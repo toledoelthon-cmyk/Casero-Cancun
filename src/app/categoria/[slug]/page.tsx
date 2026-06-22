@@ -4,7 +4,8 @@ import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { categories, demoBusinesses } from "@/lib/demo-data";
+import { getBusinessesByCategory } from "@/lib/data/businesses";
+import { categories } from "@/lib/demo-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -28,7 +29,7 @@ export default async function CategoryPage({ params }: PageProps) {
     notFound();
   }
 
-  const relatedBusinesses = demoBusinesses.filter((business) => business.category === category.name);
+  const relatedBusinesses = await getBusinessesByCategory(category.slug);
 
   return (
     <section className="container-page py-12">

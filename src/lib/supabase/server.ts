@@ -1,6 +1,24 @@
-// Aquí se conectará Supabase en la siguiente fase.
-// Este archivo quedará reservado para crear el cliente de servidor.
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/supabase/types";
+
+export function hasSupabaseServerConfig() {
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
 
 export function createSupabaseServerClient() {
-  throw new Error("Supabase todavía no está conectado en esta fase.");
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  // App Router server helper preparado para lectura pública con anon key.
+  // No usar service role key en este proyecto.
+  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
 }

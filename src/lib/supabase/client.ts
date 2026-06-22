@@ -1,6 +1,17 @@
-// Aquí se conectará Supabase en la siguiente fase.
-// Este archivo quedará reservado para crear el cliente de navegador.
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/supabase/types";
+
+export function hasSupabaseConfig() {
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
 
 export function createSupabaseBrowserClient() {
-  throw new Error("Supabase todavía no está conectado en esta fase.");
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseAnonKey);
 }

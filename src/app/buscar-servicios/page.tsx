@@ -4,7 +4,8 @@ import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { demoBusinesses, locations, serviceCategories } from "@/lib/demo-data";
+import { getPublishedBusinesses } from "@/lib/data/businesses";
+import { locations, serviceCategories } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
   title: "Buscar servicios | Casero Cancún",
@@ -12,9 +13,11 @@ export const metadata: Metadata = {
 };
 
 const tags = ["Verificado", "Atiende Airbnb", "Factura", "Urgencias", "Garantía"];
-const serviceProviders = demoBusinesses.filter((business) => business.profileType === "service_provider");
 
-export default function SearchServicesPage() {
+export default async function SearchServicesPage() {
+  const businesses = await getPublishedBusinesses();
+  const serviceProviders = businesses.filter((business) => business.profileType === "service_provider");
+
   return (
     <section className="container-page py-12">
       <div className="rounded-lg bg-white p-6 shadow-sm md:p-8">

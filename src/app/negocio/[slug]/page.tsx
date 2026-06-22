@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
-import { demoBusinesses } from "@/lib/demo-data";
+import { getBusinessBySlug } from "@/lib/data/businesses";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -13,7 +13,7 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const business = demoBusinesses.find((item) => item.slug === slug);
+  const business = await getBusinessBySlug(slug);
 
   if (!business) {
     return {
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BusinessProfilePage({ params }: PageProps) {
   const { slug } = await params;
-  const business = demoBusinesses.find((item) => item.slug === slug);
+  const business = await getBusinessBySlug(slug);
 
   if (!business) {
     notFound();

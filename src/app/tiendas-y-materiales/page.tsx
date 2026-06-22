@@ -2,16 +2,18 @@ import type { Metadata } from "next";
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { CategoryCard } from "@/components/marketplace/CategoryCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { demoBusinesses, storeCategories } from "@/lib/demo-data";
+import { getPublishedBusinesses } from "@/lib/data/businesses";
+import { storeCategories } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
   title: "Tiendas y materiales | Casero Cancún",
   description: "Encuentra ferreterías, materiales, herramientas y refacciones para el hogar en Cancún.",
 };
 
-const materialStores = demoBusinesses.filter((business) => business.profileType === "material_store");
+export default async function StoresPage() {
+  const businesses = await getPublishedBusinesses();
+  const materialStores = businesses.filter((business) => business.profileType === "material_store");
 
-export default function StoresPage() {
   return (
     <section className="container-page py-12">
       <div className="rounded-lg bg-white p-6 shadow-sm md:p-8">
