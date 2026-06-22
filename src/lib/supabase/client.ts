@@ -1,8 +1,6 @@
-import { createBrowserClient } from "@supabase/ssr";
+// Aquí se conectará Supabase en la siguiente fase.
+// Este archivo quedará reservado para crear el cliente de navegador.
 
-export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
-  );
+export function createSupabaseBrowserClient() {
+  throw new Error("Supabase todavía no está conectado en esta fase.");
 }

@@ -1,4 +1,5 @@
 import { MessageCircle } from "lucide-react";
+import { contact } from "@/lib/contact";
 import { Button } from "./Button";
 
 type WhatsAppButtonProps = {
@@ -8,9 +9,9 @@ type WhatsAppButtonProps = {
 };
 
 export function WhatsAppButton({
-  phone = "529981234567",
+  phone = contact.whatsappLinkNumber,
   label = "Contactar por WhatsApp",
-  message = "Hola, encontré su negocio en Casero Cancún y me gustaría pedir información.",
+  message = "Hola, vengo de Casero Cancún y quiero información.",
 }: WhatsAppButtonProps) {
   const href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 

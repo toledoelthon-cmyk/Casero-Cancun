@@ -5,7 +5,7 @@
 :root {
   color-scheme: light;
   background: #fafaf7;
-  color: #0f2537;
+  color: #263238;
 }
 
 * {
@@ -22,7 +22,7 @@ body {
   background:
     radial-gradient(circle at top left, rgba(24, 175, 196, 0.14), transparent 32rem),
     linear-gradient(180deg, #ffffff 0%, #fafaf7 36%, #fafaf7 100%);
-  color: #0f2537;
+  color: #263238;
 }
 
 a {
@@ -37,4 +37,13 @@ a {
 .container-page {
   width: min(1120px, calc(100% - 2rem));
   margin-inline: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-poppins), Poppins, Inter, system-ui, sans-serif;
 }

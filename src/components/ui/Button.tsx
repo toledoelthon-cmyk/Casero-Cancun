@@ -12,13 +12,13 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-casero-orange text-casero-navy shadow-soft hover:bg-amber-400 focus-visible:ring-casero-orange",
+    "bg-casero-orange text-casero-dark shadow-soft hover:bg-amber-400 focus-visible:ring-casero-orange",
   secondary:
     "bg-casero-green text-white shadow-soft hover:bg-emerald-700 focus-visible:ring-casero-green",
   outline:
-    "border border-casero-navy/15 bg-white text-casero-navy hover:border-casero-green hover:text-casero-green focus-visible:ring-casero-turquoise",
+    "border border-casero-dark/15 bg-white text-casero-dark hover:border-casero-green hover:text-casero-green focus-visible:ring-casero-turquoise",
   ghost:
-    "text-casero-navy hover:bg-casero-beige/60 focus-visible:ring-casero-turquoise",
+    "text-casero-dark hover:bg-casero-beige/60 focus-visible:ring-casero-turquoise",
 };
 
 export function Button({

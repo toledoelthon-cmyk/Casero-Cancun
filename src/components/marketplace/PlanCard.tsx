@@ -1,9 +1,9 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import type { SeedPlan } from "@/lib/seed";
+import type { DemoPlan } from "@/lib/demo-data";
 
 type PlanCardProps = {
-  plan: SeedPlan;
+  plan: DemoPlan;
 };
 
 export function PlanCard({ plan }: PlanCardProps) {
@@ -12,7 +12,7 @@ export function PlanCard({ plan }: PlanCardProps) {
       className={
         plan.highlighted
           ? "relative rounded-lg border-2 border-casero-green bg-white p-6 shadow-soft"
-          : "rounded-lg border border-casero-navy/10 bg-white p-6 shadow-sm"
+          : "rounded-lg border border-casero-dark/10 bg-white p-6 shadow-sm"
       }
     >
       {plan.highlighted ? (
@@ -20,13 +20,13 @@ export function PlanCard({ plan }: PlanCardProps) {
           Más elegido
         </span>
       ) : null}
-      <h3 className="text-2xl font-black text-casero-navy">{plan.name}</h3>
-      <p className="mt-3 text-sm leading-6 text-casero-navy/65">{plan.summary}</p>
+      <h3 className="font-heading text-2xl font-extrabold text-casero-dark">{plan.name}</h3>
+      <p className="mt-3 text-sm leading-6 text-casero-text/65">{plan.summary}</p>
       <div className="mt-6 flex items-end gap-1">
-        <span className="text-4xl font-black text-casero-navy">${plan.price}</span>
-        <span className="pb-1 text-sm font-semibold text-casero-navy/55">MXN/mes</span>
+        <span className="font-heading text-4xl font-extrabold text-casero-dark">${plan.price}</span>
+        <span className="pb-1 text-sm font-semibold text-casero-text/55">MXN/mes</span>
       </div>
-      <ul className="mt-6 space-y-3 text-sm text-casero-navy/75">
+      <ul className="mt-6 space-y-3 text-sm text-casero-text/75">
         {plan.features.map((feature) => (
           <li key={feature} className="flex gap-3">
             <Check className="mt-0.5 h-4 w-4 flex-none text-casero-green" aria-hidden />

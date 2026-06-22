@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
+import { Header } from "@/components/layout/Header";
+import { WhatsAppFloatingButton } from "@/components/layout/WhatsAppFloatingButton";
 
-const geistSans = Geist({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
-  title: "Casero Cancún | Directorio local de servicios para el hogar",
+  title: "Casero Cancún | Servicios, tiendas y proveedores para tu hogar",
   description:
-    "Encuentra proveedores verificados para reparaciones, mantenimiento, materiales y mejoras del hogar en Cancún.",
+    "Encuentra servicios del hogar, tiendas de materiales y proveedores locales en Cancún. Contacta negocios de confianza directo por WhatsApp.",
 };
 
 export default function RootLayout({
@@ -22,10 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${geistSans.variable} font-sans antialiased`}>
-        <Navbar />
+      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>
+        <Header />
         <main>{children}</main>
         <Footer />
+        <WhatsAppFloatingButton />
       </body>
     </html>
   );
