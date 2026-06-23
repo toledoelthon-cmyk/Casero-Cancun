@@ -101,6 +101,8 @@ export default async function BusinessProfilePage({ params }: PageProps) {
   const gallery = images.slice(1);
   const categories = business.categories ?? [business.category];
   const locations = business.locations ?? [business.location];
+  const features = business.features ?? [];
+  const shouldShowMap = Boolean(business.showMap && (business.address || (business.latitude && business.longitude)));
   const description =
     business.longDescription ??
     `${business.shortDescription} Este perfil está preparado para mostrar información clara, contacto directo y señales de confianza dentro de Casero Cancún.`;
@@ -188,6 +190,19 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             </div>
           </Card>
 
+          {features.length > 0 ? (
+            <Card>
+              <h2 className="font-heading text-2xl font-bold text-casero-dark">Características</h2>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {features.map((feature) => (
+                  <Badge key={feature} tone="green">
+                    {feature}
+                  </Badge>
+                ))}
+              </div>
+            </Card>
+          ) : null}
+
           <Card>
             <h2 className="font-heading text-2xl font-bold text-casero-dark">Galería de imágenes</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -248,12 +263,33 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
           <Card>
             <h2 className="font-heading text-xl font-bold text-casero-dark">Zonas de atención</h2>
+            {!business.showMap ? (
+              <p className="mt-3 rounded-md bg-casero-background p-3 text-sm font-semibold text-casero-text/70">
+                Atiende por zonas
+              </p>
+            ) : null}
             <div className="mt-4 flex flex-wrap gap-2">
               {locations.map((location) => (
                 <Badge key={location}>{location}</Badge>
               ))}
             </div>
           </Card>
+
+          {shouldShowMap ? (
+            <Card>
+              <h2 className="font-heading text-xl font-bold text-casero-dark">Ubicación</h2>
+              {business.address ? (
+                <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-casero-text/70">
+                  <MapPin className="mt-1 h-4 w-4 text-casero-green" aria-hidden />
+                  {business.address}
+                </p>
+              ) : null}
+              <div className="mt-4 rounded-md border border-casero-dark/10 bg-casero-background p-4 text-sm font-semibold text-casero-text/65">
+                Mapa disponible para este negocio.
+                {business.latitude && business.longitude ? ` Coordenadas: ${business.latitude}, ${business.longitude}.` : ""}
+              </div>
+            </Card>
+          ) : null}
 
           <Card>
             <h2 className="font-heading text-xl font-bold text-casero-dark">Categorías</h2>

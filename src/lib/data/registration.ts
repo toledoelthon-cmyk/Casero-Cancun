@@ -1,12 +1,14 @@
 import { categories as demoCategories, locations as demoLocations, plans as demoPlans } from "@/lib/demo-data";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server";
-import type { CategoryType } from "@/lib/supabase/types";
+import type { CategorySection, CategoryType } from "@/lib/supabase/types";
 
 export type RegistrationPlan = {
   id: string;
   name: string;
   slug: string;
   priceMxn: number;
+  maxCategories: number;
+  maxLocations: number;
   maxPhotos: number;
 };
 
@@ -15,6 +17,7 @@ export type RegistrationCategory = {
   name: string;
   slug: string;
   type: CategoryType;
+  section: CategorySection;
 };
 
 export type RegistrationLocation = {
@@ -38,6 +41,8 @@ function demoOptions(): RegistrationOptions {
       name: plan.name,
       slug: plan.slug,
       priceMxn: plan.price,
+      maxCategories: plan.slug === "premium" ? 8 : plan.slug === "pro" ? 5 : 2,
+      maxLocations: plan.slug === "premium" ? 10 : plan.slug === "pro" ? 5 : 2,
       maxPhotos: plan.slug === "premium" ? 15 : plan.slug === "pro" ? 8 : 3,
     })),
     categories: demoCategories.map((category) => ({
@@ -45,6 +50,7 @@ function demoOptions(): RegistrationOptions {
       name: category.name,
       slug: category.slug,
       type: category.type === "service_provider" ? "service" : "store",
+      section: category.section,
     })),
     locations: demoLocations.map((location) => ({
       id: location.slug,
@@ -74,8 +80,11 @@ export async function getRegistrationOptions(): Promise<RegistrationOptions> {
 
   const results = await withTimeout(
     Promise.all([
-      supabase.from("plans").select("id,name,slug,price_mxn,max_photos").order("price_mxn", { ascending: true }),
-      supabase.from("categories").select("id,name,slug,type").order("name", { ascending: true }),
+      supabase
+        .from("plans")
+        .select("id,name,slug,price_mxn,max_categories,max_photos")
+        .order("price_mxn", { ascending: true }),
+      supabase.from("categories").select("id,name,slug,type,section").order("name", { ascending: true }),
       supabase.from("locations").select("id,name,slug").order("name", { ascending: true }),
     ]),
   );
@@ -96,6 +105,8 @@ export async function getRegistrationOptions(): Promise<RegistrationOptions> {
       name: plan.name,
       slug: plan.slug,
       priceMxn: plan.price_mxn,
+      maxCategories: plan.max_categories ?? (plan.slug === "premium" ? 8 : plan.slug === "pro" ? 5 : 2),
+      maxLocations: plan.slug === "premium" ? 10 : plan.slug === "pro" ? 5 : 2,
       maxPhotos: plan.max_photos ?? (plan.slug === "premium" ? 15 : plan.slug === "pro" ? 8 : 3),
     })),
     categories: categoriesResult.data.map((category) => ({
@@ -103,6 +114,9 @@ export async function getRegistrationOptions(): Promise<RegistrationOptions> {
       name: category.name,
       slug: category.slug,
       type: category.type,
+      section:
+        category.section ??
+        (category.type === "store" ? "stores_materials" : ("home_services" as CategorySection)),
     })),
     locations: locationsResult.data.map((location) => ({
       id: location.id,

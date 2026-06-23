@@ -111,6 +111,68 @@ set
   name = excluded.name,
   type = excluded.type;
 
+insert into public.categories (
+  name,
+  slug,
+  type,
+  section
+)
+values
+  ('Aire acondicionado', 'aire-acondicionado', 'service', 'home_services'),
+  ('Plomeria', 'plomeria', 'service', 'home_services'),
+  ('Electricidad', 'electricidad', 'service', 'home_services'),
+  ('Limpieza del hogar', 'limpieza-del-hogar', 'service', 'home_services'),
+  ('Fumigacion', 'fumigacion', 'service', 'home_services'),
+  ('Jardineria', 'jardineria', 'service', 'home_services'),
+  ('Pintura', 'pintura', 'service', 'home_services'),
+  ('Albanileria', 'albanileria', 'service', 'home_services'),
+  ('Cerrajeria', 'cerrajeria', 'service', 'home_services'),
+  ('Carpinteria', 'carpinteria', 'service', 'home_services'),
+  ('Mudanzas', 'mudanzas', 'service', 'home_services'),
+  ('Mantenimiento general', 'mantenimiento-general', 'service', 'home_services'),
+  ('Mantenimiento Airbnb', 'mantenimiento-airbnb', 'service', 'home_services'),
+  ('Albercas', 'albercas', 'service', 'home_services'),
+  ('Camaras de seguridad', 'camaras-de-seguridad', 'service', 'home_services'),
+  ('Ferreterias', 'ferreterias', 'store', 'stores_materials'),
+  ('Material electrico', 'material-electrico', 'store', 'stores_materials'),
+  ('Material de plomeria', 'material-de-plomeria', 'store', 'stores_materials'),
+  ('Pinturas e impermeabilizantes', 'pinturas-e-impermeabilizantes', 'store', 'stores_materials'),
+  ('Herramientas', 'herramientas', 'store', 'stores_materials'),
+  ('Refacciones para electrodomesticos', 'refacciones-para-electrodomesticos', 'store', 'stores_materials'),
+  ('Aire acondicionado y refacciones', 'aire-acondicionado-y-refacciones', 'store', 'stores_materials'),
+  ('Materiales de construccion', 'materiales-de-construccion', 'store', 'stores_materials'),
+  ('Productos de limpieza', 'productos-de-limpieza', 'store', 'stores_materials'),
+  ('Jardineria y viveros', 'jardineria-y-viveros', 'store', 'stores_materials'),
+  ('Maderas y carpinteria', 'maderas-y-carpinteria', 'store', 'stores_materials'),
+  ('Material para herreria', 'material-para-herreria', 'store', 'stores_materials'),
+  ('Veterinarias', 'veterinarias', 'service', 'pets'),
+  ('Estetica canina', 'estetica-canina', 'service', 'pets'),
+  ('Bano y corte para mascotas', 'bano-y-corte-para-mascotas', 'service', 'pets'),
+  ('Paseadores de perros', 'paseadores-de-perros', 'service', 'pets'),
+  ('Guarderia para mascotas', 'guarderia-para-mascotas', 'service', 'pets'),
+  ('Entrenamiento canino', 'entrenamiento-canino', 'service', 'pets'),
+  ('Alimentos para mascotas', 'alimentos-para-mascotas', 'store', 'pets'),
+  ('Accesorios para mascotas', 'accesorios-para-mascotas', 'store', 'pets'),
+  ('Veterinario a domicilio', 'veterinario-a-domicilio', 'service', 'pets'),
+  ('Transporte de mascotas', 'transporte-de-mascotas', 'service', 'pets'),
+  ('Mecanicos a domicilio', 'mecanicos-a-domicilio', 'service', 'auto_services'),
+  ('Talleres mecanicos', 'talleres-mecanicos', 'service', 'auto_services'),
+  ('Electrico automotriz', 'electrico-automotriz', 'service', 'auto_services'),
+  ('Cerrajeria automotriz', 'cerrajeria-automotriz', 'service', 'auto_services'),
+  ('Lavado de autos', 'lavado-de-autos', 'service', 'auto_services'),
+  ('Detallado automotriz', 'detallado-automotriz', 'service', 'auto_services'),
+  ('Hojalateria y pintura', 'hojalateria-y-pintura', 'service', 'auto_services'),
+  ('Gruas', 'gruas', 'service', 'auto_services'),
+  ('Llanteras', 'llanteras', 'store', 'auto_services'),
+  ('Cambio de aceite', 'cambio-de-aceite', 'service', 'auto_services'),
+  ('Aire acondicionado automotriz', 'aire-acondicionado-automotriz', 'service', 'auto_services'),
+  ('Diagnostico automotriz', 'diagnostico-automotriz', 'service', 'auto_services')
+on conflict (slug) do update
+set
+  name = excluded.name,
+  type = excluded.type,
+  section = excluded.section;
+
 insert into public.locations (
   name,
   slug

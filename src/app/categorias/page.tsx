@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CategoryCard } from "@/components/marketplace/CategoryCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { serviceCategories, storeCategories } from "@/lib/demo-data";
+import { autoServiceCategories, petCategories, serviceCategories, storeCategories } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
   title: "Categorías | Casero Cancún",
@@ -17,23 +17,21 @@ export default function CategoriesPage() {
         description="Cada categoría enlazará a su página de resultados cuando conectemos la base de datos."
       />
 
-      <div className="mt-10">
-        <h3 className="font-heading text-xl font-bold text-casero-dark">Servicios del hogar</h3>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {serviceCategories.map((category) => (
-            <CategoryCard key={category.slug} category={category} />
-          ))}
+      {[
+        ["Servicios del hogar", serviceCategories],
+        ["Tiendas y materiales", storeCategories],
+        ["Mascotas", petCategories],
+        ["Servicios para tu auto", autoServiceCategories],
+      ].map(([title, items]) => (
+        <div key={title as string} className="mt-10">
+          <h3 className="font-heading text-xl font-bold text-casero-dark">{title as string}</h3>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {(items as typeof serviceCategories).map((category) => (
+              <CategoryCard key={category.slug} category={category} />
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div className="mt-12">
-        <h3 className="font-heading text-xl font-bold text-casero-dark">Tiendas y materiales</h3>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {storeCategories.map((category) => (
-            <CategoryCard key={category.slug} category={category} />
-          ))}
-        </div>
-      </div>
+      ))}
     </section>
   );
 }

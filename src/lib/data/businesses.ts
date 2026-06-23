@@ -51,6 +51,30 @@ function buildBadges(profile: BusinessProfile) {
   ].filter((badge): badge is string => Boolean(badge));
 }
 
+function buildFeatures(profile: BusinessProfile) {
+  return [
+    profile.service_at_home ? "Servicio a domicilio" : null,
+    profile.free_estimate ? "Presupuesto sin costo" : null,
+    profile.service_24_7 ? "AtenciÃ³n 24/7" : null,
+    profile.by_appointment ? "Con cita previa" : null,
+    profile.accepts_card ? "Acepta tarjeta" : null,
+    profile.accepts_transfer ? "Acepta transferencia" : null,
+    profile.attends_condos ? "Atiende condominios" : null,
+    profile.retail_sales ? "Venta al pÃºblico" : null,
+    profile.wholesale_sales ? "Venta por mayoreo" : null,
+    profile.delivery_available ? "Entrega a domicilio" : null,
+    profile.authorized_distributor ? "Distribuidor autorizado" : null,
+    profile.pet_veterinary_service ? "AtenciÃ³n veterinaria" : null,
+    profile.pet_grooming ? "EstÃ©tica / baÃ±o y corte" : null,
+    profile.pet_daycare ? "GuarderÃ­a" : null,
+    profile.pet_food_accessories ? "Alimentos o accesorios" : null,
+    profile.auto_tow_service ? "GrÃºa disponible" : null,
+    profile.auto_diagnostics ? "DiagnÃ³stico" : null,
+    profile.auto_parts ? "Refacciones" : null,
+    profile.auto_wash_detailing ? "Lavado / detallado" : null,
+  ].filter((feature): feature is string => Boolean(feature));
+}
+
 function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
   const categories =
     row.business_categories?.map((item) => item.categories?.name).filter((name): name is string => Boolean(name)) ??
@@ -87,6 +111,14 @@ function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
     phone: row.phone ?? undefined,
     email: row.email ?? undefined,
     website: row.website ?? undefined,
+    address: row.address ?? undefined,
+    postalCode: row.postal_code ?? undefined,
+    showMap: Boolean(row.show_map),
+    hasPhysicalLocation: Boolean(row.has_physical_location),
+    locationMode: row.location_mode ?? undefined,
+    latitude: row.latitude ?? undefined,
+    longitude: row.longitude ?? undefined,
+    features: buildFeatures(row),
     badges: buildBadges(row),
     rating: 0,
     reviewCount: 0,

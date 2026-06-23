@@ -1,13 +1,26 @@
 import Link from "next/link";
-import { ArrowRight, Store, Wrench } from "lucide-react";
-import type { DemoCategory } from "@/lib/demo-data";
+import { ArrowRight, Car, HeartHandshake, Store, Wrench } from "lucide-react";
+import type { CategorySection } from "@/lib/demo-data";
 
 type CategoryCardProps = {
-  category: DemoCategory;
+  category: {
+    name: string;
+    slug: string;
+    type: "service_provider" | "material_store";
+    section?: CategorySection;
+    description?: string;
+  };
 };
 
 export function CategoryCard({ category }: CategoryCardProps) {
-  const Icon = category.type === "service_provider" ? Wrench : Store;
+  const Icon =
+    category.section === "pets"
+      ? HeartHandshake
+      : category.section === "auto_services"
+        ? Car
+        : category.type === "service_provider"
+          ? Wrench
+          : Store;
 
   return (
     <Link

@@ -2,6 +2,8 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 
 export type ProfileType = "service_provider" | "material_store";
 export type CategoryType = "service" | "store";
+export type CategorySection = "home_services" | "stores_materials" | "pets" | "auto_services";
+export type LocationMode = "physical" | "home_service" | "both" | "zones_only";
 export type PublicationStatus = "pending" | "published" | "paused" | "rejected";
 
 export type Plan = {
@@ -22,6 +24,7 @@ export type Category = {
   name: string;
   slug: string;
   type: CategoryType;
+  section: CategorySection | null;
   description: string | null;
   icon: string | null;
   created_at: string | null;
@@ -39,8 +42,10 @@ export type BusinessProfile = {
   id: string;
   plan_id: string | null;
   business_name: string;
+  responsible_name: string | null;
   slug: string;
   profile_type: ProfileType;
+  section: CategorySection | null;
   short_description: string | null;
   long_description: string | null;
   main_service: string | null;
@@ -50,6 +55,11 @@ export type BusinessProfile = {
   website: string | null;
   address: string | null;
   postal_code: string | null;
+  has_physical_location: boolean | null;
+  location_mode: LocationMode | null;
+  show_map: boolean | null;
+  latitude: number | null;
+  longitude: number | null;
   attends_outside_cancun: boolean | null;
   status: PublicationStatus | null;
   is_featured: boolean | null;
@@ -60,9 +70,23 @@ export type BusinessProfile = {
   emergency_service: boolean | null;
   service_24_7: boolean | null;
   by_appointment: boolean | null;
+  service_at_home: boolean | null;
+  free_estimate: boolean | null;
   attends_airbnb: boolean | null;
   attends_condos: boolean | null;
   offers_warranty: boolean | null;
+  retail_sales: boolean | null;
+  wholesale_sales: boolean | null;
+  delivery_available: boolean | null;
+  authorized_distributor: boolean | null;
+  pet_veterinary_service: boolean | null;
+  pet_grooming: boolean | null;
+  pet_daycare: boolean | null;
+  pet_food_accessories: boolean | null;
+  auto_tow_service: boolean | null;
+  auto_diagnostics: boolean | null;
+  auto_parts: boolean | null;
+  auto_wash_detailing: boolean | null;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -71,8 +95,10 @@ export type BusinessProfileInsert = {
   id?: string;
   plan_id?: string | null;
   business_name: string;
+  responsible_name?: string | null;
   slug: string;
   profile_type: ProfileType;
+  section?: CategorySection | null;
   short_description?: string | null;
   long_description?: string | null;
   main_service?: string | null;
@@ -82,6 +108,11 @@ export type BusinessProfileInsert = {
   website?: string | null;
   address?: string | null;
   postal_code?: string | null;
+  has_physical_location?: boolean | null;
+  location_mode?: LocationMode | null;
+  show_map?: boolean | null;
+  latitude?: number | null;
+  longitude?: number | null;
   attends_outside_cancun?: boolean | null;
   status?: PublicationStatus | null;
   is_featured?: boolean | null;
@@ -92,9 +123,23 @@ export type BusinessProfileInsert = {
   emergency_service?: boolean | null;
   service_24_7?: boolean | null;
   by_appointment?: boolean | null;
+  service_at_home?: boolean | null;
+  free_estimate?: boolean | null;
   attends_airbnb?: boolean | null;
   attends_condos?: boolean | null;
   offers_warranty?: boolean | null;
+  retail_sales?: boolean | null;
+  wholesale_sales?: boolean | null;
+  delivery_available?: boolean | null;
+  authorized_distributor?: boolean | null;
+  pet_veterinary_service?: boolean | null;
+  pet_grooming?: boolean | null;
+  pet_daycare?: boolean | null;
+  pet_food_accessories?: boolean | null;
+  auto_tow_service?: boolean | null;
+  auto_diagnostics?: boolean | null;
+  auto_parts?: boolean | null;
+  auto_wash_detailing?: boolean | null;
   created_at?: string | null;
   updated_at?: string | null;
 };
