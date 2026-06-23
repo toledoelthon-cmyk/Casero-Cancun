@@ -145,3 +145,24 @@ create policy "Public read access for business media"
   on public.business_media
   for select
   using (true);
+
+drop policy if exists "Public insert pending business profiles" on public.business_profiles;
+
+create policy "Public insert pending business profiles"
+  on public.business_profiles
+  for insert
+  with check (status = 'pending');
+
+drop policy if exists "Public insert business categories" on public.business_categories;
+
+create policy "Public insert business categories"
+  on public.business_categories
+  for insert
+  with check (true);
+
+drop policy if exists "Public insert business locations" on public.business_locations;
+
+create policy "Public insert business locations"
+  on public.business_locations
+  for insert
+  with check (true);

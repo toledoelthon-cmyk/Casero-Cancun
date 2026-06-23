@@ -17,6 +17,15 @@ const businessSelect = `
   business_locations(locations(*))
 `;
 
+async function withTimeout<T>(promise: PromiseLike<T>, milliseconds = 4000) {
+  return Promise.race([
+    promise,
+    new Promise<null>((resolve) => {
+      setTimeout(() => resolve(null), milliseconds);
+    }),
+  ]);
+}
+
 function fallbackBusinesses() {
   return demoBusinesses;
 }
@@ -47,8 +56,8 @@ function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
     badges: buildBadges(row),
     rating: 0,
     reviewCount: 0,
-    featured: row.is_featured,
-    verified: row.is_verified,
+    featured: Boolean(row.is_featured),
+    verified: Boolean(row.is_verified),
   };
 }
 
@@ -59,12 +68,20 @@ async function getSupabasePublishedBusinesses() {
     return null;
   }
 
-  const { data, error } = await supabase
-    .from("business_profiles")
-    .select(businessSelect)
-    .eq("status", "published")
-    .order("is_featured", { ascending: false })
-    .order("created_at", { ascending: false });
+  const result = await withTimeout(
+    supabase
+      .from("business_profiles")
+      .select(businessSelect)
+      .eq("status", "published")
+      .order("is_featured", { ascending: false })
+      .order("created_at", { ascending: false }),
+  );
+
+  if (!result) {
+    return null;
+  }
+
+  const { data, error } = result;
 
   if (error || !data) {
     return null;
@@ -82,12 +99,20 @@ export async function getBusinessBySlug(slug: string) {
   const supabase = createSupabaseServerClient();
 
   if (supabase) {
-    const { data, error } = await supabase
-      .from("business_profiles")
-      .select(businessSelect)
-      .eq("slug", slug)
-      .eq("status", "published")
-      .maybeSingle();
+    const result = await withTimeout(
+      supabase
+        .from("business_profiles")
+        .select(businessSelect)
+        .eq("slug", slug)
+        .eq("status", "published")
+        .maybeSingle(),
+    );
+
+    if (!result) {
+      return fallbackBusinesses().find((business) => business.slug === slug) ?? null;
+    }
+
+    const { data, error } = result;
 
     if (!error && data) {
       return mapSupabaseBusiness(data as SupabaseBusinessRow);

@@ -1,6 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 
+const missingSupabaseServerMessage =
+  "Supabase is not configured. Expected environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.";
+
 export function hasSupabaseServerConfig() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
@@ -10,6 +13,10 @@ export function createSupabaseServerClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
+    console.error(missingSupabaseServerMessage, {
+      NEXT_PUBLIC_SUPABASE_URL: Boolean(supabaseUrl),
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: Boolean(supabaseAnonKey),
+    });
     return null;
   }
 

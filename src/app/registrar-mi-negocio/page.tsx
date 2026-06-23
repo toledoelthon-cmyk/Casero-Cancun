@@ -3,6 +3,7 @@ import { MessageCircle, Search, ShieldCheck, Store } from "lucide-react";
 import { RegisterBusinessForm } from "@/components/marketplace/RegisterBusinessForm";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { getRegistrationOptions } from "@/lib/data/registration";
 
 export const metadata: Metadata = {
   title: "Registrar mi negocio | Casero Cancún",
@@ -32,7 +33,9 @@ const benefits = [
   },
 ];
 
-export default function RegisterBusinessPage() {
+export default async function RegisterBusinessPage() {
+  const registrationOptions = await getRegistrationOptions();
+
   return (
     <>
       <section className="bg-white py-12">
@@ -61,7 +64,7 @@ export default function RegisterBusinessPage() {
         <SectionHeader
           eyebrow="Beneficios"
           title="Un perfil pensado para que te contacten mejor"
-          description="La primera versión es visual. La recepción real de solicitudes se conectará con Supabase en la siguiente fase."
+          description="La recepción de solicitudes guardará negocios pendientes cuando Supabase esté configurado."
         />
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((benefit) => (
@@ -80,10 +83,10 @@ export default function RegisterBusinessPage() {
             <SectionHeader
               eyebrow="Solicitud"
               title="Cuéntanos sobre tu negocio"
-              description="Este formulario muestra la experiencia final esperada, pero todavía no guarda información."
+              description="Completa los datos principales para enviar tu negocio a revisión."
             />
             <div className="mt-6">
-              <RegisterBusinessForm />
+              <RegisterBusinessForm {...registrationOptions} />
             </div>
           </div>
 
@@ -91,13 +94,13 @@ export default function RegisterBusinessPage() {
             <Card>
               <h2 className="font-heading text-lg font-bold text-casero-dark">Qué pasa después</h2>
               <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                En la versión conectada, cada solicitud entrará a revisión antes de publicarse en el directorio.
+                Cada solicitud entrará a revisión antes de publicarse en el directorio.
               </p>
             </Card>
             <Card>
               <h2 className="font-heading text-lg font-bold text-casero-dark">Estado de publicación</h2>
               <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                La estructura futura contempla perfiles pendientes, publicados, pausados y rechazados.
+                La estructura contempla perfiles pendientes, publicados, pausados y rechazados.
               </p>
             </Card>
           </aside>
