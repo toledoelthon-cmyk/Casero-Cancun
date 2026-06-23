@@ -146,6 +146,13 @@ create policy "Public read access for business media"
   for select
   using (true);
 
+drop policy if exists "Public insert business media" on public.business_media;
+
+create policy "Public insert business media"
+  on public.business_media
+  for insert
+  with check (true);
+
 drop policy if exists "Public insert pending business profiles" on public.business_profiles;
 
 create policy "Public insert pending business profiles"

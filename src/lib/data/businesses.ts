@@ -1,6 +1,6 @@
 import { demoBusinesses, type DemoBusiness } from "@/lib/demo-data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { BusinessProfile, Category, Location } from "@/lib/supabase/types";
+import type { BusinessMedia, BusinessProfile, Category, Location } from "@/lib/supabase/types";
 
 type SupabaseBusinessRow = BusinessProfile & {
   business_categories?: Array<{
@@ -9,12 +9,14 @@ type SupabaseBusinessRow = BusinessProfile & {
   business_locations?: Array<{
     locations?: Location | null;
   }> | null;
+  business_media?: BusinessMedia[] | null;
 };
 
 const businessSelect = `
   *,
   business_categories(categories(*)),
-  business_locations(locations(*))
+  business_locations(locations(*)),
+  business_media(*)
 `;
 
 async function withTimeout<T>(promise: PromiseLike<T>, milliseconds = 4000) {
@@ -27,7 +29,16 @@ async function withTimeout<T>(promise: PromiseLike<T>, milliseconds = 4000) {
 }
 
 function fallbackBusinesses() {
-  return demoBusinesses;
+  return demoBusinesses.map((business) => ({
+    ...business,
+    categories: business.categories ?? [business.category],
+    locations: business.locations ?? [business.location],
+    longDescription:
+      business.longDescription ??
+      `${business.shortDescription} Perfil demo preparado para mostrar cómo se verá un negocio publicado en Casero Cancún.`,
+    mainService: business.mainService ?? business.category,
+    media: business.media ?? [],
+  }));
 }
 
 function buildBadges(profile: BusinessProfile) {
@@ -41,8 +52,24 @@ function buildBadges(profile: BusinessProfile) {
 }
 
 function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
-  const category = row.business_categories?.[0]?.categories?.name ?? row.main_service ?? "Servicio local";
-  const location = row.business_locations?.[0]?.locations?.name ?? row.address ?? "Cancún y alrededores";
+  const categories =
+    row.business_categories?.map((item) => item.categories?.name).filter((name): name is string => Boolean(name)) ??
+    [];
+  const locations =
+    row.business_locations?.map((item) => item.locations?.name).filter((name): name is string => Boolean(name)) ?? [];
+  const category = categories[0] ?? row.main_service ?? "Servicio local";
+  const location = locations[0] ?? row.address ?? "Cancún y alrededores";
+  const media =
+    row.business_media
+      ?.slice()
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((item) => ({
+        id: item.id,
+        url: item.url,
+        type: item.type ?? "image",
+        alt: item.alt,
+        sortOrder: item.sort_order ?? 0,
+      })) ?? [];
 
   return {
     id: row.id,
@@ -50,14 +77,22 @@ function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
     slug: row.slug,
     profileType: row.profile_type,
     category,
+    categories: categories.length > 0 ? categories : [category],
     location,
+    locations: locations.length > 0 ? locations : [location],
     shortDescription: row.short_description ?? row.long_description ?? "Negocio local publicado en Casero Cancún.",
+    longDescription: row.long_description ?? row.short_description ?? undefined,
+    mainService: row.main_service ?? category,
     whatsapp: row.whatsapp ?? row.phone ?? "",
+    phone: row.phone ?? undefined,
+    email: row.email ?? undefined,
+    website: row.website ?? undefined,
     badges: buildBadges(row),
     rating: 0,
     reviewCount: 0,
     featured: Boolean(row.is_featured),
     verified: Boolean(row.is_verified),
+    media,
   };
 }
 

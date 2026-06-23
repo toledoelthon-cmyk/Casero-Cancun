@@ -7,6 +7,7 @@ export type RegistrationPlan = {
   name: string;
   slug: string;
   priceMxn: number;
+  maxPhotos: number;
 };
 
 export type RegistrationCategory = {
@@ -37,6 +38,7 @@ function demoOptions(): RegistrationOptions {
       name: plan.name,
       slug: plan.slug,
       priceMxn: plan.price,
+      maxPhotos: plan.slug === "premium" ? 15 : plan.slug === "pro" ? 8 : 3,
     })),
     categories: demoCategories.map((category) => ({
       id: category.slug,
@@ -72,7 +74,7 @@ export async function getRegistrationOptions(): Promise<RegistrationOptions> {
 
   const results = await withTimeout(
     Promise.all([
-      supabase.from("plans").select("id,name,slug,price_mxn").order("price_mxn", { ascending: true }),
+      supabase.from("plans").select("id,name,slug,price_mxn,max_photos").order("price_mxn", { ascending: true }),
       supabase.from("categories").select("id,name,slug,type").order("name", { ascending: true }),
       supabase.from("locations").select("id,name,slug").order("name", { ascending: true }),
     ]),
@@ -94,6 +96,7 @@ export async function getRegistrationOptions(): Promise<RegistrationOptions> {
       name: plan.name,
       slug: plan.slug,
       priceMxn: plan.price_mxn,
+      maxPhotos: plan.max_photos ?? (plan.slug === "premium" ? 15 : plan.slug === "pro" ? 8 : 3),
     })),
     categories: categoriesResult.data.map((category) => ({
       id: category.id,

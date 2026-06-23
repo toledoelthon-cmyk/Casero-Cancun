@@ -27,14 +27,29 @@ export type DemoBusiness = {
   slug: string;
   profileType: ProfileType;
   category: string;
+  categories?: string[];
   location: string;
+  locations?: string[];
   shortDescription: string;
+  longDescription?: string;
+  mainService?: string;
   whatsapp: string;
+  phone?: string;
+  email?: string;
+  website?: string;
   badges: string[];
   rating: number;
   reviewCount: number;
   featured: boolean;
   verified: boolean;
+  logoUrl?: string;
+  media?: Array<{
+    id: string;
+    url: string;
+    type: string;
+    alt?: string | null;
+    sortOrder: number;
+  }>;
 };
 
 export const serviceCategories: DemoCategory[] = [

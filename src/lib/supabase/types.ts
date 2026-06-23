@@ -115,6 +115,16 @@ export type BusinessLocation = {
   location_id: string;
 };
 
+export type BusinessMedia = {
+  id: string;
+  business_id: string | null;
+  url: string;
+  type: string | null;
+  alt: string | null;
+  sort_order: number | null;
+  created_at: string | null;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -188,6 +198,20 @@ export type Database = {
             columns: ["location_id"];
             isOneToOne: false;
             referencedRelation: "locations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      business_media: {
+        Row: BusinessMedia;
+        Insert: Omit<BusinessMedia, "id" | "created_at"> & { id?: string; created_at?: string | null };
+        Update: Partial<BusinessMedia>;
+        Relationships: [
+          {
+            foreignKeyName: "business_media_business_id_fkey";
+            columns: ["business_id"];
+            isOneToOne: false;
+            referencedRelation: "business_profiles";
             referencedColumns: ["id"];
           },
         ];
