@@ -156,6 +156,18 @@ const sectionLabels: Record<CategorySection, string> = {
   auto_services: "Servicios para tu auto",
 };
 
+const profileTypeLabels: Record<ProfileType, string> = {
+  service_provider: "Proveedor de servicio",
+  material_store: "Tienda o materiales",
+};
+
+const locationModeLabels: Record<LocationMode, string> = {
+  physical: "Local físico",
+  home_service: "Servicio a domicilio",
+  both: "Local físico y servicio a domicilio",
+  zones_only: "Solo zonas de atención",
+};
+
 function mapBusiness(row: AdminBusinessRow): AdminBusiness {
   const media = [...(row.business_media ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
@@ -231,7 +243,15 @@ function formatDate(value: string | null) {
 
 function getSection(business: AdminBusiness) {
   const section = business.categories.find((category) => category.section)?.section;
-  return section ? sectionLabels[section] : "Sin seccion";
+  return section ? sectionLabels[section] : "Sin sección";
+}
+
+function getProfileTypeLabel(profileType: ProfileType) {
+  return profileTypeLabels[profileType];
+}
+
+function getLocationModeLabel(locationMode: LocationMode | null) {
+  return locationMode ? locationModeLabels[locationMode] : "No definido";
 }
 
 function statusBadge(status: PublicationStatus) {
@@ -315,23 +335,23 @@ function DetailModal({
     ["Emite factura", business.invoices],
     ["Atiende urgencias", business.emergency_service],
     ["Atiende Airbnb", business.attends_airbnb],
-    ["Ofrece garantia", business.offers_warranty],
+    ["Ofrece garantía", business.offers_warranty],
     ["Acepta tarjeta", business.accepts_card],
     ["Acepta transferencia", business.accepts_transfer],
     ["Servicio a domicilio", business.service_at_home],
-    ["AtenciÃ³n 24/7", business.service_24_7],
+    ["Atención 24/7", business.service_24_7],
     ["Cita previa", business.by_appointment],
     ["Presupuesto sin costo", business.free_estimate],
-    ["Venta al pÃºblico", business.retail_sales],
+    ["Venta al público", business.retail_sales],
     ["Venta por mayoreo", business.wholesale_sales],
     ["Entrega a domicilio", business.delivery_available],
     ["Distribuidor autorizado", business.authorized_distributor],
-    ["AtenciÃ³n veterinaria", business.pet_veterinary_service],
-    ["EstÃ©tica mascotas", business.pet_grooming],
-    ["GuarderÃ­a mascotas", business.pet_daycare],
+    ["Atención veterinaria", business.pet_veterinary_service],
+    ["Estética mascotas", business.pet_grooming],
+    ["Guardería mascotas", business.pet_daycare],
     ["Alimentos/accesorios mascotas", business.pet_food_accessories],
-    ["GrÃºa disponible", business.auto_tow_service],
-    ["DiagnÃ³stico automotriz", business.auto_diagnostics],
+    ["Grúa disponible", business.auto_tow_service],
+    ["Diagnóstico automotriz", business.auto_diagnostics],
     ["Refacciones", business.auto_parts],
     ["Lavado / detallado", business.auto_wash_detailing],
   ];
@@ -356,27 +376,27 @@ function DetailModal({
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
           <Card>
-            <h3 className="font-heading text-lg font-bold text-casero-dark">Informacion principal</h3>
+            <h3 className="font-heading text-lg font-bold text-casero-dark">Información principal</h3>
             <dl className="mt-4 grid gap-3 text-sm text-casero-text/75 sm:grid-cols-2">
               <div><dt className="font-bold text-casero-dark">Responsable</dt><dd>{business.responsible_name ?? "No capturado"}</dd></div>
               <div><dt className="font-bold text-casero-dark">WhatsApp</dt><dd>{business.whatsapp ?? "Sin WhatsApp"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Correo</dt><dd>{business.email ?? "Sin correo"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Telefono</dt><dd>{business.phone ?? "Sin telefono"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Tipo</dt><dd>{business.profile_type === "service_provider" ? "Proveedor de servicio" : "Tienda/materiales"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Seccion</dt><dd>{getSection(business)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Teléfono</dt><dd>{business.phone ?? "Sin teléfono"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Tipo</dt><dd>{getProfileTypeLabel(business.profile_type)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Sección</dt><dd>{getSection(business)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Plan</dt><dd>{business.planName ?? business.plan_id ?? "Sin plan"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Fecha</dt><dd>{formatDate(business.created_at)}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Modo de ubicaciÃ³n</dt><dd>{business.location_mode ?? "No definido"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "SÃ­" : "No"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">DirecciÃ³n</dt><dd>{business.address ?? "No capturada"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Modo de ubicación</dt><dd>{getLocationModeLabel(business.location_mode)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "Sí" : "No"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Dirección</dt><dd>{business.address ?? "No capturada"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Coordenadas</dt><dd>{business.latitude && business.longitude ? `${business.latitude}, ${business.longitude}` : "No capturadas"}</dd></div>
             </dl>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-sm font-bold text-casero-dark">Categorias</p>
+                <p className="text-sm font-bold text-casero-dark">Categorías</p>
                 <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                  {business.categories.map((category) => category.name).join(", ") || "Sin categorias"}
+                  {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}
                 </p>
               </div>
               <div>
@@ -399,20 +419,20 @@ function DetailModal({
             </div>
             {business.status === "published" ? (
               <Link className="mt-5 inline-flex rounded-md bg-casero-green px-4 py-2 text-sm font-bold text-white" href={`/negocio/${business.slug}`}>
-                Ver perfil publico
+                Ver perfil público
               </Link>
             ) : null}
           </Card>
         </div>
 
         <Card className="mt-5">
-          <h3 className="font-heading text-lg font-bold text-casero-dark">Descripcion</h3>
-          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.short_description ?? "Sin descripcion breve."}</p>
-          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.long_description ?? "Sin descripcion larga."}</p>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">Descripción</h3>
+          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.short_description ?? "Sin descripción breve."}</p>
+          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.long_description ?? "Sin descripción larga."}</p>
         </Card>
 
         <Card className="mt-5">
-          <h3 className="font-heading text-lg font-bold text-casero-dark">Galeria</h3>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">Galería</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {business.media.length > 0 ? (
               business.media.map((item, index) => (
@@ -427,7 +447,7 @@ function DetailModal({
                 />
               ))
             ) : (
-              <p className="text-sm text-casero-text/70">Sin imagenes cargadas.</p>
+              <p className="text-sm text-casero-text/70">Sin imágenes cargadas.</p>
             )}
           </div>
         </Card>
@@ -538,7 +558,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
 
     if (loadError) {
       console.error("admin businesses load error", loadError);
-      setError("No pudimos cargar los negocios. Revisa la consola y las politicas de Supabase.");
+      setError("No pudimos cargar los negocios. Revisa la consola y las políticas de Supabase.");
       setLoading(false);
       return;
     }
@@ -618,7 +638,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
 
     if (updateError) {
       console.error("admin business update error", { id, updates, error: updateError });
-      setError("No pudimos actualizar el negocio. Revisa la consola y las politicas temporales.");
+      setError("No pudimos actualizar el negocio. Revisa la consola y las políticas temporales.");
       setActionLoadingId(null);
       return;
     }
@@ -667,7 +687,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
             Solicitudes de negocios
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-casero-text/70">
-            Revisa categorias, zonas, imagenes y atributos antes de publicar negocios en Casero Cancun.
+            Revisa categorías, zonas, imágenes y atributos antes de publicar negocios en Casero Cancún.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -675,7 +695,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
             Refrescar
           </Button>
           <Button type="button" variant="ghost" onClick={logout}>
-            Cerrar sesion admin
+            Cerrar sesión admin
           </Button>
         </div>
       </div>
@@ -706,7 +726,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
           <thead className="bg-casero-beige/70 text-xs uppercase tracking-[0.12em] text-casero-dark">
             <tr>
               <th className="px-4 py-3">Negocio</th>
-              <th className="px-4 py-3">Seccion</th>
+              <th className="px-4 py-3">Sección</th>
               <th className="px-4 py-3">Plan</th>
               <th className="px-4 py-3">Contacto</th>
               <th className="px-4 py-3">Estado</th>
@@ -723,7 +743,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
                       <p className="font-heading font-bold text-casero-dark">{business.business_name}</p>
                       <p className="mt-1 text-xs text-casero-text/55">{formatDate(business.created_at)}</p>
                       <p className="mt-2 text-xs text-casero-text/65">
-                        {business.categories.map((category) => category.name).join(", ") || "Sin categorias"}
+                        {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}
                       </p>
                       <p className="mt-1 text-xs text-casero-text/65">
                         {business.locations.join(", ") || "Sin ubicaciones"}
@@ -734,7 +754,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
                 <td className="px-4 py-4">
                   <p className="font-semibold text-casero-text">{getSection(business)}</p>
                   <p className="mt-1 text-xs text-casero-text/60">
-                    {business.profile_type === "service_provider" ? "Proveedor de servicio" : "Tienda/materiales"}
+                    {getProfileTypeLabel(business.profile_type)}
                   </p>
                 </td>
                 <td className="px-4 py-4 text-casero-text/75">{business.planName ?? business.plan_id ?? "Sin plan"}</td>
@@ -773,13 +793,13 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
             <h2 className="mt-3 font-heading text-xl font-bold text-casero-dark">{business.business_name}</h2>
             <p className="mt-1 text-xs font-semibold text-casero-text/50">/{business.slug}</p>
             <div className="mt-4 grid gap-2 text-sm text-casero-text/70">
-              <p><strong>Tipo:</strong> {business.profile_type === "service_provider" ? "Proveedor de servicio" : "Tienda/materiales"}</p>
-              <p><strong>Seccion:</strong> {getSection(business)}</p>
+              <p><strong>Tipo:</strong> {getProfileTypeLabel(business.profile_type)}</p>
+              <p><strong>Sección:</strong> {getSection(business)}</p>
               <p><strong>Plan:</strong> {business.planName ?? business.plan_id ?? "Sin plan"}</p>
               <p><strong>WhatsApp:</strong> {business.whatsapp ?? "Sin WhatsApp"}</p>
               <p><strong>Email:</strong> {business.email ?? "Sin correo"}</p>
               <p><strong>Fecha:</strong> {formatDate(business.created_at)}</p>
-              <p><strong>Categorias:</strong> {business.categories.map((category) => category.name).join(", ") || "Sin categorias"}</p>
+              <p><strong>Categorías:</strong> {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}</p>
               <p><strong>Ubicaciones:</strong> {business.locations.join(", ") || "Sin ubicaciones"}</p>
             </div>
             <div className="mt-4">
