@@ -114,7 +114,8 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const reviewCount = isDemoBusiness(business) ? business.reviewCount : undefined;
   const section = isDemoBusiness(business) && business.section ? sectionLabels[business.section] : undefined;
   const categories = isDemoBusiness(business) ? (business.categories ?? [business.category]).slice(0, 3) : [business.category];
-  const locations = isDemoBusiness(business) ? (business.locations ?? [business.location]).slice(0, 3) : [business.location];
+  const locations = isDemoBusiness(business) ? (business.locations ?? [business.location]).slice(0, 2) : [business.location];
+  const visibleBadges = badges.slice(0, 4);
 
   return (
     <article className="group overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft">
@@ -122,7 +123,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
         <BusinessImage business={business} />
       </Link>
 
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2">
           {business.featured ? (
             <Badge tone="orange" className="gap-1">
@@ -139,7 +140,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
         </div>
 
         <Link href={`/negocio/${business.slug}`}>
-          <h3 className="mt-3 font-heading text-xl font-extrabold text-casero-dark hover:text-casero-green">
+          <h3 className="mt-3 font-heading text-lg font-extrabold leading-snug text-casero-dark hover:text-casero-green sm:text-xl">
             {business.name}
           </h3>
         </Link>
@@ -151,7 +152,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
             </Badge>
           ))}
         </div>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-casero-text/70">{description}</p>
+        <p className="mt-3 line-clamp-2 text-sm leading-6 text-casero-text/70 sm:line-clamp-3">{description}</p>
         <p className="mt-3 flex items-start gap-2 text-sm text-casero-text/60">
           <MapPin className="h-4 w-4" aria-hidden />
           <span>{locations.join(", ")}</span>
@@ -165,15 +166,16 @@ export function BusinessCard({ business }: BusinessCardProps) {
         ) : null}
 
         <div className="mt-4 flex flex-wrap gap-2">
-          {badges.map((tag) => (
+          {visibleBadges.map((tag) => (
             <Badge key={tag} tone={tag === "Verificado" ? "green" : tag === "Urgencias" ? "orange" : "neutral"}>
               {tag}
             </Badge>
           ))}
+          {badges.length > visibleBadges.length ? <Badge>+{badges.length - visibleBadges.length}</Badge> : null}
         </div>
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          <WhatsAppButton phone={whatsapp} label="WhatsApp" />
+          <WhatsAppButton phone={whatsapp} label="WhatsApp" className="w-full" />
           <Button href={`/negocio/${business.slug}`} variant="outline">
             Ver perfil
           </Button>

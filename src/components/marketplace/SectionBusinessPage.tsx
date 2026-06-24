@@ -31,28 +31,28 @@ export async function SectionBusinessPage({
       : businesses.filter((business) => business.locationSlugs?.includes(selectedLocationSlug));
 
   return (
-    <section className="container-page py-12">
-      <div className="rounded-lg bg-white p-6 shadow-sm md:p-8">
+    <section className="container-page py-8 sm:py-12">
+      <div className="rounded-lg bg-white p-5 shadow-sm md:p-8">
         <SectionHeader eyebrow={eyebrow} title={title} description={description} />
       </div>
 
-      <div className="mt-10">
+      <div className="mt-8 sm:mt-10">
         <h2 className="font-heading text-xl font-bold text-casero-dark">Categorias</h2>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {categories.map((category) => (
             <CategoryCard key={category.slug} category={category} />
           ))}
         </div>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-10 sm:mt-12">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <SectionHeader
             eyebrow="Negocios publicados"
             title="Listos para contactar"
             description="Solo mostramos negocios publicados por el equipo de Casero Cancun."
           />
-          <form className="w-full md:w-72">
+          <form className="w-full rounded-lg border border-casero-dark/10 bg-white p-4 shadow-sm md:w-72">
             <label className="text-sm font-bold text-casero-dark" htmlFor="location">
               Filtrar por ubicacion
             </label>
@@ -75,7 +75,7 @@ export async function SectionBusinessPage({
           </form>
         </div>
 
-        <div className="mt-6 grid gap-5">
+        <div className="mt-6 grid gap-4 sm:gap-5">
           {filteredBusinesses.length > 0 ? (
             filteredBusinesses.map((business) => <BusinessCard key={business.id} business={business} />)
           ) : (
@@ -88,12 +88,12 @@ export async function SectionBusinessPage({
         </div>
       </div>
 
-      <div className="mt-10 rounded-lg bg-casero-dark p-6 text-white shadow-soft md:p-8">
-        <h2 className="font-heading text-2xl font-extrabold">Registra tu negocio en esta seccion</h2>
+      <div className="mt-10 rounded-lg bg-casero-dark p-5 text-white shadow-soft md:p-8">
+        <h2 className="font-heading text-xl font-extrabold sm:text-2xl">Registra tu negocio en esta seccion</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/70">
           Aparece en Casero Cancun para que clientes locales encuentren tu negocio y te contacten directo por WhatsApp.
         </p>
-        <Button href="/registrar-mi-negocio" className="mt-5" variant="primary">
+        <Button href="/registrar-mi-negocio" className="mt-5 w-full sm:w-auto" variant="primary">
           Registrar negocio
         </Button>
       </div>

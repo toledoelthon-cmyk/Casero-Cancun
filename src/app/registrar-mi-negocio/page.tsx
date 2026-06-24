@@ -38,16 +38,16 @@ export default async function RegisterBusinessPage() {
 
   return (
     <>
-      <section className="bg-white py-12">
+      <section className="bg-white py-8 sm:py-12">
         <div className="container-page">
           <div className="max-w-4xl">
             <span className="inline-flex rounded-md bg-casero-beige px-3 py-1 text-sm font-bold text-casero-green">
               Registro de proveedores
             </span>
-            <h1 className="mt-5 font-heading text-4xl font-extrabold text-casero-dark md:text-5xl">
+            <h1 className="mt-4 font-heading text-3xl font-extrabold text-casero-dark sm:text-4xl md:text-5xl">
               Haz que más clientes encuentren tu negocio en Cancún
             </h1>
-            <p className="mt-5 text-lg leading-8 text-casero-text/75">
+            <p className="mt-4 text-base leading-7 text-casero-text/75 sm:text-lg sm:leading-8">
               Registra tu servicio, tienda o proveedor local en Casero Cancún y obtén visibilidad
               en una plataforma creada para conectar negocios locales con clientes reales.
             </p>
@@ -60,15 +60,15 @@ export default async function RegisterBusinessPage() {
         </div>
       </section>
 
-      <section className="container-page py-12">
+      <section className="container-page py-8 sm:py-12">
         <SectionHeader
           eyebrow="Beneficios"
           title="Un perfil pensado para que te contacten mejor"
           description="La recepción de solicitudes guardará negocios pendientes cuando Supabase esté configurado."
         />
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((benefit) => (
-            <Card key={benefit.title}>
+            <Card key={benefit.title} className="p-5 sm:p-6">
               <benefit.icon className="h-8 w-8 text-casero-green" aria-hidden />
               <h2 className="mt-4 font-heading text-lg font-bold text-casero-dark">{benefit.title}</h2>
               <p className="mt-2 text-sm leading-6 text-casero-text/70">{benefit.text}</p>
@@ -77,8 +77,8 @@ export default async function RegisterBusinessPage() {
         </div>
       </section>
 
-      <section className="container-page pb-16">
-        <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
+      <section className="container-page pb-12 sm:pb-16">
+        <div className="grid gap-6 lg:grid-cols-[1fr_22rem] lg:gap-8">
           <div>
             <SectionHeader
               eyebrow="Solicitud"

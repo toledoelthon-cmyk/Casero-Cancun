@@ -35,7 +35,7 @@ export default async function LocationPage({ params }: PageProps) {
   );
 
   return (
-    <section className="container-page py-12">
+    <section className="container-page py-8 sm:py-12">
       <SectionHeader
         eyebrow="Ubicacion"
         title={location.name}
@@ -43,7 +43,7 @@ export default async function LocationPage({ params }: PageProps) {
       />
 
       {availableCategories.length > 0 ? (
-        <Card className="mt-8">
+        <Card className="mt-6 p-5 sm:mt-8 sm:p-6">
           <h2 className="font-heading text-xl font-bold text-casero-dark">Categorias disponibles en esta zona</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {availableCategories.map((category) => (
@@ -55,11 +55,11 @@ export default async function LocationPage({ params }: PageProps) {
         </Card>
       ) : null}
 
-      <div className="mt-8 grid gap-5">
+      <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5">
         {relatedBusinesses.length > 0 ? (
           relatedBusinesses.map((business) => <BusinessCard key={business.id} business={business} />)
         ) : (
-          <Card>
+          <Card className="p-5 sm:p-6">
             <p className="text-sm leading-7 text-casero-text/70">
               Proximamente habra proveedores disponibles en esta zona.
             </p>
@@ -67,12 +67,12 @@ export default async function LocationPage({ params }: PageProps) {
         )}
       </div>
 
-      <div className="mt-8 rounded-lg bg-casero-dark p-6 text-white">
-        <h2 className="font-heading text-2xl font-bold">Registra tu negocio en esta zona.</h2>
+      <div className="mt-8 rounded-lg bg-casero-dark p-5 text-white sm:p-6">
+        <h2 className="font-heading text-xl font-bold sm:text-2xl">Registra tu negocio en esta zona.</h2>
         <p className="mt-2 text-sm leading-6 text-white/70">
           Ayuda a que mas clientes de {location.name} encuentren tu servicio, tienda o proveedor local.
         </p>
-        <Button href="/registrar-mi-negocio" className="mt-5">
+        <Button href="/registrar-mi-negocio" className="mt-5 w-full sm:w-auto">
           Registrar mi negocio
         </Button>
       </div>

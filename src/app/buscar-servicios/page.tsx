@@ -14,8 +14,8 @@ export default async function SearchServicesPage() {
   const businesses = await getPublishedBusinesses();
 
   return (
-    <section className="container-page py-12">
-      <div className="rounded-lg bg-white p-6 shadow-sm md:p-8">
+    <section className="container-page py-8 sm:py-12">
+      <div className="rounded-lg bg-white p-5 shadow-sm md:p-8">
         <SectionHeader
           eyebrow="Directorio local"
           title="Busca negocios publicados en Casero Cancun"

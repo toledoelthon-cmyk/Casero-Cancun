@@ -382,10 +382,10 @@ function AdminActions({
   disabled: boolean;
   onUpdate: (id: string, updates: Partial<Pick<AdminBusiness, "status" | "is_featured" | "is_verified">>) => void;
 }) {
-  const buttonClass = "rounded-md px-3 py-2 text-xs font-bold disabled:opacity-50";
+  const buttonClass = "min-h-10 rounded-md px-3 py-2 text-xs font-bold disabled:opacity-50";
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="grid gap-2 sm:flex sm:flex-wrap">
       <button className={`${buttonClass} bg-casero-green text-white`} disabled={disabled} type="button" onClick={() => onUpdate(business.id, { status: "published" })}>
         Aprobar
       </button>
@@ -445,8 +445,8 @@ function DetailModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-casero-dark/65 p-4">
-      <div className="mx-auto max-w-5xl rounded-lg bg-casero-background p-5 shadow-soft md:p-7">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-casero-dark/65 p-2 sm:p-4">
+      <div className="mx-auto max-h-[calc(100vh-1rem)] max-w-5xl overflow-y-auto rounded-lg bg-casero-background p-4 shadow-soft sm:max-h-none sm:p-5 md:p-7">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
           <div>
             <div className="flex flex-wrap gap-2">
@@ -457,7 +457,7 @@ function DetailModal({
             <h2 className="mt-3 font-heading text-2xl font-extrabold text-casero-dark">{business.business_name}</h2>
             <p className="mt-1 text-sm font-semibold text-casero-text/55">/{business.slug}</p>
           </div>
-          <button className="rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-dark" type="button" onClick={onClose}>
+          <button className="min-h-11 rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-dark" type="button" onClick={onClose}>
             Cerrar
           </button>
         </div>
@@ -704,9 +704,9 @@ function EditBusinessModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-casero-dark/65 p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-casero-dark/65 p-2 sm:p-4">
       <form
-        className="mx-auto grid max-w-5xl gap-5 rounded-lg bg-casero-background p-5 shadow-soft md:p-7"
+        className="mx-auto grid max-h-[calc(100vh-1rem)] max-w-5xl gap-5 overflow-y-auto rounded-lg bg-casero-background p-4 shadow-soft sm:max-h-none sm:p-5 md:p-7"
         onSubmit={(event) => {
           event.preventDefault();
           onSave(business, new FormData(event.currentTarget), categoryIds, locationIds);
@@ -717,7 +717,7 @@ function EditBusinessModal({
             <p className="text-sm font-bold uppercase tracking-[0.14em] text-casero-green">Editar negocio</p>
             <h2 className="mt-2 font-heading text-2xl font-extrabold text-casero-dark">{business.business_name}</h2>
           </div>
-          <button className="rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-dark" type="button" onClick={onClose}>
+          <button className="min-h-11 rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-dark" type="button" onClick={onClose}>
             Cerrar
           </button>
         </div>
@@ -950,12 +950,12 @@ function EditBusinessModal({
                       <p className="break-all"><strong>URL:</strong> {media.url}</p>
                     </div>
                     <MediaAltEditor media={media} disabled={disabled} onSave={onSaveImageAlt} />
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                       <button
                         type="button"
                         disabled={disabled || isMain}
                         onClick={() => onPromoteImage(business, media)}
-                        className="rounded-md bg-casero-green px-3 py-2 text-xs font-bold text-white disabled:opacity-45"
+                        className="min-h-10 rounded-md bg-casero-green px-3 py-2 text-xs font-bold text-white disabled:opacity-45"
                       >
                         Marcar principal
                       </button>
@@ -963,7 +963,7 @@ function EditBusinessModal({
                         type="button"
                         disabled={disabled || index === 0}
                         onClick={() => onMoveImage(business, media, "up")}
-                        className="rounded-md border border-casero-dark/10 px-3 py-2 text-xs font-bold text-casero-dark disabled:opacity-45"
+                        className="min-h-10 rounded-md border border-casero-dark/10 px-3 py-2 text-xs font-bold text-casero-dark disabled:opacity-45"
                       >
                         Subir
                       </button>
@@ -971,7 +971,7 @@ function EditBusinessModal({
                         type="button"
                         disabled={disabled || index === business.media.length - 1}
                         onClick={() => onMoveImage(business, media, "down")}
-                        className="rounded-md border border-casero-dark/10 px-3 py-2 text-xs font-bold text-casero-dark disabled:opacity-45"
+                        className="min-h-10 rounded-md border border-casero-dark/10 px-3 py-2 text-xs font-bold text-casero-dark disabled:opacity-45"
                       >
                         Bajar
                       </button>
@@ -979,7 +979,7 @@ function EditBusinessModal({
                         type="button"
                         disabled={disabled}
                         onClick={() => onDeleteImage(business, media)}
-                        className="rounded-md bg-red-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-45"
+                        className="min-h-10 rounded-md bg-red-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-45"
                       >
                         Eliminar
                       </button>
@@ -1595,7 +1595,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
 
   if (!hasAccess) {
     return (
-      <section className="container-page py-12">
+      <section className="container-page py-8 sm:py-12">
         <div className="mx-auto max-w-xl">
           <Card>
             <h1 className="font-heading text-2xl font-extrabold text-casero-dark">Acceso admin temporal</h1>
@@ -1624,35 +1624,35 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
   }
 
   return (
-    <section className="container-page py-12">
+    <section className="container-page py-8 sm:py-12">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-casero-green">Admin temporal</p>
-          <h1 className="mt-3 font-heading text-3xl font-extrabold text-casero-dark md:text-4xl">
+          <h1 className="mt-3 font-heading text-2xl font-extrabold text-casero-dark sm:text-3xl md:text-4xl">
             Solicitudes de negocios
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-casero-text/70">
             Revisa categorías, zonas, imágenes y atributos antes de publicar negocios en Casero Cancún.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button type="button" variant="outline" onClick={() => void loadBusinesses()}>
+        <div className="grid gap-2 sm:flex sm:flex-wrap">
+          <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => void loadBusinesses()}>
             Refrescar
           </Button>
-          <Button type="button" variant="ghost" onClick={logout}>
+          <Button type="button" variant="ghost" className="w-full sm:w-auto" onClick={logout}>
             Cerrar sesión admin
           </Button>
         </div>
       </div>
 
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-8 sm:flex sm:flex-wrap">
         {statusFilters.map((item) => (
           <button
             key={item.value}
             className={
               filter === item.value
-                ? "rounded-md bg-casero-green px-3 py-2 text-sm font-bold text-white"
-                : "rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-text"
+                ? "min-h-10 rounded-md bg-casero-green px-3 py-2 text-sm font-bold text-white"
+                : "min-h-10 rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-text"
             }
             type="button"
             onClick={() => setFilter(item.value)}
@@ -1734,7 +1734,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
 
       <div className="mt-6 grid gap-4 lg:hidden">
         {filteredBusinesses.map((business) => (
-          <Card key={business.id}>
+          <Card key={business.id} className="p-4 sm:p-6">
             <BusinessImage business={business} />
             <div className="mt-4 flex flex-wrap items-center gap-2">
               {statusBadge(business.status)}
@@ -1753,11 +1753,11 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
               <p><strong>Categorías:</strong> {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}</p>
               <p><strong>Ubicaciones:</strong> {business.locations.map((location) => location.name).join(", ") || "Sin ubicaciones"}</p>
             </div>
-            <div className="mt-4">
-              <button className="rounded-md bg-casero-orange px-3 py-2 text-xs font-bold text-white" type="button" onClick={() => setSelectedBusinessId(business.id)}>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button className="min-h-10 rounded-md bg-casero-orange px-3 py-2 text-xs font-bold text-white" type="button" onClick={() => setSelectedBusinessId(business.id)}>
                 Revisar
               </button>
-              <button className="ml-2 rounded-md bg-casero-green px-3 py-2 text-xs font-bold text-white" type="button" onClick={() => {
+              <button className="min-h-10 rounded-md bg-casero-green px-3 py-2 text-xs font-bold text-white" type="button" onClick={() => {
                 setEditError(null);
                 setEditingBusinessId(business.id);
               }}>

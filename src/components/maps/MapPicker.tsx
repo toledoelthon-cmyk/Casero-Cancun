@@ -33,7 +33,7 @@ export function MapPicker({ latitude, longitude, onChange }: MapPickerProps) {
   return (
     <div className="md:col-span-2">
       <div className="overflow-hidden rounded-lg border border-casero-dark/10 bg-white p-3">
-        <div className="h-80 overflow-hidden rounded-md bg-casero-background">
+        <div className="h-72 overflow-hidden rounded-md bg-casero-background sm:h-80">
           <LeafletPicker latitude={latitude} longitude={longitude} mode="picker" onChange={onChange} />
         </div>
         <div className="mt-3 grid gap-2 text-xs font-semibold text-casero-text/65 sm:grid-cols-2">

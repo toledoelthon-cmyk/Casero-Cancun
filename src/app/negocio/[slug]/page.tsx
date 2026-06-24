@@ -146,16 +146,16 @@ export default async function BusinessProfilePage({ params }: PageProps) {
     `${business.shortDescription} Este perfil estÃ¡ preparado para mostrar informaciÃ³n clara, contacto directo y seÃ±ales de confianza dentro de Casero CancÃºn.`;
 
   return (
-    <section className="bg-casero-background pb-14">
+    <section className="bg-casero-background pb-24 md:pb-14">
       <div className="relative bg-white">
         <div className="aspect-[16/9] max-h-[34rem] w-full overflow-hidden bg-casero-beige md:aspect-[21/8]">
           <BusinessImage business={business} image={mainImage} priority />
         </div>
         <div className="container-page">
-          <div className="-mt-16 rounded-lg border border-casero-dark/10 bg-white p-5 shadow-soft md:p-7">
+          <div className="-mt-10 rounded-lg border border-casero-dark/10 bg-white p-4 shadow-soft sm:-mt-16 md:p-7">
             <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div className="flex gap-4">
-                <div className="grid h-20 w-20 flex-none place-items-center overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm">
+                <div className="grid h-16 w-16 flex-none place-items-center overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm sm:h-20 sm:w-20">
                   {isUsableImageUrl(business.logoUrl) ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={business.logoUrl} alt={`Logo de ${business.name}`} className="h-full w-full object-cover" />
@@ -185,7 +185,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                       </Badge>
                     ))}
                   </div>
-                  <h1 className="mt-3 font-heading text-3xl font-extrabold text-casero-dark md:text-5xl">
+                  <h1 className="mt-3 font-heading text-2xl font-extrabold leading-tight text-casero-dark sm:text-3xl md:text-5xl">
                     {business.name}
                   </h1>
                   <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold text-casero-text/65">
@@ -204,22 +204,22 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                 </div>
               </div>
               <div className="w-full md:w-auto">
-                <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} />
+                <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} className="w-full" />
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container-page mt-8 grid gap-8 lg:grid-cols-[1fr_22rem]">
+      <div className="container-page mt-6 grid gap-6 lg:mt-8 lg:grid-cols-[1fr_22rem] lg:gap-8">
         <div className="space-y-6">
-          <Card>
-            <h2 className="font-heading text-2xl font-bold text-casero-dark">Sobre el negocio</h2>
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Sobre el negocio</h2>
             <p className="mt-4 text-base leading-8 text-casero-text/75">{description}</p>
           </Card>
 
-          <Card>
-            <h2 className="font-heading text-2xl font-bold text-casero-dark">Servicios o productos principales</h2>
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Servicios o productos principales</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               <Badge tone="turquoise">{business.mainService ?? business.category}</Badge>
               {categories.map((category) => (
@@ -229,8 +229,8 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           </Card>
 
           {features.length > 0 ? (
-            <Card>
-              <h2 className="font-heading text-2xl font-bold text-casero-dark">CaracterÃ­sticas</h2>
+            <Card className="p-5 sm:p-6">
+              <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">CaracterÃ­sticas</h2>
               <div className="mt-4 flex flex-wrap gap-2">
                 {features.map((feature) => (
                   <Badge key={feature} tone="green">
@@ -241,8 +241,8 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             </Card>
           ) : null}
 
-          <Card>
-            <h2 className="font-heading text-2xl font-bold text-casero-dark">Galería de imágenes</h2>
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Galería de imágenes</h2>
             {images.length > 0 ? (
               <div className="mt-5 grid gap-4">
                 <div className="aspect-video overflow-hidden rounded-lg bg-casero-background">
@@ -302,7 +302,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
               ) : null}
             </div>
             <div className="mt-5">
-              <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} />
+              <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} className="w-full" />
             </div>
           </Card>
 
@@ -368,6 +368,11 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             Contactar por WhatsApp
           </Button>
         </aside>
+      </div>
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-casero-dark/10 bg-white/95 p-3 shadow-soft backdrop-blur md:hidden">
+        <div className="container-page px-0">
+          <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} className="w-full" />
+        </div>
       </div>
     </section>
   );

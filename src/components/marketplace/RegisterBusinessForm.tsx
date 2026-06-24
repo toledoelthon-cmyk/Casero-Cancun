@@ -124,6 +124,7 @@ export function RegisterBusinessForm({
   const [businessFiles, setBusinessFiles] = useState<ImagePreview[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [formMessage, setFormMessage] = useState<string | null>(null);
+  const [validationTarget, setValidationTarget] = useState<"plan" | "section" | "categories" | "locations" | "images" | "main" | null>(null);
 
   const filteredCategories = useMemo(() => {
     if (!businessSection) {
@@ -156,6 +157,11 @@ export function RegisterBusinessForm({
   const availableLocationItems = locations.filter((location) => !locationIds.includes(location.id));
   const locationFlags = getLocationFlags(businessSection, locationMode);
   const shouldShowAddressFields = locationFlags.showMap;
+  const fieldClass =
+    "mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-3 text-base font-normal outline-casero-green sm:text-sm";
+  const sectionClass = "rounded-lg border border-casero-dark/10 bg-casero-background p-4 sm:p-5";
+  const chipClass =
+    "min-h-11 rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-left text-sm font-bold text-casero-dark shadow-sm transition hover:border-casero-green/40 hover:text-casero-green";
 
   function validateFiles(nextLogoFile: ImagePreview | null, nextBusinessFiles: ImagePreview[]) {
     const files = [...(nextLogoFile ? [nextLogoFile] : []), ...nextBusinessFiles];
@@ -448,7 +454,20 @@ export function RegisterBusinessForm({
       imageValidationError ||
       selectionValidationError
     ) {
+      const nextValidationTarget = imageValidationError
+        ? "images"
+        : !submittedPlanId
+          ? "plan"
+          : !profileType || !businessSection
+            ? "section"
+            : selectedCategories.length === 0 || selectionValidationError?.includes("categor")
+              ? "categories"
+              : locationIds.length === 0 || selectionValidationError?.includes("ubic")
+                ? "locations"
+                : "main";
+
       setStatus("error");
+      setValidationTarget(nextValidationTarget);
       setFormMessage(
         imageValidationError ??
           selectionValidationError ??
@@ -456,6 +475,9 @@ export function RegisterBusinessForm({
           ? "Completa todos los campos obligatorios para enviar tu solicitud."
           : "Ingresa un WhatsApp o teléfono válido. Puedes usar 9984032240, +52 998 403 2240 o 52 9984032240."),
       );
+      window.setTimeout(() => {
+        document.getElementById(`${nextValidationTarget}-section`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
       return;
     }
 
@@ -569,7 +591,7 @@ export function RegisterBusinessForm({
   const isCategoryDisabled = !profileType;
 
   return (
-    <Card>
+    <Card className="p-4 sm:p-6">
       {formMessage ? (
         <div
           className={
@@ -582,15 +604,20 @@ export function RegisterBusinessForm({
         </div>
       ) : null}
 
-      <form className="grid gap-5" onSubmit={handleSubmit}>
-        <div className="grid gap-5 md:grid-cols-2">
+      <form className="grid gap-6 sm:gap-7" onSubmit={handleSubmit}>
+        <div id="main-section" className={`rounded-lg border bg-white p-4 sm:p-5 ${validationTarget === "main" ? "border-red-300 ring-2 ring-red-100" : "border-casero-dark/10"}`}>
+          <div className="mb-4">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-casero-green">Datos principales</p>
+            <h3 className="mt-1 font-heading text-xl font-bold text-casero-dark">Información de contacto</h3>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
           <label className="text-sm font-bold text-casero-dark">
             Nombre del negocio
             <input
               name="businessName"
               required
               autoComplete="organization"
-              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              className={fieldClass}
               placeholder="Ej. Plomería Express del Caribe"
             />
           </label>
@@ -600,20 +627,24 @@ export function RegisterBusinessForm({
               name="responsibleName"
               required
               autoComplete="name"
-              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              className={fieldClass}
               placeholder="Nombre y apellido"
             />
           </label>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <label className="text-sm font-bold text-casero-dark">
+        <div className="rounded-lg border border-casero-dark/10 bg-white p-4 sm:p-5">
+          <div className="mb-4">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-casero-green">Tipo de negocio</p>
+            <h3 className="mt-1 font-heading text-xl font-bold text-casero-dark">Elige tu sección</h3>
+          </div>
+          <label className="block text-sm font-bold text-casero-dark">
             WhatsApp
             <input
               name="whatsapp"
               required
               autoComplete="tel"
-              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              className={fieldClass}
               placeholder="9984032240"
             />
           </label>
@@ -624,7 +655,7 @@ export function RegisterBusinessForm({
               type="email"
               required
               autoComplete="email"
-              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              className={fieldClass}
               placeholder="negocio@correo.com"
             />
           </label>
@@ -633,14 +664,19 @@ export function RegisterBusinessForm({
             <input
               name="phone"
               autoComplete="tel"
-              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              className={fieldClass}
               placeholder="Si es distinto al WhatsApp"
             />
           </label>
         </div>
 
-        <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
-          <legend className="px-1 text-sm font-bold text-casero-dark">Elige tu plan</legend>
+        </div>
+
+        <fieldset id="plan-section" className={`${sectionClass} ${validationTarget === "plan" ? "border-red-300 ring-2 ring-red-100" : ""}`}>
+          <legend className="px-1 font-heading text-lg font-bold text-casero-dark">Plan</legend>
+          <p className="mt-2 text-sm leading-6 text-casero-text/65">
+            El plan define cuántas categorías, zonas e imágenes puede incluir tu perfil.
+          </p>
           <input name="planId" type="hidden" value={planId} />
           <div className="mt-4 grid gap-4 lg:grid-cols-3">
             {plans.map((plan) => {
@@ -654,8 +690,8 @@ export function RegisterBusinessForm({
                   onClick={() => handlePlanChange(plan.id)}
                   className={
                     isSelected
-                      ? "rounded-lg border-2 border-casero-green bg-white p-4 text-left shadow-soft"
-                      : "rounded-lg border border-casero-dark/10 bg-white p-4 text-left shadow-sm transition hover:border-casero-green/40"
+                      ? "min-h-44 rounded-lg border-2 border-casero-green bg-white p-4 text-left shadow-soft"
+                      : "min-h-44 rounded-lg border border-casero-dark/10 bg-white p-4 text-left shadow-sm transition hover:border-casero-green/40"
                   }
                 >
                   <span className="font-heading text-lg font-extrabold text-casero-dark">{plan.name}</span>
@@ -688,8 +724,12 @@ export function RegisterBusinessForm({
           ) : null}
         </fieldset>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <label className="text-sm font-bold text-casero-dark">
+        <div id="section-section" className={`rounded-lg border bg-white p-4 sm:p-5 ${validationTarget === "section" ? "border-red-300 ring-2 ring-red-100" : "border-casero-dark/10"}`}>
+          <div className="mb-4">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-casero-green">Tipo de negocio</p>
+            <h3 className="mt-1 font-heading text-xl font-bold text-casero-dark">Elige tu sección</h3>
+          </div>
+          <label className="block text-sm font-bold text-casero-dark">
             Tipo de negocio
             <select
               name="businessSection"
@@ -702,7 +742,7 @@ export function RegisterBusinessForm({
                 setCategoryIds([]);
                 setMapPosition({ latitude: null, longitude: null });
               }}
-              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              className={fieldClass}
             >
               <option value="">Selecciona una seccion</option>
               {Object.entries(businessSectionLabels).map(([value, label]) => (
@@ -712,9 +752,11 @@ export function RegisterBusinessForm({
               ))}
             </select>
           </label>
+        </div>
 
-          <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
-            <legend className="px-1 text-sm font-bold text-casero-dark">{categoryLabel}</legend>
+          <fieldset id="categories-section" className={`${sectionClass} ${validationTarget === "categories" ? "border-red-300 ring-2 ring-red-100" : ""}`}>
+            <legend className="px-1 font-heading text-lg font-bold text-casero-dark">Categorías</legend>
+            <p className="mt-1 text-sm font-semibold text-casero-dark">{categoryLabel}</p>
             {!selectedPlan ? (
               <p className="mt-2 rounded-md bg-white p-3 text-sm font-semibold text-casero-text/65">
                 Selecciona un plan para ver tus límites disponibles.
@@ -757,7 +799,7 @@ export function RegisterBusinessForm({
                       key={category.id}
                       type="button"
                       onClick={() => addCategory(category.id)}
-                      className="min-h-11 rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-left text-sm font-bold text-casero-dark shadow-sm transition hover:border-casero-green/40 hover:text-casero-green"
+                      className={chipClass}
                     >
                       {category.name}
                     </button>
@@ -801,10 +843,9 @@ export function RegisterBusinessForm({
               ))}
             </select>
           </label>
-        </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+        <div>
+          <fieldset id="locations-section" className={`${sectionClass} ${validationTarget === "locations" ? "border-red-300 ring-2 ring-red-100" : ""}`}>
             <legend className="px-1 text-sm font-bold text-casero-dark">Zonas de atención</legend>
             {!selectedPlan ? (
               <p className="mt-2 rounded-md bg-white p-3 text-sm font-semibold text-casero-text/65">
@@ -846,7 +887,7 @@ export function RegisterBusinessForm({
                       key={location.id}
                       type="button"
                       onClick={() => addLocation(location.id)}
-                      className="min-h-11 rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-left text-sm font-bold text-casero-dark shadow-sm transition hover:border-casero-turquoise/50 hover:text-casero-turquoise"
+                      className={chipClass}
                     >
                       {location.name}
                     </button>
@@ -876,7 +917,7 @@ export function RegisterBusinessForm({
                 setFormMessage(null);
                 setLocationIds(nextLocationIds);
               }}
-              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              className={fieldClass}
             >
               <option value="">Selecciona una zona</option>
               {locations.map((location) => (
@@ -933,7 +974,7 @@ export function RegisterBusinessForm({
         </div>
 
         {profileType ? (
-          <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+          <fieldset className={sectionClass}>
             <legend className="px-1 text-sm font-bold text-casero-dark">Características</legend>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {[
@@ -1032,7 +1073,7 @@ export function RegisterBusinessForm({
           </fieldset>
         ) : null}
 
-        <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+        <fieldset className={sectionClass}>
           <legend className="px-1 text-sm font-bold text-casero-dark">Ubicación y mapa</legend>
           {businessSection === "home_services" ? (
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -1093,7 +1134,7 @@ export function RegisterBusinessForm({
           )}
         </fieldset>
 
-        <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+        <fieldset id="images-section" className={`${sectionClass} ${validationTarget === "images" ? "border-red-300 ring-2 ring-red-100" : ""}`}>
           <legend className="px-1 text-sm font-bold text-casero-dark">Imágenes del perfil</legend>
           {selectedPlan ? (
             <p className="mt-2 text-sm leading-6 text-casero-text/70">
@@ -1143,9 +1184,9 @@ export function RegisterBusinessForm({
                 <div className="overflow-hidden rounded-lg border border-casero-dark/10 bg-white">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={logoFile.previewUrl} alt="Preview logo" className="aspect-video w-full object-cover" />
-                  <div className="flex items-center justify-between gap-2 p-3">
+                  <div className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:justify-between">
                     <span className="text-xs font-semibold text-casero-text/70">Logo · imagen principal</span>
-                    <button type="button" onClick={removeLogo} className="text-xs font-bold text-red-700">
+                    <button type="button" onClick={removeLogo} className="min-h-10 rounded-md bg-red-50 px-3 py-2 text-xs font-bold text-red-700">
                       Eliminar
                     </button>
                   </div>
@@ -1155,11 +1196,11 @@ export function RegisterBusinessForm({
                 <div key={`${item.file.name}-${index}`} className="overflow-hidden rounded-lg border border-casero-dark/10 bg-white">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={item.previewUrl} alt={`Preview ${item.file.name}`} className="aspect-video w-full object-cover" />
-                  <div className="flex items-center justify-between gap-2 p-3">
+                  <div className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:justify-between">
                     <span className="truncate text-xs font-semibold text-casero-text/70">
                       {logoFile ? `Imagen ${index + 2}` : index === 0 ? "Imagen principal" : `Imagen ${index + 1}`}
                     </span>
-                    <button type="button" onClick={() => removeBusinessFile(index)} className="text-xs font-bold text-red-700">
+                    <button type="button" onClick={() => removeBusinessFile(index)} className="min-h-10 rounded-md bg-red-50 px-3 py-2 text-xs font-bold text-red-700">
                       Eliminar
                     </button>
                   </div>
@@ -1318,7 +1359,7 @@ export function RegisterBusinessForm({
           </fieldset>
         ) : null}
 
-        <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+        <fieldset className={sectionClass}>
           <legend className="px-1 text-sm font-bold text-casero-dark">Revisión final y envío</legend>
           <div className="mt-3 grid gap-5">
         <label className="text-sm font-bold text-casero-dark">

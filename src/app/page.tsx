@@ -88,33 +88,33 @@ export default function Home() {
   return (
     <>
       <section className="overflow-hidden border-b border-casero-dark/10 bg-white">
-        <div className="container-page grid min-h-[calc(100vh-4rem)] items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="container-page grid items-center gap-8 py-8 sm:py-12 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <span className="inline-flex rounded-md bg-casero-beige px-3 py-1 text-sm font-bold text-casero-green">
               Directorio local para Cancun
             </span>
-            <h1 className="mt-5 max-w-4xl font-heading text-4xl font-extrabold tracking-normal text-casero-dark sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 max-w-4xl font-heading text-3xl font-extrabold tracking-normal text-casero-dark sm:text-5xl lg:text-6xl">
               Servicios, negocios y soluciones locales en Cancun.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-casero-text/75">
+            <p className="mt-4 max-w-2xl text-base leading-7 text-casero-text/75 sm:mt-6 sm:text-lg sm:leading-8">
               Casero Cancun conecta clientes con proveedores locales, tiendas de materiales, negocios de mascotas y
               servicios automotrices confiables.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Button href="/buscar-servicios">
+            <div className="mt-6 grid gap-3 sm:mt-8 sm:flex sm:flex-wrap">
+              <Button href="/buscar-servicios" className="w-full sm:w-auto">
                 <Search className="h-4 w-4" aria-hidden />
                 Buscar en el directorio
               </Button>
-              <Button href="/registrar-mi-negocio" variant="secondary">
+              <Button href="/registrar-mi-negocio" variant="secondary" className="w-full sm:w-auto">
                 Registrar negocio
               </Button>
-              <Button href="/categorias" variant="outline">
+              <Button href="/categorias" variant="outline" className="w-full sm:w-auto">
                 Ver categorias
               </Button>
             </div>
           </div>
 
-          <div className="rounded-lg bg-casero-dark p-5 text-white shadow-soft">
+          <div className="rounded-lg bg-casero-dark p-4 text-white shadow-soft sm:p-5">
             <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
               <div>
                 <p className="text-sm text-white/60">Busqueda rapida</p>
@@ -124,7 +124,7 @@ export default function Home() {
             </div>
             <div className="mt-5 grid gap-3">
               {["Plomeria", "Ferreterias", "Veterinarias", "Talleres mecanicos"].map((item) => (
-                <div key={item} className="flex items-center gap-3 rounded-md bg-white/10 p-4">
+                <div key={item} className="flex items-center gap-3 rounded-md bg-white/10 p-3 sm:p-4">
                   <span className="grid h-9 w-9 place-items-center rounded-md bg-white/10">
                     <Store className="h-4 w-4 text-casero-orange" aria-hidden />
                   </span>
@@ -136,18 +136,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container-page py-16">
+      <section className="container-page py-10 sm:py-16">
         <SectionHeader
           eyebrow="Explora por seccion"
           title="Encuentra lo que necesitas en Cancun"
           description="Cuatro accesos principales para resolver necesidades de casa, compras locales, mascotas y auto."
         />
-        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {mainSections.map((section) => {
             const Icon = section.icon;
 
             return (
-              <div key={section.href} className="flex h-full flex-col rounded-lg border border-casero-dark/10 bg-white p-5 shadow-sm">
+              <div key={section.href} className="flex h-full flex-col rounded-lg border border-casero-dark/10 bg-white p-4 shadow-sm sm:p-5">
                 <span className="grid h-12 w-12 place-items-center rounded-md bg-casero-beige text-casero-green">
                   <Icon className="h-6 w-6" aria-hidden />
                 </span>
@@ -162,7 +162,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-casero-beige/55 py-16">
+      <section className="bg-casero-beige/55 py-10 sm:py-16">
         <div className="container-page">
           <SectionHeader
             eyebrow="Confianza"
@@ -177,7 +177,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container-page py-16">
+      <section className="container-page py-10 sm:py-16">
         <SectionHeader eyebrow="Categorias destacadas" title="Servicios locales Cancun para cada necesidad" />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...highlightedServices, ...highlightedStores, ...highlightedPets, ...highlightedAuto].map((category) => (
@@ -186,7 +186,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
+      <section className="bg-white py-10 sm:py-16">
         <div className="container-page">
           <SectionHeader eyebrow="Como funciona" title="De la busqueda al contacto directo" align="center" />
           <div className="mt-10 grid gap-4 md:grid-cols-4">
@@ -202,13 +202,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container-page py-16">
-        <div className="rounded-lg bg-casero-dark p-8 text-white shadow-soft md:p-10">
-          <p className="font-heading text-3xl font-extrabold">Haz que mas clientes encuentren tu negocio</p>
+      <section className="container-page py-10 sm:py-16">
+        <div className="rounded-lg bg-casero-dark p-5 text-white shadow-soft sm:p-8 md:p-10">
+          <p className="font-heading text-2xl font-extrabold sm:text-3xl">Haz que mas clientes encuentren tu negocio</p>
           <p className="mt-3 max-w-3xl text-white/70">
             Registra tu servicio, tienda, negocio de mascotas o servicio automotriz en una plataforma local creada para Cancun.
           </p>
-          <Button href="/registrar-mi-negocio" className="mt-6" variant="primary">
+          <Button href="/registrar-mi-negocio" className="mt-6 w-full sm:w-auto" variant="primary">
             Registrar negocio
           </Button>
         </div>

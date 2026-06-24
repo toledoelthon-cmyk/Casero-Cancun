@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function PlansPage() {
   return (
-    <section className="container-page py-12">
+    <section className="container-page py-8 sm:py-12">
       <SectionHeader
         eyebrow="Planes"
         title="Publica tu negocio en el directorio local de Cancun"
@@ -21,7 +21,7 @@ export default function PlansPage() {
       <div className="mx-auto mt-6 max-w-3xl rounded-lg border border-casero-orange/25 bg-casero-orange/10 p-4 text-center text-sm font-semibold text-casero-dark">
         Durante la etapa de lanzamiento, los negocios aprobados pueden recibir su primer mes gratis.
       </div>
-      <div className="mt-10 grid gap-5 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 lg:grid-cols-3">
         {plans.map((plan) => (
           <PlanCard key={plan.slug} plan={plan} />
         ))}

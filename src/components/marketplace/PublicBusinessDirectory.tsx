@@ -68,6 +68,7 @@ export function PublicBusinessDirectory({
   const [categorySlug, setCategorySlug] = useState("all");
   const [locationSlug, setLocationSlug] = useState("all");
   const [attributes, setAttributes] = useState<AttributeValue[]>([]);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const visibleCategories = useMemo(() => {
     if (section === "all") {
@@ -110,106 +111,147 @@ export function PublicBusinessDirectory({
     );
   }
 
+  function clearFilters() {
+    setQuery("");
+    setSection(initialSection);
+    setCategorySlug("all");
+    setLocationSlug("all");
+    setAttributes([]);
+  }
+
+  const activeFilterCount =
+    (query.trim() ? 1 : 0) +
+    (section !== initialSection ? 1 : 0) +
+    (categorySlug !== "all" ? 1 : 0) +
+    (locationSlug !== "all" ? 1 : 0) +
+    attributes.length;
+
+  const filtersContent = (
+    <>
+      <div className="flex items-center gap-2 text-sm font-bold text-casero-dark">
+        <Filter className="h-4 w-4" aria-hidden />
+        Filtros
+      </div>
+
+      <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-query">
+        Buscar por texto
+      </label>
+      <div className="mt-2 flex items-center gap-2 rounded-md border border-casero-dark/10 bg-casero-background px-3 py-2.5">
+        <Search className="h-4 w-4 text-casero-text/45" aria-hidden />
+        <input
+          id="directory-query"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          className="w-full bg-transparent text-base outline-none placeholder:text-casero-text/40 lg:text-sm"
+          placeholder="Plomería, ferretería..."
+        />
+      </div>
+
+      <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-section">
+        Sección
+      </label>
+      <select
+        id="directory-section"
+        value={section}
+        onChange={(event) => {
+          setSection(event.target.value as CategorySection | "all");
+          setCategorySlug("all");
+        }}
+        className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-base outline-casero-green lg:text-sm"
+      >
+        <option value="all">Todas las secciones</option>
+        {sectionOptions.map((item) => (
+          <option key={item.value} value={item.value}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+
+      <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-category">
+        Categoría
+      </label>
+      <select
+        id="directory-category"
+        value={categorySlug}
+        onChange={(event) => setCategorySlug(event.target.value)}
+        className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-base outline-casero-green lg:text-sm"
+      >
+        <option value="all">Todas las categorías</option>
+        {visibleCategories.map((category) => (
+          <option key={category.slug} value={category.slug}>
+            {category.name}
+          </option>
+        ))}
+      </select>
+
+      <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-location">
+        Ubicación
+      </label>
+      <select
+        id="directory-location"
+        value={locationSlug}
+        onChange={(event) => setLocationSlug(event.target.value)}
+        className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-base outline-casero-green lg:text-sm"
+      >
+        <option value="all">Todas las zonas</option>
+        {locations.map((location) => (
+          <option key={location.slug} value={location.slug}>
+            {location.name}
+          </option>
+        ))}
+      </select>
+
+      <div className="mt-5">
+        <p className="text-sm font-bold text-casero-dark">Atributos</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {attributeOptions.map((attribute) => {
+            const active = attributes.includes(attribute.value);
+
+            return (
+              <button
+                key={attribute.value}
+                className={
+                  active
+                    ? "rounded-md bg-casero-green px-3 py-2.5 text-xs font-bold text-white"
+                    : "rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-xs font-semibold text-casero-text/70"
+                }
+                type="button"
+                onClick={() => toggleAttribute(attribute.value)}
+              >
+                {attribute.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <button
+        className="mt-5 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-sm font-bold text-casero-dark"
+        type="button"
+        onClick={clearFilters}
+      >
+        Limpiar filtros
+      </button>
+    </>
+  );
+
   return (
-    <div className="mt-8 grid gap-6 lg:grid-cols-[19rem_1fr]">
+    <div className="mt-6 grid gap-5 lg:mt-8 lg:grid-cols-[19rem_1fr] lg:gap-6">
       <aside>
-        <Card>
-          <div className="flex items-center gap-2 text-sm font-bold text-casero-dark">
+        <button
+          className="flex w-full items-center justify-between rounded-lg border border-casero-dark/10 bg-white px-4 py-3 text-sm font-bold text-casero-dark shadow-sm lg:hidden"
+          type="button"
+          onClick={() => setFiltersOpen((current) => !current)}
+          aria-expanded={filtersOpen}
+        >
+          <span className="inline-flex items-center gap-2">
             <Filter className="h-4 w-4" aria-hidden />
-            Filtros
-          </div>
-
-          <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-query">
-            Buscar por texto
-          </label>
-          <div className="mt-2 flex items-center gap-2 rounded-md border border-casero-dark/10 bg-casero-background px-3 py-2">
-            <Search className="h-4 w-4 text-casero-text/45" aria-hidden />
-            <input
-              id="directory-query"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="w-full bg-transparent text-sm outline-none placeholder:text-casero-text/40"
-              placeholder="Plomería, ferretería, veterinaria..."
-            />
-          </div>
-
-          <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-section">
-            Sección
-          </label>
-          <select
-            id="directory-section"
-            value={section}
-            onChange={(event) => {
-              setSection(event.target.value as CategorySection | "all");
-              setCategorySlug("all");
-            }}
-            className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm"
-          >
-            <option value="all">Todas las secciones</option>
-            {sectionOptions.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-
-          <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-category">
-            Categoría
-          </label>
-          <select
-            id="directory-category"
-            value={categorySlug}
-            onChange={(event) => setCategorySlug(event.target.value)}
-            className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm"
-          >
-            <option value="all">Todas las categorías</option>
-            {visibleCategories.map((category) => (
-              <option key={category.slug} value={category.slug}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-
-          <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-location">
-            Ubicación
-          </label>
-          <select
-            id="directory-location"
-            value={locationSlug}
-            onChange={(event) => setLocationSlug(event.target.value)}
-            className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm"
-          >
-            <option value="all">Todas las zonas</option>
-            {locations.map((location) => (
-              <option key={location.slug} value={location.slug}>
-                {location.name}
-              </option>
-            ))}
-          </select>
-
-          <div className="mt-5">
-            <p className="text-sm font-bold text-casero-dark">Atributos</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {attributeOptions.map((attribute) => {
-                const active = attributes.includes(attribute.value);
-
-                return (
-                  <button
-                    key={attribute.value}
-                    className={
-                      active
-                        ? "rounded-md bg-casero-green px-3 py-2 text-xs font-bold text-white"
-                        : "rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-xs font-semibold text-casero-text/70"
-                    }
-                    type="button"
-                    onClick={() => toggleAttribute(attribute.value)}
-                  >
-                    {attribute.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+            Filtrar
+          </span>
+          <span className="text-xs text-casero-text/55">{activeFilterCount ? `${activeFilterCount} activos` : "Sin filtros"}</span>
+        </button>
+        <Card className={filtersOpen ? "mt-3 p-4 lg:mt-0 lg:block lg:p-6" : "hidden lg:block"}>
+          {filtersContent}
         </Card>
       </aside>
 
@@ -219,25 +261,19 @@ export function PublicBusinessDirectory({
             {title}: <strong className="text-casero-dark">{filteredBusinesses.length} negocios publicados</strong>
           </p>
           <button
-            className="rounded-md border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-dark"
+            className="rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-sm font-bold text-casero-dark"
             type="button"
-            onClick={() => {
-              setQuery("");
-              setSection(initialSection);
-              setCategorySlug("all");
-              setLocationSlug("all");
-              setAttributes([]);
-            }}
+            onClick={clearFilters}
           >
             Limpiar filtros
           </button>
         </div>
 
-        <div className="grid gap-5">
+        <div className="grid gap-4 sm:gap-5">
           {filteredBusinesses.length > 0 ? (
             filteredBusinesses.map((business) => <BusinessCard key={business.id} business={business} />)
           ) : (
-            <Card>
+            <Card className="p-5 sm:p-6">
               <p className="text-sm leading-7 text-casero-text/70">
                 No encontramos negocios publicados con esos filtros.
               </p>

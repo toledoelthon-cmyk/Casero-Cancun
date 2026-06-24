@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function CategoriesPage() {
   return (
-    <section className="container-page py-12">
+    <section className="container-page py-8 sm:py-12">
       <SectionHeader
         eyebrow="Categorias"
         title="Busca por tipo de solucion"
@@ -24,9 +24,9 @@ export default function CategoriesPage() {
         ["Mascotas", petCategories],
         ["Servicios para tu auto", autoServiceCategories],
       ].map(([title, items]) => (
-        <div key={title as string} className="mt-10">
-          <h2 className="font-heading text-2xl font-extrabold text-casero-dark">{title as string}</h2>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div key={title as string} className="mt-8 sm:mt-10">
+          <h2 className="font-heading text-xl font-extrabold text-casero-dark sm:text-2xl">{title as string}</h2>
+          <div className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {(items as typeof serviceCategories).map((category) => (
               <CategoryCard key={category.slug} category={category} />
             ))}

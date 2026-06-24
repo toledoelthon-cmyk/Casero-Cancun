@@ -25,7 +25,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link
       href={`/categoria/${category.slug}`}
-      className="group flex h-full flex-col rounded-lg border border-casero-dark/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/40 hover:shadow-soft"
+      className="group flex h-full flex-col rounded-lg border border-casero-dark/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/40 hover:shadow-soft sm:p-5"
     >
       <div className="flex items-start justify-between gap-4">
         <span className="grid h-11 w-11 place-items-center rounded-md bg-casero-beige text-casero-green">
@@ -33,8 +33,8 @@ export function CategoryCard({ category }: CategoryCardProps) {
         </span>
         <ArrowRight className="h-5 w-5 text-casero-dark/35 transition group-hover:translate-x-1 group-hover:text-casero-green" />
       </div>
-      <h3 className="mt-5 font-heading text-lg font-bold text-casero-dark">{category.name}</h3>
-      <p className="mt-2 text-sm leading-6 text-casero-text/65">{category.description}</p>
+      <h3 className="mt-4 font-heading text-base font-bold text-casero-dark sm:mt-5 sm:text-lg">{category.name}</h3>
+      <p className="mt-2 line-clamp-2 text-sm leading-6 text-casero-text/65 sm:line-clamp-3">{category.description}</p>
     </Link>
   );
 }
