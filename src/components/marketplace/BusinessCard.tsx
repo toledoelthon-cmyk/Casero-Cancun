@@ -26,7 +26,7 @@ function isDemoBusiness(business: DemoBusiness | LegacyBusiness): business is De
 
 function BusinessPlaceholder({ type, name }: { type?: DemoBusiness["profileType"]; name: string }) {
   const Icon = type === "material_store" ? Store : Wrench;
-  const label = type === "material_store" ? "Tienda/materiales" : "Proveedor de servicios";
+  const label = type === "material_store" ? "Tienda o materiales" : "Proveedor de servicios";
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-casero-turquoise/18 via-casero-beige to-casero-orange/20 p-6 text-center">
@@ -38,6 +38,13 @@ function BusinessPlaceholder({ type, name }: { type?: DemoBusiness["profileType"
     </div>
   );
 }
+
+const sectionLabels = {
+  home_services: "Servicios del hogar",
+  stores_materials: "Tiendas y materiales",
+  pets: "Mascotas",
+  auto_services: "Servicios para tu auto",
+} as const;
 
 function BusinessImage({ business }: { business: DemoBusiness | LegacyBusiness }) {
   const image = isDemoBusiness(business) ? business.media?.[0] : undefined;
@@ -62,6 +69,9 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const whatsapp = isDemoBusiness(business) ? business.whatsapp : undefined;
   const rating = isDemoBusiness(business) ? business.rating : undefined;
   const reviewCount = isDemoBusiness(business) ? business.reviewCount : undefined;
+  const section = isDemoBusiness(business) && business.section ? sectionLabels[business.section] : undefined;
+  const categories = isDemoBusiness(business) ? (business.categories ?? [business.category]).slice(0, 3) : [business.category];
+  const locations = isDemoBusiness(business) ? (business.locations ?? [business.location]).slice(0, 3) : [business.location];
 
   return (
     <article className="group overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft">
@@ -90,11 +100,18 @@ export function BusinessCard({ business }: BusinessCardProps) {
             {business.name}
           </h3>
         </Link>
-        <p className="mt-1 text-sm font-semibold text-casero-turquoise">{business.category}</p>
+        {section ? <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-casero-green">{section}</p> : null}
+        <div className="mt-2 flex flex-wrap gap-2">
+          {categories.map((category) => (
+            <Badge key={category} tone="turquoise">
+              {category}
+            </Badge>
+          ))}
+        </div>
         <p className="mt-3 line-clamp-3 text-sm leading-6 text-casero-text/70">{description}</p>
-        <p className="mt-3 flex items-center gap-2 text-sm text-casero-text/60">
+        <p className="mt-3 flex items-start gap-2 text-sm text-casero-text/60">
           <MapPin className="h-4 w-4" aria-hidden />
-          {business.location}
+          <span>{locations.join(", ")}</span>
         </p>
 
         {rating ? (

@@ -4,7 +4,7 @@ import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { getBusinessesByLocation } from "@/lib/data/businesses";
+import { getPublishedBusinessesByLocation } from "@/lib/data/businesses";
 import { locations } from "@/lib/demo-data";
 
 type PageProps = {
@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const location = locations.find((item) => item.slug === slug);
 
   return {
-    title: location ? `${location.name} | Casero Cancún` : "Ubicación no encontrada | Casero Cancún",
-    description: location ? `Negocios demo que atienden ${location.name} en Casero Cancún.` : undefined,
+    title: location ? `${location.name} | Casero Cancun` : "Ubicacion no encontrada | Casero Cancun",
+    description: location ? `Negocios publicados que atienden ${location.name} en Casero Cancun.` : undefined,
   };
 }
 
@@ -29,15 +29,31 @@ export default async function LocationPage({ params }: PageProps) {
     notFound();
   }
 
-  const relatedBusinesses = await getBusinessesByLocation(location.slug);
+  const relatedBusinesses = await getPublishedBusinessesByLocation(location.slug);
+  const availableCategories = Array.from(
+    new Set(relatedBusinesses.flatMap((business) => business.categories ?? [business.category])),
+  );
 
   return (
     <section className="container-page py-12">
       <SectionHeader
-        eyebrow="Ubicación"
+        eyebrow="Ubicacion"
         title={location.name}
-        description="Negocios demo relacionados con esta zona de atención."
+        description="Negocios publicados que atienden esta zona."
       />
+
+      {availableCategories.length > 0 ? (
+        <Card className="mt-8">
+          <h2 className="font-heading text-xl font-bold text-casero-dark">Categorias disponibles en esta zona</h2>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {availableCategories.map((category) => (
+              <span key={category} className="rounded-md bg-casero-beige px-3 py-1.5 text-xs font-bold text-casero-dark">
+                {category}
+              </span>
+            ))}
+          </div>
+        </Card>
+      ) : null}
 
       <div className="mt-8 grid gap-5">
         {relatedBusinesses.length > 0 ? (
@@ -45,7 +61,7 @@ export default async function LocationPage({ params }: PageProps) {
         ) : (
           <Card>
             <p className="text-sm leading-7 text-casero-text/70">
-              Próximamente habrá proveedores disponibles en esta zona.
+              Proximamente habra proveedores disponibles en esta zona.
             </p>
           </Card>
         )}
@@ -54,7 +70,7 @@ export default async function LocationPage({ params }: PageProps) {
       <div className="mt-8 rounded-lg bg-casero-dark p-6 text-white">
         <h2 className="font-heading text-2xl font-bold">Registra tu negocio en esta zona.</h2>
         <p className="mt-2 text-sm leading-6 text-white/70">
-          Ayuda a que más clientes de {location.name} encuentren tu servicio, tienda o proveedor local.
+          Ayuda a que mas clientes de {location.name} encuentren tu servicio, tienda o proveedor local.
         </p>
         <Button href="/registrar-mi-negocio" className="mt-5">
           Registrar mi negocio

@@ -4,7 +4,7 @@ import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { getBusinessesByCategory } from "@/lib/data/businesses";
+import { getPublishedBusinessesByCategory } from "@/lib/data/businesses";
 import { categories } from "@/lib/demo-data";
 
 type PageProps = {
@@ -29,7 +29,7 @@ export default async function CategoryPage({ params }: PageProps) {
     notFound();
   }
 
-  const relatedBusinesses = await getBusinessesByCategory(category.slug);
+  const relatedBusinesses = await getPublishedBusinessesByCategory(category.slug);
 
   return (
     <section className="container-page py-12">

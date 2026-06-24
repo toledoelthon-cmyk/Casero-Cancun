@@ -28,9 +28,12 @@ export type DemoBusiness = {
   name: string;
   slug: string;
   profileType: ProfileType;
+  section?: CategorySection;
   category: string;
+  categorySlugs?: string[];
   categories?: string[];
   location: string;
+  locationSlugs?: string[];
   locations?: string[];
   shortDescription: string;
   longDescription?: string;
