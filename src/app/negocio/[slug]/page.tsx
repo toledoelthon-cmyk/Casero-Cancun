@@ -14,6 +14,7 @@ import {
   Store,
   Wrench,
 } from "lucide-react";
+import { BusinessMap } from "@/components/maps/BusinessMap";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -26,6 +27,10 @@ type PageProps = {
 };
 
 type BusinessMediaItem = NonNullable<DemoBusiness["media"]>[number];
+
+function hasCoordinates(latitude?: number | null, longitude?: number | null) {
+  return typeof latitude === "number" && Number.isFinite(latitude) && typeof longitude === "number" && Number.isFinite(longitude);
+}
 
 function BusinessVisualPlaceholder({ business, compact = false }: { business: DemoBusiness; compact?: boolean }) {
   const Icon = business.profileType === "material_store" ? Store : Wrench;
@@ -102,7 +107,8 @@ export default async function BusinessProfilePage({ params }: PageProps) {
   const categories = business.categories ?? [business.category];
   const locations = business.locations ?? [business.location];
   const features = business.features ?? [];
-  const shouldShowMap = Boolean(business.showMap && (business.address || (business.latitude && business.longitude)));
+  const shouldShowLocation = Boolean(business.showMap && (business.address || hasCoordinates(business.latitude, business.longitude)));
+  const shouldShowMap = Boolean(business.showMap && hasCoordinates(business.latitude, business.longitude));
   const description =
     business.longDescription ??
     `${business.shortDescription} Este perfil está preparado para mostrar información clara, contacto directo y señales de confianza dentro de Casero Cancún.`;
@@ -275,7 +281,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             </div>
           </Card>
 
-          {shouldShowMap ? (
+          {shouldShowLocation ? (
             <Card>
               <h2 className="font-heading text-xl font-bold text-casero-dark">Ubicación</h2>
               {business.address ? (
@@ -284,10 +290,11 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                   {business.address}
                 </p>
               ) : null}
-              <div className="mt-4 rounded-md border border-casero-dark/10 bg-casero-background p-4 text-sm font-semibold text-casero-text/65">
-                Mapa disponible para este negocio.
-                {business.latitude && business.longitude ? ` Coordenadas: ${business.latitude}, ${business.longitude}.` : ""}
-              </div>
+              {shouldShowMap ? (
+                <div className="mt-4">
+                  <BusinessMap latitude={business.latitude} longitude={business.longitude} markerLabel={business.name} />
+                </div>
+              ) : null}
             </Card>
           ) : null}
 

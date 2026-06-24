@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { MapPicker } from "@/components/maps/MapPicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { RegistrationCategory, RegistrationLocation, RegistrationPlan } from "@/lib/data/registration";
@@ -103,6 +104,10 @@ export function RegisterBusinessForm({
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [locationIds, setLocationIds] = useState<string[]>([]);
   const [planId, setPlanId] = useState("");
+  const [mapPosition, setMapPosition] = useState<{ latitude: number | null; longitude: number | null }>({
+    latitude: null,
+    longitude: null,
+  });
   const [logoFile, setLogoFile] = useState<ImagePreview | null>(null);
   const [businessFiles, setBusinessFiles] = useState<ImagePreview[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -349,8 +354,8 @@ export function RegisterBusinessForm({
     const shortDescription = String(formData.get("shortDescription") ?? "").trim();
     const submittedPlanId = String(formData.get("planId") ?? "");
     const additionalMessage = String(formData.get("additionalMessage") ?? "").trim();
-    const latitudeInput = String(formData.get("latitude") ?? "").trim();
-    const longitudeInput = String(formData.get("longitude") ?? "").trim();
+    const latitudeInput = shouldShowAddressFields ? String(formData.get("latitude") ?? "").trim() : "";
+    const longitudeInput = shouldShowAddressFields ? String(formData.get("longitude") ?? "").trim() : "";
     const latitude = latitudeInput ? Number(latitudeInput) : null;
     const longitude = longitudeInput ? Number(longitudeInput) : null;
 
@@ -408,8 +413,8 @@ export function RegisterBusinessForm({
       has_physical_location: locationFlags.hasPhysicalLocation,
       location_mode: locationFlags.locationMode,
       show_map: locationFlags.showMap,
-      latitude: Number.isFinite(latitude) ? latitude : null,
-      longitude: Number.isFinite(longitude) ? longitude : null,
+      latitude: shouldShowAddressFields && Number.isFinite(latitude) ? latitude : null,
+      longitude: shouldShowAddressFields && Number.isFinite(longitude) ? longitude : null,
       status: "pending",
       plan_id: submittedPlanId || null,
       main_service: selectedCategories[0].name,
@@ -481,6 +486,7 @@ export function RegisterBusinessForm({
       setCategoryIds([]);
       setLocationIds([]);
       setPlanId("");
+      setMapPosition({ latitude: null, longitude: null });
       setLogoFile(null);
       setBusinessFiles([]);
     } catch (error) {
@@ -573,6 +579,7 @@ export function RegisterBusinessForm({
                 setBusinessSection(nextSection);
                 setLocationMode(getDefaultLocationMode(nextSection));
                 setCategoryIds([]);
+                setMapPosition({ latitude: null, longitude: null });
               }}
               className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
             >
@@ -835,17 +842,13 @@ export function RegisterBusinessForm({
                 Código postal
                 <input name="postalCode" className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green" placeholder="77500" />
               </label>
-              <label className="text-sm font-bold text-casero-dark">
-                Latitud
-                <input name="latitude" inputMode="decimal" className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green" placeholder="21.1619" />
-              </label>
-              <label className="text-sm font-bold text-casero-dark">
-                Longitud
-                <input name="longitude" inputMode="decimal" className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green" placeholder="-86.8515" />
-              </label>
-              <div className="rounded-md border border-casero-dark/10 bg-white p-4 text-sm font-semibold text-casero-text/60 md:col-span-2">
-                Vista previa de mapa pendiente. Por ahora guarda dirección y coordenadas opcionales.
-              </div>
+              <input name="latitude" type="hidden" value={mapPosition.latitude ?? ""} />
+              <input name="longitude" type="hidden" value={mapPosition.longitude ?? ""} />
+              <MapPicker
+                latitude={mapPosition.latitude}
+                longitude={mapPosition.longitude}
+                onChange={(position) => setMapPosition(position)}
+              />
             </div>
           ) : (
             <p className="mt-4 rounded-md bg-white p-3 text-sm font-semibold text-casero-text/65">

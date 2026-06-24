@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { BusinessMap } from "@/components/maps/BusinessMap";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -254,6 +255,10 @@ function getLocationModeLabel(locationMode: LocationMode | null) {
   return locationMode ? locationModeLabels[locationMode] : "No definido";
 }
 
+function hasCoordinates(latitude: number | null, longitude: number | null) {
+  return typeof latitude === "number" && Number.isFinite(latitude) && typeof longitude === "number" && Number.isFinite(longitude);
+}
+
 function statusBadge(status: PublicationStatus) {
   return (
     <span className={`inline-flex rounded-md px-2.5 py-1 text-xs font-bold ${statusClasses[status]}`}>
@@ -389,7 +394,7 @@ function DetailModal({
               <div><dt className="font-bold text-casero-dark">Modo de ubicación</dt><dd>{getLocationModeLabel(business.location_mode)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "Sí" : "No"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Dirección</dt><dd>{business.address ?? "No capturada"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Coordenadas</dt><dd>{business.latitude && business.longitude ? `${business.latitude}, ${business.longitude}` : "No capturadas"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Coordenadas</dt><dd>{hasCoordinates(business.latitude, business.longitude) ? `${business.latitude}, ${business.longitude}` : "No capturadas"}</dd></div>
             </dl>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -405,6 +410,27 @@ function DetailModal({
                   {business.locations.join(", ") || "Sin ubicaciones"}
                 </p>
               </div>
+            </div>
+          </Card>
+
+          <Card>
+            <h3 className="font-heading text-lg font-bold text-casero-dark">Mapa</h3>
+            <div className="mt-4">
+              {hasCoordinates(business.latitude, business.longitude) ? (
+                <BusinessMap
+                  latitude={business.latitude}
+                  longitude={business.longitude}
+                  markerLabel={business.business_name}
+                />
+              ) : business.show_map ? (
+                <p className="rounded-md bg-casero-orange/10 p-4 text-sm font-semibold text-casero-dark">
+                  Este negocio solicitó mostrar mapa, pero aún no capturó coordenadas.
+                </p>
+              ) : (
+                <p className="rounded-md bg-white p-4 text-sm font-semibold text-casero-text/65">
+                  Este negocio no solicitó mostrar mapa.
+                </p>
+              )}
             </div>
           </Card>
 
