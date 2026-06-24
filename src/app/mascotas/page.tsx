@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Mascotas | Casero Cancun",
-  description: "Encuentra veterinarias, estetica canina, alimentos, accesorios y servicios para mascotas en Cancun.",
+  title: "Mascotas Cancun | Veterinarias, estetica, alimentos y servicios",
+  description: "Encuentra mascotas Cancun: veterinarias, estetica canina, alimentos, accesorios, paseadores y servicios para mascotas.",
 };
 
 export default async function PetsPage({ searchParams }: PageProps) {

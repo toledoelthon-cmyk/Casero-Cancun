@@ -19,9 +19,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Casero Cancún | Servicios, tiendas y proveedores para tu hogar",
+  title: "Casero Cancun | Servicios locales, tiendas, mascotas y auto",
   description:
-    "Encuentra servicios del hogar, tiendas de materiales y proveedores locales en Cancún. Contacta negocios de confianza directo por WhatsApp.",
+    "Encuentra servicios locales Cancun, tiendas y materiales Cancun, mascotas Cancun y servicios automotrices Cancun con contacto directo por WhatsApp.",
 };
 
 export default function RootLayout({

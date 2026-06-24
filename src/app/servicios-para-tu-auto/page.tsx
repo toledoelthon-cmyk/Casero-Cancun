@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Servicios para tu auto | Casero Cancun",
-  description: "Encuentra mecanicos, talleres, lavado, gruas, llanteras y servicios automotrices en Cancun.",
+  title: "Servicios automotrices Cancun | Talleres, lavado, gruas y llanteras",
+  description: "Encuentra servicios automotrices Cancun: mecanicos, talleres, lavado, gruas, llanteras, diagnostico y refacciones.",
 };
 
 export default async function AutoServicesPage({ searchParams }: PageProps) {

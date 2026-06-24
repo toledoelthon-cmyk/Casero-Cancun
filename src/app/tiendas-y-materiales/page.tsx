@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Tiendas y materiales | Casero Cancun",
-  description: "Encuentra ferreterias, materiales, herramientas y refacciones para el hogar en Cancun.",
+  title: "Tiendas y materiales Cancun | Ferreterias, herramientas y refacciones",
+  description: "Encuentra tiendas y materiales Cancun: ferreterias, materiales de construccion, herramientas, refacciones y suministros locales.",
 };
 
 export default async function StoresPage({ searchParams }: PageProps) {

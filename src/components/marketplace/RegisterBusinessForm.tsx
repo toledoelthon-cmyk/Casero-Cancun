@@ -51,6 +51,18 @@ function getPlanFileSizeLimit(slug?: string) {
   return 2;
 }
 
+function getPlanBenefits(slug: string) {
+  if (slug === "premium") {
+    return ["Perfil destacado", "Prioridad alta en búsquedas", "Hasta 15 fotos", "Promoción destacada"];
+  }
+
+  if (slug === "pro") {
+    return ["Mejor posición en resultados", "Proveedor recomendado", "WhatsApp destacado", "Hasta 8 fotos"];
+  }
+
+  return ["Perfil público", "WhatsApp visible", "Zona de atención", "Hasta 3 fotos"];
+}
+
 function fileToPreview(file: File) {
   return {
     file,
@@ -130,9 +142,9 @@ export function RegisterBusinessForm({
         : "Categoría principal";
 
   const selectedPlan = plans.find((plan) => plan.id === planId);
-  const maxCategories = selectedPlan?.maxCategories ?? 2;
-  const maxLocations = selectedPlan?.maxLocations ?? 2;
-  const maxPhotos = selectedPlan?.maxPhotos ?? 3;
+  const maxCategories = selectedPlan?.maxCategories ?? 0;
+  const maxLocations = selectedPlan?.maxLocations ?? 0;
+  const maxPhotos = selectedPlan?.maxPhotos ?? 0;
   const maxFileSizeMb = getPlanFileSizeLimit(selectedPlan?.slug);
   const selectedImages = [...(logoFile ? [logoFile] : []), ...businessFiles];
   const exceedsPlanLimit = selectedImages.length > maxPhotos;
@@ -147,6 +159,10 @@ export function RegisterBusinessForm({
 
   function validateFiles(nextLogoFile: ImagePreview | null, nextBusinessFiles: ImagePreview[]) {
     const files = [...(nextLogoFile ? [nextLogoFile] : []), ...nextBusinessFiles];
+
+    if (!selectedPlan && files.length > 0) {
+      return "Selecciona un plan para ver tus límites disponibles.";
+    }
 
     if (files.length > maxPhotos) {
       return `Supera el máximo del plan seleccionado. Este plan permite hasta ${maxPhotos} imágenes.`;
@@ -203,6 +219,12 @@ export function RegisterBusinessForm({
       return;
     }
 
+    if (!selectedPlan) {
+      setStatus("error");
+      setFormMessage("Selecciona un plan para ver tus límites disponibles.");
+      return;
+    }
+
     if (categoryIds.length >= maxCategories) {
       setStatus("error");
       setFormMessage(`Tu plan permite seleccionar hasta ${maxCategories} categorías.`);
@@ -225,6 +247,12 @@ export function RegisterBusinessForm({
       return;
     }
 
+    if (!selectedPlan) {
+      setStatus("error");
+      setFormMessage("Selecciona un plan para ver tus límites disponibles.");
+      return;
+    }
+
     if (locationIds.length >= maxLocations) {
       setStatus("error");
       setFormMessage(`Tu plan permite seleccionar hasta ${maxLocations} zonas.`);
@@ -240,6 +268,37 @@ export function RegisterBusinessForm({
     setLocationIds(locationIds.filter((id) => id !== locationId));
     setStatus("idle");
     setFormMessage(null);
+  }
+
+  function handlePlanChange(nextPlanId: string) {
+    setPlanId(nextPlanId);
+    const nextPlan = plans.find((plan) => plan.id === nextPlanId);
+
+    if (!nextPlan) {
+      setStatus("idle");
+      setFormMessage(null);
+      return;
+    }
+
+    if (categoryIds.length > nextPlan.maxCategories) {
+      setStatus("error");
+      setFormMessage(
+        `Tu plan permite seleccionar hasta ${nextPlan.maxCategories} categorías. Elimina categorías sobrantes para continuar.`,
+      );
+    } else if (locationIds.length > nextPlan.maxLocations) {
+      setStatus("error");
+      setFormMessage(
+        `Tu plan permite seleccionar hasta ${nextPlan.maxLocations} zonas. Elimina zonas sobrantes para continuar.`,
+      );
+    } else if (selectedImages.length > nextPlan.maxPhotos) {
+      setStatus("error");
+      setFormMessage(
+        `Supera el máximo del plan seleccionado. Este plan permite hasta ${nextPlan.maxPhotos} imágenes. Elimina imágenes sobrantes para continuar.`,
+      );
+    } else {
+      setStatus("idle");
+      setFormMessage(null);
+    }
   }
 
   async function uploadBusinessImages(businessId: string, businessSlug: string, businessName: string) {
@@ -350,6 +409,7 @@ export function RegisterBusinessForm({
     const businessName = String(formData.get("businessName") ?? "").trim();
     const responsibleName = String(formData.get("responsibleName") ?? "").trim();
     const whatsappInput = String(formData.get("whatsapp") ?? "").trim();
+    const phoneInput = String(formData.get("phone") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const shortDescription = String(formData.get("shortDescription") ?? "").trim();
     const submittedPlanId = String(formData.get("planId") ?? "");
@@ -360,6 +420,7 @@ export function RegisterBusinessForm({
     const longitude = longitudeInput ? Number(longitudeInput) : null;
 
     const normalizedWhatsapp = normalizeWhatsapp(whatsappInput);
+    const normalizedPhone = phoneInput ? normalizeWhatsapp(phoneInput) : null;
     const selectedCategories = categories.filter((category) => categoryIds.includes(category.id));
     const selectedLocations = locations.filter((location) => locationIds.includes(location.id));
     const categoriesMatchSelectedSection = selectedCategories.every((category) => category.section === businessSection);
@@ -376,7 +437,9 @@ export function RegisterBusinessForm({
       !businessName ||
       !responsibleName ||
       !normalizedWhatsapp ||
+      (phoneInput && !normalizedPhone) ||
       !email ||
+      !submittedPlanId ||
       !profileType ||
       !businessSection ||
       selectedCategories.length === 0 ||
@@ -389,9 +452,9 @@ export function RegisterBusinessForm({
       setFormMessage(
         imageValidationError ??
           selectionValidationError ??
-          (normalizedWhatsapp
+          (normalizedWhatsapp && (!phoneInput || normalizedPhone)
           ? "Completa todos los campos obligatorios para enviar tu solicitud."
-          : "Ingresa un WhatsApp válido. Puedes usar 9984032240, +52 998 403 2240 o 52 9984032240."),
+          : "Ingresa un WhatsApp o teléfono válido. Puedes usar 9984032240, +52 998 403 2240 o 52 9984032240."),
       );
       return;
     }
@@ -406,7 +469,7 @@ export function RegisterBusinessForm({
       short_description: shortDescription,
       long_description: additionalMessage || null,
       whatsapp: normalizedWhatsapp,
-      phone: normalizedWhatsapp,
+      phone: normalizedPhone ?? normalizedWhatsapp,
       email,
       address: shouldShowAddressFields ? String(formData.get("address") ?? "").trim() || null : null,
       postal_code: shouldShowAddressFields ? String(formData.get("postalCode") ?? "").trim() || null : null,
@@ -565,7 +628,65 @@ export function RegisterBusinessForm({
               placeholder="negocio@correo.com"
             />
           </label>
+          <label className="text-sm font-bold text-casero-dark md:col-span-2">
+            Teléfono alternativo <span className="font-normal text-casero-text/55">(opcional)</span>
+            <input
+              name="phone"
+              autoComplete="tel"
+              className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
+              placeholder="Si es distinto al WhatsApp"
+            />
+          </label>
         </div>
+
+        <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+          <legend className="px-1 text-sm font-bold text-casero-dark">Elige tu plan</legend>
+          <input name="planId" type="hidden" value={planId} />
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            {plans.map((plan) => {
+              const isSelected = plan.id === planId;
+              const benefits = getPlanBenefits(plan.slug);
+
+              return (
+                <button
+                  key={plan.id}
+                  type="button"
+                  onClick={() => handlePlanChange(plan.id)}
+                  className={
+                    isSelected
+                      ? "rounded-lg border-2 border-casero-green bg-white p-4 text-left shadow-soft"
+                      : "rounded-lg border border-casero-dark/10 bg-white p-4 text-left shadow-sm transition hover:border-casero-green/40"
+                  }
+                >
+                  <span className="font-heading text-lg font-extrabold text-casero-dark">{plan.name}</span>
+                  <span className="mt-2 block text-2xl font-extrabold text-casero-green">
+                    ${plan.priceMxn} <span className="text-sm font-semibold text-casero-text/60">MXN/mes</span>
+                  </span>
+                  <span className="mt-4 grid gap-2 text-sm font-semibold text-casero-text/70">
+                    <span>{plan.maxCategories} categorías</span>
+                    <span>{plan.maxLocations} zonas</span>
+                    <span>{plan.maxPhotos} fotos</span>
+                  </span>
+                  <span className="mt-4 block text-xs font-bold uppercase tracking-[0.12em] text-casero-turquoise">
+                    Beneficios
+                  </span>
+                  <span className="mt-2 block space-y-1 text-sm leading-6 text-casero-text/70">
+                    {benefits.map((benefit) => (
+                      <span key={benefit} className="block">
+                        {benefit}
+                      </span>
+                    ))}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {!selectedPlan ? (
+            <p className="mt-4 rounded-md bg-white p-3 text-sm font-semibold text-casero-text/65">
+              Selecciona un plan para ver tus límites disponibles.
+            </p>
+          ) : null}
+        </fieldset>
 
         <div className="grid gap-5 md:grid-cols-2">
           <label className="text-sm font-bold text-casero-dark">
@@ -594,6 +715,11 @@ export function RegisterBusinessForm({
 
           <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
             <legend className="px-1 text-sm font-bold text-casero-dark">{categoryLabel}</legend>
+            {!selectedPlan ? (
+              <p className="mt-2 rounded-md bg-white p-3 text-sm font-semibold text-casero-text/65">
+                Selecciona un plan para ver tus límites disponibles.
+              </p>
+            ) : null}
             <p className="mt-2 text-sm font-semibold text-casero-text/70">
               {categoryIds.length} de {maxCategories} categorías seleccionadas según tu plan
             </p>
@@ -621,7 +747,9 @@ export function RegisterBusinessForm({
             <div className="mt-5">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-casero-dark/60">Categorías disponibles</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {!businessSection ? (
+                {!selectedPlan ? (
+                  <p className="text-sm text-casero-text/55">Selecciona un plan para ver tus límites disponibles.</p>
+                ) : !businessSection ? (
                   <p className="text-sm text-casero-text/55">Primero selecciona el tipo de negocio.</p>
                 ) : availableCategoryItems.length > 0 ? (
                   availableCategoryItems.map((category) => (
@@ -678,6 +806,11 @@ export function RegisterBusinessForm({
         <div className="grid gap-5 md:grid-cols-2">
           <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
             <legend className="px-1 text-sm font-bold text-casero-dark">Zonas de atención</legend>
+            {!selectedPlan ? (
+              <p className="mt-2 rounded-md bg-white p-3 text-sm font-semibold text-casero-text/65">
+                Selecciona un plan para ver tus límites disponibles.
+              </p>
+            ) : null}
             <p className="mt-2 text-sm font-semibold text-casero-text/70">
               {locationIds.length} de {maxLocations} zonas seleccionadas según tu plan
             </p>
@@ -705,7 +838,9 @@ export function RegisterBusinessForm({
             <div className="mt-5">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-casero-dark/60">Zonas disponibles</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {availableLocationItems.length > 0 ? (
+                {!selectedPlan ? (
+                  <p className="text-sm text-casero-text/55">Selecciona un plan para ver tus límites disponibles.</p>
+                ) : availableLocationItems.length > 0 ? (
                   availableLocationItems.map((location) => (
                     <button
                       key={location.id}
@@ -751,10 +886,11 @@ export function RegisterBusinessForm({
               ))}
             </select>
           </label>
-          <label className="text-sm font-bold text-casero-dark">
+          <label className="hidden">
             Plan de interés
             <select
               name="planId"
+              disabled
               value={planId}
               onChange={(event) => {
                 const nextPlanId = event.target.value;
@@ -795,6 +931,106 @@ export function RegisterBusinessForm({
             </select>
           </label>
         </div>
+
+        {profileType ? (
+          <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+            <legend className="px-1 text-sm font-bold text-casero-dark">Características</legend>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {[
+                ["serviceAtHome", "Servicio a domicilio"],
+                ["emergencyService", "Atiende urgencias"],
+                ["service247", "Atención 24/7"],
+                ["byAppointment", "Servicio con cita previa"],
+                ["freeEstimate", "Presupuesto sin costo"],
+                ["invoices", "Emite factura"],
+                ["acceptsCard", "Acepta tarjeta"],
+                ["acceptsTransfer", "Acepta transferencia"],
+                ["offersWarranty", "Ofrece garantía"],
+              ].map(([name, label]) => (
+                <label key={name} className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                  <input name={name} type="checkbox" className="h-4 w-4 accent-casero-green" />
+                  {label}
+                </label>
+              ))}
+
+              {businessSection === "home_services" ? (
+                <>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="attendsCondos" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Atiende condominios
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="attendsAirbnb" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Atiende rentas vacacionales / Airbnb
+                  </label>
+                </>
+              ) : null}
+
+              {businessSection === "stores_materials" ? (
+                <>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="retailSales" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Venta al público
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="wholesaleSales" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Venta por mayoreo
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="deliveryAvailable" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Entrega a domicilio
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="authorizedDistributor" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Distribuidor autorizado
+                  </label>
+                </>
+              ) : null}
+
+              {businessSection === "pets" ? (
+                <>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="petVeterinaryService" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Atención veterinaria
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="petGrooming" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Estética / baño y corte
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="petDaycare" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Guardería
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="petFoodAccessories" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Venta de alimentos o accesorios
+                  </label>
+                </>
+              ) : null}
+
+              {businessSection === "auto_services" ? (
+                <>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="autoTowService" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Grúa disponible
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="autoDiagnostics" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Diagnóstico
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="autoParts" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Refacciones
+                  </label>
+                  <label className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm text-casero-text/75">
+                    <input name="autoWashDetailing" type="checkbox" className="h-4 w-4 accent-casero-green" />
+                    Lavado / detallado
+                  </label>
+                </>
+              ) : null}
+            </div>
+          </fieldset>
+        ) : null}
 
         <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
           <legend className="px-1 text-sm font-bold text-casero-dark">Ubicación y mapa</legend>
@@ -859,10 +1095,16 @@ export function RegisterBusinessForm({
 
         <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
           <legend className="px-1 text-sm font-bold text-casero-dark">Imágenes del perfil</legend>
-          <p className="mt-2 text-sm leading-6 text-casero-text/70">
-            Plan seleccionado: {selectedPlan?.name ?? "Básico por defecto"} · máximo {maxPhotos} imágenes ·{" "}
-            {maxFileSizeMb} MB por imagen. Formatos: JPG, PNG o WebP.
-          </p>
+          {selectedPlan ? (
+            <p className="mt-2 text-sm leading-6 text-casero-text/70">
+              Plan seleccionado: {selectedPlan.name} · máximo {maxPhotos} imágenes · {maxFileSizeMb} MB por imagen.
+              Formatos: JPG, PNG o WebP.
+            </p>
+          ) : (
+            <p className="mt-2 rounded-md bg-white p-3 text-sm font-semibold text-casero-text/65">
+              Selecciona un plan para ver tus límites disponibles.
+            </p>
+          )}
           {exceedsPlanLimit ? (
             <p className="mt-3 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">
               Supera el máximo del plan seleccionado. Elimina imágenes sobrantes para continuar.
@@ -875,9 +1117,10 @@ export function RegisterBusinessForm({
               <input
                 name="logo"
                 type="file"
+                disabled={!selectedPlan}
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(event) => handleLogoChange(event.target.files)}
-                className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-sm font-normal"
+                className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-sm font-normal disabled:cursor-not-allowed disabled:bg-casero-background disabled:text-casero-text/45"
               />
             </label>
             <label className="text-sm font-bold text-casero-dark">
@@ -886,9 +1129,10 @@ export function RegisterBusinessForm({
                 name="businessPhotos"
                 type="file"
                 multiple
+                disabled={!selectedPlan}
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(event) => handleBusinessFilesChange(event.target.files)}
-                className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-sm font-normal"
+                className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-sm font-normal disabled:cursor-not-allowed disabled:bg-casero-background disabled:text-casero-text/45"
               />
             </label>
           </div>
@@ -925,7 +1169,7 @@ export function RegisterBusinessForm({
           ) : null}
         </fieldset>
 
-        {profileType ? (
+        {false && profileType ? (
           <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
             <legend className="px-1 text-sm font-bold text-casero-dark">Características inteligentes</legend>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -1025,7 +1269,7 @@ export function RegisterBusinessForm({
           </fieldset>
         ) : null}
 
-        {profileType ? (
+        {false && profileType ? (
           <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
             <legend className="px-1 text-sm font-bold text-casero-dark">
               {profileType === "service_provider" ? "Detalles del servicio" : "Detalles de la tienda"}
@@ -1074,6 +1318,9 @@ export function RegisterBusinessForm({
           </fieldset>
         ) : null}
 
+        <fieldset className="rounded-lg border border-casero-dark/10 bg-casero-background p-4">
+          <legend className="px-1 text-sm font-bold text-casero-dark">Revisión final y envío</legend>
+          <div className="mt-3 grid gap-5">
         <label className="text-sm font-bold text-casero-dark">
           Descripción breve
           <textarea
@@ -1093,9 +1340,11 @@ export function RegisterBusinessForm({
           />
         </label>
 
-        <Button type="submit" variant="secondary" className="w-full sm:w-auto" disabled={isLoading}>
-          {isLoading ? "Enviando..." : "Enviar solicitud"}
-        </Button>
+            <Button type="submit" variant="secondary" className="w-full sm:w-auto" disabled={isLoading}>
+              {isLoading ? "Enviando..." : "Enviar solicitud"}
+            </Button>
+          </div>
+        </fieldset>
       </form>
     </Card>
   );

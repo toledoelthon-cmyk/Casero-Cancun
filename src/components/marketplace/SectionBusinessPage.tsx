@@ -1,5 +1,6 @@
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { CategoryCard } from "@/components/marketplace/CategoryCard";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getPublishedBusinessesBySection } from "@/lib/data/businesses";
@@ -85,6 +86,16 @@ export async function SectionBusinessPage({
             </Card>
           )}
         </div>
+      </div>
+
+      <div className="mt-10 rounded-lg bg-casero-dark p-6 text-white shadow-soft md:p-8">
+        <h2 className="font-heading text-2xl font-extrabold">Registra tu negocio en esta seccion</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/70">
+          Aparece en Casero Cancun para que clientes locales encuentren tu negocio y te contacten directo por WhatsApp.
+        </p>
+        <Button href="/registrar-mi-negocio" className="mt-5" variant="primary">
+          Registrar negocio
+        </Button>
       </div>
     </section>
   );

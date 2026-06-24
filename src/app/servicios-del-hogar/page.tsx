@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Servicios del hogar | Casero Cancun",
-  description: "Encuentra proveedores publicados para reparaciones, mantenimiento y mejoras del hogar en Cancun.",
+  title: "Servicios del hogar | Servicios locales Cancun",
+  description: "Encuentra servicios locales Cancun para reparaciones, mantenimiento, limpieza, electricidad, plomeria y aire acondicionado.",
 };
 
 export default async function HomeServicesPage({ searchParams }: PageProps) {

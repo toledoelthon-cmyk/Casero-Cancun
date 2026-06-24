@@ -5,8 +5,9 @@ import { getPublishedBusinesses } from "@/lib/data/businesses";
 import { categories, locations } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
-  title: "Buscar servicios | Casero Cancun",
-  description: "Busca servicios, tiendas, mascotas y soluciones para tu auto en Cancun.",
+  title: "Buscar servicios locales Cancun | Mascotas, auto, tiendas y materiales",
+  description:
+    "Busca servicios locales Cancun, tiendas y materiales Cancun, mascotas Cancun y servicios automotrices Cancun en un solo directorio.",
 };
 
 export default async function SearchServicesPage() {

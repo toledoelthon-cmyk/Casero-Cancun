@@ -4,8 +4,9 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { plans } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
-  title: "Planes | Casero Cancún",
-  description: "Conoce los planes para publicar tu negocio, tienda o servicio en Casero Cancún.",
+  title: "Planes | Casero Cancun para servicios, tiendas, mascotas y auto",
+  description:
+    "Planes para publicar proveedores de servicios, tiendas y materiales Cancun, negocios de mascotas Cancun, talleres y servicios automotrices Cancun.",
 };
 
 export default function PlansPage() {
@@ -13,8 +14,8 @@ export default function PlansPage() {
     <section className="container-page py-12">
       <SectionHeader
         eyebrow="Planes"
-        title="Publica tu negocio en el directorio local de Cancún"
-        description="Tres planes pensados para proveedores independientes, tiendas de materiales y negocios con operación activa."
+        title="Publica tu negocio en el directorio local de Cancun"
+        description="Planes para proveedores de servicios, tiendas, negocios de mascotas, talleres y servicios automotrices con operacion activa."
         align="center"
       />
       <div className="mx-auto mt-6 max-w-3xl rounded-lg border border-casero-orange/25 bg-casero-orange/10 p-4 text-center text-sm font-semibold text-casero-dark">
