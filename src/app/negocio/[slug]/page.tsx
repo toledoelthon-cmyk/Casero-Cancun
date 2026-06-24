@@ -1,12 +1,15 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   BadgeCheck,
+  CarFront,
   Globe,
+  Home,
   ImageIcon,
   Mail,
   MapPin,
   MessageCircle,
+  PawPrint,
   Phone,
   ShieldCheck,
   Sparkles,
@@ -32,8 +35,32 @@ function hasCoordinates(latitude?: number | null, longitude?: number | null) {
   return typeof latitude === "number" && Number.isFinite(latitude) && typeof longitude === "number" && Number.isFinite(longitude);
 }
 
+function isUsableImageUrl(url: string | null | undefined) {
+  if (!url?.trim()) {
+    return false;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol === "https:" || parsedUrl.protocol === "http:";
+  } catch {
+    return url.startsWith("/");
+  }
+}
+
 function BusinessVisualPlaceholder({ business, compact = false }: { business: DemoBusiness; compact?: boolean }) {
-  const Icon = business.profileType === "material_store" ? Store : Wrench;
+  const sectionMeta = {
+    home_services: { Icon: Home, label: "Servicios del hogar" },
+    stores_materials: { Icon: Store, label: "Tiendas y materiales" },
+    pets: { Icon: PawPrint, label: "Mascotas" },
+    auto_services: { Icon: CarFront, label: "Servicios para tu auto" },
+  };
+  const { Icon, label } = business.section
+    ? sectionMeta[business.section]
+    : {
+        Icon: business.profileType === "material_store" ? Store : Wrench,
+        label: business.profileType === "material_store" ? "Tienda/materiales" : "Proveedor de servicios",
+      };
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-casero-turquoise/20 via-casero-beige to-casero-orange/25 p-8 text-center">
@@ -43,7 +70,7 @@ function BusinessVisualPlaceholder({ business, compact = false }: { business: De
       {!compact ? (
         <>
           <p className="mt-5 font-heading text-2xl font-extrabold text-casero-dark">
-            {business.profileType === "material_store" ? "Tienda/materiales" : "Proveedor de servicios"}
+            {label}
           </p>
           <p className="mt-2 max-w-md text-sm text-casero-text/65">Imagen pendiente de carga para este perfil.</p>
         </>
@@ -61,15 +88,17 @@ function BusinessImage({
   image?: BusinessMediaItem;
   priority?: boolean;
 }) {
-  if (!image?.url) {
+  const imageUrl = image?.url;
+
+  if (!isUsableImageUrl(imageUrl)) {
     return <BusinessVisualPlaceholder business={business} />;
   }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={image.url}
-      alt={image.alt ?? business.name}
+      src={imageUrl}
+      alt={image?.alt ?? business.name}
       loading={priority ? "eager" : "lazy"}
       className="h-full w-full object-cover"
     />
@@ -82,12 +111,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!business) {
     return {
-      title: "Negocio no encontrado | Casero Cancún",
+      title: "Negocio no encontrado | Casero CancÃºn",
     };
   }
 
   return {
-    title: `${business.name} | Casero Cancún`,
+    title: `${business.name} | Casero CancÃºn`,
     description: business.shortDescription,
   };
 }
@@ -100,8 +129,11 @@ export default async function BusinessProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const whatsappMessage = "Hola, vi tu perfil en Casero Cancún y quiero información.";
-  const images = business.media ?? [];
+  const whatsappMessage = "Hola, vi tu perfil en Casero CancÃºn y quiero informaciÃ³n.";
+  const images = (business.media ?? [])
+    .filter((image) => isUsableImageUrl(image.url))
+    .slice()
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
   const mainImage = images[0];
   const gallery = images.slice(1);
   const categories = business.categories ?? [business.category];
@@ -111,7 +143,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
   const shouldShowMap = Boolean(business.showMap && hasCoordinates(business.latitude, business.longitude));
   const description =
     business.longDescription ??
-    `${business.shortDescription} Este perfil está preparado para mostrar información clara, contacto directo y señales de confianza dentro de Casero Cancún.`;
+    `${business.shortDescription} Este perfil estÃ¡ preparado para mostrar informaciÃ³n clara, contacto directo y seÃ±ales de confianza dentro de Casero CancÃºn.`;
 
   return (
     <section className="bg-casero-background pb-14">
@@ -124,7 +156,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div className="flex gap-4">
                 <div className="grid h-20 w-20 flex-none place-items-center overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm">
-                  {business.logoUrl ? (
+                  {isUsableImageUrl(business.logoUrl) ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={business.logoUrl} alt={`Logo de ${business.name}`} className="h-full w-full object-cover" />
                   ) : (
@@ -165,7 +197,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                     {business.rating ? (
                       <span className="flex items-center gap-1 text-casero-dark">
                         <Star className="h-4 w-4 fill-casero-orange text-casero-orange" aria-hidden />
-                        {business.rating.toFixed(1)} ({business.reviewCount} reseñas)
+                        {business.rating.toFixed(1)} ({business.reviewCount} reseÃ±as)
                       </span>
                     ) : null}
                   </div>
@@ -198,7 +230,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
           {features.length > 0 ? (
             <Card>
-              <h2 className="font-heading text-2xl font-bold text-casero-dark">Características</h2>
+              <h2 className="font-heading text-2xl font-bold text-casero-dark">CaracterÃ­sticas</h2>
               <div className="mt-4 flex flex-wrap gap-2">
                 {features.map((feature) => (
                   <Badge key={feature} tone="green">
@@ -211,33 +243,40 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
           <Card>
             <h2 className="font-heading text-2xl font-bold text-casero-dark">Galería de imágenes</h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              {gallery.length > 0 ? (
-                gallery.map((image) => (
-                  <div key={image.id} className="aspect-video overflow-hidden rounded-lg bg-casero-background">
-                    <BusinessImage business={business} image={image} />
+            {images.length > 0 ? (
+              <div className="mt-5 grid gap-4">
+                <div className="aspect-video overflow-hidden rounded-lg bg-casero-background">
+                  <BusinessImage business={business} image={mainImage} />
+                </div>
+                {gallery.length > 0 ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {gallery.map((image) => (
+                      <div key={image.id} className="aspect-video overflow-hidden rounded-lg bg-casero-background">
+                        <BusinessImage business={business} image={image} />
+                      </div>
+                    ))}
                   </div>
-                ))
-              ) : (
-                <>
-                  <div className="aspect-video overflow-hidden rounded-lg bg-casero-background">
-                    <BusinessVisualPlaceholder business={business} compact />
-                  </div>
-                  <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-casero-dark/15 bg-white p-6 text-center">
-                    <ImageIcon className="h-8 w-8 text-casero-turquoise" aria-hidden />
-                    <p className="mt-3 text-sm font-semibold text-casero-text/65">
-                      Este negocio aún no ha subido galería.
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
+                ) : null}
+              </div>
+            ) : (
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                <div className="aspect-video overflow-hidden rounded-lg bg-casero-background">
+                  <BusinessVisualPlaceholder business={business} compact />
+                </div>
+                <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-casero-dark/15 bg-white p-6 text-center">
+                  <ImageIcon className="h-8 w-8 text-casero-turquoise" aria-hidden />
+                  <p className="mt-3 text-sm font-semibold text-casero-text/65">
+                    Este negocio aún no ha subido galería.
+                  </p>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
 
         <aside className="space-y-5">
           <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">Información de contacto</h2>
+            <h2 className="font-heading text-xl font-bold text-casero-dark">InformaciÃ³n de contacto</h2>
             <div className="mt-4 grid gap-3 text-sm text-casero-text/70">
               <p className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4 text-casero-green" aria-hidden />
@@ -246,7 +285,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
               {business.phone ? (
                 <p className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-casero-green" aria-hidden />
-                  Teléfono: {business.phone}
+                  TelÃ©fono: {business.phone}
                 </p>
               ) : null}
               {business.email ? (
@@ -268,7 +307,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           </Card>
 
           <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">Zonas de atención</h2>
+            <h2 className="font-heading text-xl font-bold text-casero-dark">Zonas de atenciÃ³n</h2>
             {!business.showMap ? (
               <p className="mt-3 rounded-md bg-casero-background p-3 text-sm font-semibold text-casero-text/70">
                 Atiende por zonas
@@ -283,7 +322,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
           {shouldShowLocation ? (
             <Card>
-              <h2 className="font-heading text-xl font-bold text-casero-dark">Ubicación</h2>
+              <h2 className="font-heading text-xl font-bold text-casero-dark">UbicaciÃ³n</h2>
               {business.address ? (
                 <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-casero-text/70">
                   <MapPin className="mt-1 h-4 w-4 text-casero-green" aria-hidden />
@@ -299,7 +338,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           ) : null}
 
           <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">Categorías</h2>
+            <h2 className="font-heading text-xl font-bold text-casero-dark">CategorÃ­as</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Badge key={category} tone="turquoise">
@@ -312,11 +351,11 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           <Card>
             <p className="flex items-center gap-2 font-heading text-lg font-bold text-casero-dark">
               <ShieldCheck className="h-5 w-5 text-casero-green" aria-hidden />
-              Señales de confianza
+              SeÃ±ales de confianza
             </p>
             <div className="mt-4 grid gap-2 text-sm text-casero-text/70">
-              <p>{business.verified ? "Perfil verificado" : "Perfil pendiente de verificación"}</p>
-              <p>{business.featured ? "Negocio destacado" : "Aparición normal"}</p>
+              <p>{business.verified ? "Perfil verificado" : "Perfil pendiente de verificaciÃ³n"}</p>
+              <p>{business.featured ? "Negocio destacado" : "ApariciÃ³n normal"}</p>
               <p>Contacto directo por WhatsApp</p>
             </div>
           </Card>

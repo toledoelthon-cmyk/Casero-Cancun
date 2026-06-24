@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BadgeCheck, MapPin, Star, Store, Wrench } from "lucide-react";
+import { BadgeCheck, CarFront, Home, MapPin, PawPrint, Star, Store, Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
@@ -24,16 +24,52 @@ function isDemoBusiness(business: DemoBusiness | LegacyBusiness): business is De
   return "shortDescription" in business;
 }
 
-function BusinessPlaceholder({ type, name }: { type?: DemoBusiness["profileType"]; name: string }) {
-  const Icon = type === "material_store" ? Store : Wrench;
-  const label = type === "material_store" ? "Tienda o materiales" : "Proveedor de servicios";
+function isUsableImageUrl(url: string | null | undefined) {
+  if (!url?.trim()) {
+    return false;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol === "https:" || parsedUrl.protocol === "http:";
+  } catch {
+    return url.startsWith("/");
+  }
+}
+
+function getPlaceholderMeta(business: DemoBusiness | LegacyBusiness) {
+  if (isDemoBusiness(business)) {
+    if (business.section === "stores_materials") {
+      return { Icon: Store, label: "Tiendas y materiales" };
+    }
+
+    if (business.section === "pets") {
+      return { Icon: PawPrint, label: "Mascotas" };
+    }
+
+    if (business.section === "auto_services") {
+      return { Icon: CarFront, label: "Servicios para tu auto" };
+    }
+
+    if (business.section === "home_services") {
+      return { Icon: Home, label: "Servicios del hogar" };
+    }
+  }
+
+  return isDemoBusiness(business) && business.profileType === "material_store"
+    ? { Icon: Store, label: "Tienda o materiales" }
+    : { Icon: Wrench, label: "Proveedor de servicios" };
+}
+
+function BusinessPlaceholder({ business }: { business: DemoBusiness | LegacyBusiness }) {
+  const { Icon, label } = getPlaceholderMeta(business);
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-casero-turquoise/18 via-casero-beige to-casero-orange/20 p-6 text-center">
       <span className="grid h-14 w-14 place-items-center rounded-md bg-white/80 text-casero-green shadow-sm">
         <Icon className="h-7 w-7" aria-hidden />
       </span>
-      <p className="mt-4 font-heading text-xl font-extrabold text-casero-dark">{name.charAt(0)}</p>
+      <p className="mt-4 font-heading text-xl font-extrabold text-casero-dark">{business.name.charAt(0)}</p>
       <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-casero-text/55">{label}</p>
     </div>
   );
@@ -47,17 +83,24 @@ const sectionLabels = {
 } as const;
 
 function BusinessImage({ business }: { business: DemoBusiness | LegacyBusiness }) {
-  const image = isDemoBusiness(business) ? business.media?.[0] : undefined;
+  const image = isDemoBusiness(business)
+    ? business.media
+        ?.filter((item) => isUsableImageUrl(item.url))
+        .slice()
+        .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))[0]
+    : undefined;
 
-  if (!image?.url) {
-    return <BusinessPlaceholder type={isDemoBusiness(business) ? business.profileType : undefined} name={business.name} />;
+  const imageUrl = image?.url;
+
+  if (!isUsableImageUrl(imageUrl)) {
+    return <BusinessPlaceholder business={business} />;
   }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={image.url}
-      alt={image.alt ?? business.name}
+      src={imageUrl}
+      alt={image?.alt ?? business.name}
       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
     />
   );

@@ -101,6 +101,19 @@ function buildFeatures(profile: BusinessProfile) {
   ].filter((feature): feature is string => Boolean(feature));
 }
 
+function hasUsableImageUrl(url: string | null | undefined) {
+  if (!url?.trim()) {
+    return false;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol === "https:" || parsedUrl.protocol === "http:";
+  } catch {
+    return url.startsWith("/");
+  }
+}
+
 function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
   const categoryRows =
     row.business_categories?.map((item) => item.categories).filter((category): category is Category => Boolean(category?.name)) ?? [];
@@ -114,6 +127,7 @@ function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
   const media =
     row.business_media
       ?.slice()
+      .filter((item) => hasUsableImageUrl(item.url))
       .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
       .map((item) => ({
         id: item.id,
