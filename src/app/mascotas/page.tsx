@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   description: "Encuentra mascotas Cancun: veterinarias, estetica canina, alimentos, accesorios, paseadores y servicios para mascotas.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function PetsPage({ searchParams }: PageProps) {
   const { ubicacion } = await searchParams;
 

@@ -29,6 +29,9 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type BusinessMediaItem = NonNullable<DemoBusiness["media"]>[number];
 
 function hasCoordinates(latitude?: number | null, longitude?: number | null) {

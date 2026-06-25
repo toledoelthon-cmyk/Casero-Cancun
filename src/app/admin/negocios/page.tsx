@@ -10,6 +10,9 @@ type PageProps = {
   searchParams: Promise<{ key?: string }>;
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminBusinessesPage({ searchParams }: PageProps) {
   const { key } = await searchParams;
 

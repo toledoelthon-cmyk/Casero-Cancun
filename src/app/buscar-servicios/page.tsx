@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Busca servicios locales Cancun, tiendas y materiales Cancun, mascotas Cancun y servicios automotrices Cancun en un solo directorio.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function SearchServicesPage() {
   const businesses = await getPublishedBusinesses();
 

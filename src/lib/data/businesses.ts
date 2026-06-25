@@ -177,7 +177,7 @@ async function getSupabasePublishedBusinesses() {
   const supabase = createSupabaseServerClient();
 
   if (!supabase) {
-    return null;
+    return undefined;
   }
 
   const result = await withTimeout(
@@ -204,7 +204,12 @@ async function getSupabasePublishedBusinesses() {
 
 export async function getPublishedBusinesses() {
   const businesses = await getSupabasePublishedBusinesses();
-  return businesses ?? fallbackBusinesses();
+
+  if (businesses === undefined) {
+    return fallbackBusinesses();
+  }
+
+  return businesses ?? [];
 }
 
 export async function getPublishedBusinessBySlug(slug: string) {
@@ -221,7 +226,7 @@ export async function getPublishedBusinessBySlug(slug: string) {
     );
 
     if (!result) {
-      return fallbackBusinesses().find((business) => business.slug === slug) ?? null;
+      return null;
     }
 
     const { data, error } = result;
@@ -229,6 +234,8 @@ export async function getPublishedBusinessBySlug(slug: string) {
     if (!error && data) {
       return mapSupabaseBusiness(data as SupabaseBusinessRow);
     }
+
+    return null;
   }
 
   return fallbackBusinesses().find((business) => business.slug === slug) ?? null;

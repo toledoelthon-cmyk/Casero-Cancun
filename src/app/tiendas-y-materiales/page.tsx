@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   description: "Encuentra tiendas y materiales Cancun: ferreterias, materiales de construccion, herramientas, refacciones y suministros locales.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function StoresPage({ searchParams }: PageProps) {
   const { ubicacion } = await searchParams;
 

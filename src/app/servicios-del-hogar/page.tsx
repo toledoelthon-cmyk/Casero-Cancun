@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   description: "Encuentra servicios locales Cancun para reparaciones, mantenimiento, limpieza, electricidad, plomeria y aire acondicionado.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function HomeServicesPage({ searchParams }: PageProps) {
   const { ubicacion } = await searchParams;
 

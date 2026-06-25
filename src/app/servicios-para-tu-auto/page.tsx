@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   description: "Encuentra servicios automotrices Cancun: mecanicos, talleres, lavado, gruas, llanteras, diagnostico y refacciones.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AutoServicesPage({ searchParams }: PageProps) {
   const { ubicacion } = await searchParams;
 

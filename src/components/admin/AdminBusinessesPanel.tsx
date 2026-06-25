@@ -1078,7 +1078,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
 
     if (!supabase) {
       setError("Supabase no esta configurado. Revisa NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
-      return;
+      return false;
     }
 
     setLoading(true);
@@ -1146,7 +1146,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
       console.error("admin businesses load error", loadError);
       setError("No pudimos cargar los negocios. Revisa la consola y las políticas de Supabase.");
       setLoading(false);
-      return;
+      return false;
     }
 
     const [plansResult, categoriesResult, locationsResult] = await Promise.all([
@@ -1170,6 +1170,7 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
 
     setBusinesses(((data ?? []) as unknown as AdminBusinessRow[]).map(mapBusiness));
     setLoading(false);
+    return true;
   }, []);
 
   useEffect(() => {
@@ -1252,8 +1253,14 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
       return;
     }
 
-    await loadBusinesses();
-    setNotice("Negocio actualizado correctamente.");
+    const refreshed = await loadBusinesses();
+
+    if (refreshed) {
+      setNotice("Negocio actualizado correctamente.");
+    } else {
+      setError("El negocio se actualizo, pero no pudimos refrescar la lista desde Supabase.");
+    }
+
     setActionLoadingId(null);
   }
 
