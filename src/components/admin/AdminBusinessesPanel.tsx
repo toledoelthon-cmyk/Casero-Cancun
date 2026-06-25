@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { BusinessMap } from "@/components/maps/BusinessMap";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -160,7 +160,6 @@ type AdminBusinessRow = {
 
 type StatusFilter = "all" | PublicationStatus;
 
-const storageKey = "casero_admin_access";
 const mediaStorageBucket = "business-media";
 const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
 const statusFilters: Array<{ label: string; value: StatusFilter }> = [
@@ -1041,10 +1040,7 @@ function EditBusinessModal({
   );
 }
 
-export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: string }) {
-  const adminKey = process.env.NEXT_PUBLIC_ADMIN_ACCESS_KEY;
-  const [accessInput, setAccessInput] = useState("");
-  const [hasAccess, setHasAccess] = useState(false);
+export function AdminBusinessesPanel() {
   const [businesses, setBusinesses] = useState<AdminBusiness[]>([]);
   const [plans, setPlans] = useState<AdminPlanOption[]>([]);
   const [categories, setCategories] = useState<AdminCategoryOption[]>([]);
@@ -1059,19 +1055,6 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
   const [editError, setEditError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!adminKey) {
-      return;
-    }
-
-    const storedAccess = window.localStorage.getItem(storageKey);
-
-    if (storedAccess === adminKey || queryAccessKey === adminKey) {
-      window.localStorage.setItem(storageKey, adminKey);
-      setHasAccess(true);
-    }
-  }, [adminKey, queryAccessKey]);
 
   const loadBusinesses = useCallback(async () => {
     const supabase = createSupabaseBrowserClient();
@@ -1174,10 +1157,8 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
   }, []);
 
   useEffect(() => {
-    if (hasAccess) {
-      void loadBusinesses();
-    }
-  }, [hasAccess, loadBusinesses]);
+    void loadBusinesses();
+  }, [loadBusinesses]);
 
   const filteredBusinesses = useMemo(() => {
     if (filter === "all") {
@@ -1203,33 +1184,19 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
   const selectedBusiness = businesses.find((business) => business.id === selectedBusinessId) ?? null;
   const editingBusiness = businesses.find((business) => business.id === editingBusinessId) ?? null;
 
-  function handleAccessSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function logout() {
+    const supabase = createSupabaseBrowserClient();
 
-    if (!adminKey) {
-      setError("Falta configurar NEXT_PUBLIC_ADMIN_ACCESS_KEY.");
-      return;
+    if (supabase) {
+      await supabase.auth.signOut();
     }
 
-    if (accessInput === adminKey) {
-      window.localStorage.setItem(storageKey, adminKey);
-      setHasAccess(true);
-      setError(null);
-      return;
-    }
-
-    setError("Clave admin incorrecta.");
-  }
-
-  function logout() {
-    window.localStorage.removeItem(storageKey);
-    setHasAccess(false);
     setBusinesses([]);
-    setAccessInput("");
     setSelectedBusinessId(null);
     setEditingBusinessId(null);
     setEditError(null);
     setMediaActionLoadingId(null);
+    window.location.assign("/admin/login");
   }
 
   async function updateBusiness(id: string, updates: Partial<Pick<AdminBusiness, "status" | "is_featured" | "is_verified">>) {
@@ -1600,41 +1567,11 @@ export function AdminBusinessesPanel({ queryAccessKey }: { queryAccessKey?: stri
     setMediaActionLoadingId(null);
   }
 
-  if (!hasAccess) {
-    return (
-      <section className="container-page py-8 sm:py-12">
-        <div className="mx-auto max-w-xl">
-          <Card>
-            <h1 className="font-heading text-2xl font-extrabold text-casero-dark">Acceso admin temporal</h1>
-            <p className="mt-3 text-sm leading-6 text-casero-text/70">
-              Ingresa la clave temporal para revisar negocios registrados.
-            </p>
-            <form className="mt-6 grid gap-4" onSubmit={handleAccessSubmit}>
-              <label className="text-sm font-bold text-casero-dark">
-                Clave admin
-                <input
-                  value={accessInput}
-                  onChange={(event) => setAccessInput(event.target.value)}
-                  className="mt-2 w-full rounded-md border border-casero-dark/10 px-3 py-2.5 font-normal outline-casero-green"
-                  type="password"
-                />
-              </label>
-              {error ? <p className="rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p> : null}
-              <Button type="submit" variant="secondary">
-                Entrar
-              </Button>
-            </form>
-          </Card>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="container-page py-8 sm:py-12">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.16em] text-casero-green">Admin temporal</p>
+          <p className="text-sm font-bold uppercase tracking-[0.16em] text-casero-green">Admin</p>
           <h1 className="mt-3 font-heading text-2xl font-extrabold text-casero-dark sm:text-3xl md:text-4xl">
             Solicitudes de negocios
           </h1>

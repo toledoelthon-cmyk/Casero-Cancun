@@ -5,6 +5,16 @@ export type CategoryType = "service" | "store";
 export type CategorySection = "home_services" | "stores_materials" | "pets" | "auto_services";
 export type LocationMode = "physical" | "home_service" | "both" | "zones_only";
 export type PublicationStatus = "pending" | "published" | "paused" | "rejected";
+export type UserRole = "admin" | "provider";
+
+export type UserProfile = {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  role: UserRole;
+  created_at: string | null;
+  updated_at: string | null;
+};
 
 export type Plan = {
   id: string;
@@ -41,6 +51,7 @@ export type Location = {
 export type BusinessProfile = {
   id: string;
   plan_id: string | null;
+  owner_user_id: string | null;
   business_name: string;
   responsible_name: string | null;
   slug: string;
@@ -94,6 +105,7 @@ export type BusinessProfile = {
 export type BusinessProfileInsert = {
   id?: string;
   plan_id?: string | null;
+  owner_user_id?: string | null;
   business_name: string;
   responsible_name?: string | null;
   slug: string;
@@ -173,6 +185,15 @@ export type BusinessMedia = {
 export type Database = {
   public: {
     Tables: {
+      user_profiles: {
+        Row: UserProfile;
+        Insert: Omit<UserProfile, "created_at" | "updated_at"> & {
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: Partial<Omit<UserProfile, "id">>;
+        Relationships: [];
+      };
       plans: {
         Row: Plan;
         Insert: Omit<Plan, "id" | "created_at"> & { id?: string; created_at?: string | null };

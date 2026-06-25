@@ -1,4 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 
 const missingSupabaseMessage =
@@ -20,15 +21,15 @@ export function createSupabaseBrowserClient() {
     return null;
   }
 
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey, {
     global: {
-      fetch: (input, init) =>
+      fetch: (input: RequestInfo | URL, init?: RequestInit) =>
         fetch(input, {
           ...init,
           cache: "no-store",
         }),
     },
-  });
+  }) as unknown as SupabaseClient<Database>;
 }
 
 export { missingSupabaseMessage };
