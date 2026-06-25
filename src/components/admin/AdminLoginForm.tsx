@@ -26,7 +26,7 @@ export function AdminLoginForm() {
     setLoading(true);
     setError(null);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
@@ -37,12 +37,9 @@ export function AdminLoginForm() {
       return;
     }
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    const authUser = signInData.user ?? signInData.session?.user ?? null;
 
-    if (userError || !user) {
+    if (!authUser) {
       await supabase.auth.signOut();
       setError("No pudimos validar tu sesion.");
       setLoading(false);
@@ -51,9 +48,28 @@ export function AdminLoginForm() {
 
     const { data: profile, error: profileError } = await supabase
       .from("user_profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+      .select("id,email,role")
+      .eq("id", authUser.id)
+      .single();
+
+    if (process.env.NODE_ENV === "development") {
+      console.log("admin login role check", {
+        authUserId: authUser.id,
+        authEmail: authUser.email,
+        profileReturned: profile,
+        profileError,
+      });
+    }
+
+    if (profileError) {
+      console.error("admin login profile query failed", {
+        message: profileError.message,
+        details: profileError.details,
+        hint: profileError.hint,
+        code: profileError.code,
+        fullError: profileError,
+      });
+    }
 
     if (profileError || profile?.role !== "admin") {
       await supabase.auth.signOut();

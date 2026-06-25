@@ -71,7 +71,26 @@ export async function getAdminSession(): Promise<AdminSession | null> {
     .from("user_profiles")
     .select("id,email,full_name,role,created_at,updated_at")
     .eq("id", user.id)
-    .maybeSingle();
+    .single();
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("admin session role check", {
+      authUserId: user.id,
+      authEmail: user.email,
+      profileReturned: profile,
+      profileError,
+    });
+  }
+
+  if (profileError) {
+    console.error("admin session profile query failed", {
+      message: profileError.message,
+      details: profileError.details,
+      hint: profileError.hint,
+      code: profileError.code,
+      fullError: profileError,
+    });
+  }
 
   if (profileError || profile?.role !== "admin") {
     return null;
