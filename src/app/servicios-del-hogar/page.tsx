@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Servicios del hogar | Servicios locales Cancun",
-  description: "Encuentra servicios locales Cancun para reparaciones, mantenimiento, limpieza, electricidad, plomeria y aire acondicionado.",
+  title: "Servicios del hogar | Servicios locales Cancún",
+  description: "Encuentra servicios locales Cancún para reparaciones, mantenimiento, limpieza, electricidad, plomería y aire acondicionado.",
 };
 
 export const dynamic = "force-dynamic";
@@ -21,8 +21,8 @@ export default async function HomeServicesPage({ searchParams }: PageProps) {
     <SectionBusinessPage
       section="home_services"
       eyebrow="Servicios del hogar"
-      title="Servicios del hogar en Cancun"
-      description="Plomeria, electricidad, limpieza, aire acondicionado y mantenimiento local para hogares y propiedades."
+      title="Servicios del hogar en Cancún"
+      description="Plomería, electricidad, limpieza, aire acondicionado y mantenimiento local para hogares y propiedades."
       categories={serviceCategories}
       selectedLocationSlug={ubicacion ?? "all"}
     />

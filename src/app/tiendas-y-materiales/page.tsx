@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Tiendas y materiales Cancun | Ferreterias, herramientas y refacciones",
-  description: "Encuentra tiendas y materiales Cancun: ferreterias, materiales de construccion, herramientas, refacciones y suministros locales.",
+  title: "Tiendas y materiales Cancún | Ferreterías, herramientas y refacciones",
+  description: "Encuentra tiendas y materiales Cancún: ferreterias, materiales de construcción, herramientas, refacciones y suministros locales.",
 };
 
 export const dynamic = "force-dynamic";
@@ -21,7 +21,7 @@ export default async function StoresPage({ searchParams }: PageProps) {
     <SectionBusinessPage
       section="stores_materials"
       eyebrow="Tiendas y materiales"
-      title="Tiendas y materiales en Cancun"
+      title="Tiendas y materiales en Cancún"
       description="Encuentra ferreterias, materiales, herramientas, refacciones y proveedores locales publicados."
       categories={storeCategories}
       selectedLocationSlug={ubicacion ?? "all"}

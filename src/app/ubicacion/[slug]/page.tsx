@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const location = locations.find((item) => item.slug === slug);
 
   return {
-    title: location ? `${location.name} | Casero Cancun` : "Ubicacion no encontrada | Casero Cancun",
-    description: location ? `Negocios publicados que atienden ${location.name} en Casero Cancun.` : undefined,
+    title: location ? `${location.name} | Casero Cancún` : "Ubicación no encontrada | Casero Cancún",
+    description: location ? `Negocios publicados que atienden ${location.name} en Casero Cancún.` : undefined,
   };
 }
 
@@ -40,14 +40,14 @@ export default async function LocationPage({ params }: PageProps) {
   return (
     <section className="container-page py-8 sm:py-12">
       <SectionHeader
-        eyebrow="Ubicacion"
+        eyebrow="Ubicación"
         title={location.name}
         description="Negocios publicados que atienden esta zona."
       />
 
       {availableCategories.length > 0 ? (
         <Card className="mt-6 p-5 sm:mt-8 sm:p-6">
-          <h2 className="font-heading text-xl font-bold text-casero-dark">Categorias disponibles en esta zona</h2>
+          <h2 className="font-heading text-xl font-bold text-casero-dark">Categorías disponibles en esta zona</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {availableCategories.map((category) => (
               <span key={category} className="rounded-md bg-casero-beige px-3 py-1.5 text-xs font-bold text-casero-dark">
@@ -64,7 +64,7 @@ export default async function LocationPage({ params }: PageProps) {
         ) : (
           <Card className="p-5 sm:p-6">
             <p className="text-sm leading-7 text-casero-text/70">
-              Proximamente habra proveedores disponibles en esta zona.
+              Próximamente habrá proveedores disponibles en esta zona.
             </p>
           </Card>
         )}
@@ -73,7 +73,7 @@ export default async function LocationPage({ params }: PageProps) {
       <div className="mt-8 rounded-lg bg-casero-dark p-5 text-white sm:p-6">
         <h2 className="font-heading text-xl font-bold sm:text-2xl">Registra tu negocio en esta zona.</h2>
         <p className="mt-2 text-sm leading-6 text-white/70">
-          Ayuda a que mas clientes de {location.name} encuentren tu servicio, tienda o proveedor local.
+          Ayuda a que más clientes de {location.name} encuentren tu servicio, tienda o proveedor local.
         </p>
         <Button href="/registrar-mi-negocio" className="mt-5 w-full sm:w-auto">
           Registrar mi negocio

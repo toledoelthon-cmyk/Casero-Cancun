@@ -4,18 +4,18 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { autoServiceCategories, petCategories, serviceCategories, storeCategories } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
-  title: "Categorias | Servicios locales Cancun, mascotas, auto, tiendas y materiales",
+  title: "Categorías | Servicios locales Cancún, mascotas, auto, tiendas y materiales",
   description:
-    "Explora categorias de servicios locales Cancun, tiendas y materiales Cancun, mascotas Cancun y servicios automotrices Cancun.",
+    "Explora categorías de servicios locales Cancún, tiendas y materiales Cancún, mascotas Cancún y servicios automotrices Cancún.",
 };
 
 export default function CategoriesPage() {
   return (
     <section className="container-page py-8 sm:py-12">
       <SectionHeader
-        eyebrow="Categorias"
+        eyebrow="Categorías"
         title="Busca por tipo de solucion"
-        description="Explora las cuatro secciones principales de Casero Cancun y entra a resultados por categoria."
+        description="Explora las cuatro secciones principales de Casero Cancún y entra a resultados por categoría."
       />
 
       {[

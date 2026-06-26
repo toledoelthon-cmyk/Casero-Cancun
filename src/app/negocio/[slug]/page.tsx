@@ -114,12 +114,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!business) {
     return {
-      title: "Negocio no encontrado | Casero CancÃºn",
+      title: "Negocio no encontrado | Casero Cancún",
     };
   }
 
   return {
-    title: `${business.name} | Casero CancÃºn`,
+    title: `${business.name} | Casero Cancún`,
     description: business.shortDescription,
   };
 }
@@ -132,7 +132,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const whatsappMessage = "Hola, vi tu perfil en Casero CancÃºn y quiero informaciÃ³n.";
+  const whatsappMessage = "Hola, vi tu perfil en Casero Cancún y quiero información.";
   const images = (business.media ?? [])
     .filter((image) => isUsableImageUrl(image.url))
     .slice()
@@ -146,7 +146,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
   const shouldShowMap = Boolean(business.showMap && hasCoordinates(business.latitude, business.longitude));
   const description =
     business.longDescription ??
-    `${business.shortDescription} Este perfil estÃ¡ preparado para mostrar informaciÃ³n clara, contacto directo y seÃ±ales de confianza dentro de Casero CancÃºn.`;
+    `${business.shortDescription} Este perfil está preparado para mostrar información clara, contacto directo y señales de confianza dentro de Casero Cancún.`;
 
   return (
     <section className="bg-casero-background pb-24 md:pb-14">
@@ -200,7 +200,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                     {business.rating ? (
                       <span className="flex items-center gap-1 text-casero-dark">
                         <Star className="h-4 w-4 fill-casero-orange text-casero-orange" aria-hidden />
-                        {business.rating.toFixed(1)} ({business.reviewCount} reseÃ±as)
+                        {business.rating.toFixed(1)} ({business.reviewCount} reseñas)
                       </span>
                     ) : null}
                   </div>
@@ -233,7 +233,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
           {features.length > 0 ? (
             <Card className="p-5 sm:p-6">
-              <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">CaracterÃ­sticas</h2>
+              <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Características</h2>
               <div className="mt-4 flex flex-wrap gap-2">
                 {features.map((feature) => (
                   <Badge key={feature} tone="green">
@@ -279,7 +279,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
         <aside className="space-y-5">
           <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">InformaciÃ³n de contacto</h2>
+            <h2 className="font-heading text-xl font-bold text-casero-dark">Información de contacto</h2>
             <div className="mt-4 grid gap-3 text-sm text-casero-text/70">
               <p className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4 text-casero-green" aria-hidden />
@@ -288,7 +288,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
               {business.phone ? (
                 <p className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-casero-green" aria-hidden />
-                  TelÃ©fono: {business.phone}
+                  Teléfono: {business.phone}
                 </p>
               ) : null}
               {business.email ? (
@@ -310,7 +310,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           </Card>
 
           <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">Zonas de atenciÃ³n</h2>
+            <h2 className="font-heading text-xl font-bold text-casero-dark">Zonas de atención</h2>
             {!business.showMap ? (
               <p className="mt-3 rounded-md bg-casero-background p-3 text-sm font-semibold text-casero-text/70">
                 Atiende por zonas
@@ -325,7 +325,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
           {shouldShowLocation ? (
             <Card>
-              <h2 className="font-heading text-xl font-bold text-casero-dark">UbicaciÃ³n</h2>
+              <h2 className="font-heading text-xl font-bold text-casero-dark">Ubicación</h2>
               {business.address ? (
                 <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-casero-text/70">
                   <MapPin className="mt-1 h-4 w-4 text-casero-green" aria-hidden />
@@ -341,7 +341,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           ) : null}
 
           <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">CategorÃ­as</h2>
+            <h2 className="font-heading text-xl font-bold text-casero-dark">Categorías</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Badge key={category} tone="turquoise">
@@ -354,11 +354,11 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           <Card>
             <p className="flex items-center gap-2 font-heading text-lg font-bold text-casero-dark">
               <ShieldCheck className="h-5 w-5 text-casero-green" aria-hidden />
-              SeÃ±ales de confianza
+              Señales de confianza
             </p>
             <div className="mt-4 grid gap-2 text-sm text-casero-text/70">
-              <p>{business.verified ? "Perfil verificado" : "Perfil pendiente de verificaciÃ³n"}</p>
-              <p>{business.featured ? "Negocio destacado" : "ApariciÃ³n normal"}</p>
+              <p>{business.verified ? "Perfil verificado" : "Perfil pendiente de verificación"}</p>
+              <p>{business.featured ? "Negocio destacado" : "Aparición normal"}</p>
               <p>Contacto directo por WhatsApp</p>
             </div>
           </Card>

@@ -433,11 +433,11 @@ export function RegisterBusinessForm({
     const categoriesMatchSelectedSection = selectedCategories.every((category) => category.section === businessSection);
     const imageValidationError = validateFiles(logoFile, businessFiles);
     const selectionValidationError = exceedsCategoryLimit
-      ? `Tu plan permite seleccionar hasta ${maxCategories} categorias.`
+      ? `Tu plan permite seleccionar hasta ${maxCategories} categorías.`
       : exceedsLocationLimit
         ? `Tu plan permite seleccionar hasta ${maxLocations} ubicaciones.`
         : selectedCategories.length > 0 && !categoriesMatchSelectedSection
-          ? "Las categorias seleccionadas no corresponden a la seccion elegida."
+          ? "Las categorías seleccionadas no corresponden a la sección elegida."
         : null;
 
     if (
@@ -533,7 +533,7 @@ export function RegisterBusinessForm({
       selectedSection: businessSection,
       "profile_type enviado": profileType,
       "section enviada": businessSection,
-      "categorias seleccionadas": selectedCategories.map((category) => ({
+      "categorías seleccionadas": selectedCategories.map((category) => ({
         id: category.id,
         name: category.name,
         section: category.section,
@@ -752,7 +752,7 @@ export function RegisterBusinessForm({
               }}
               className={fieldClass}
             >
-              <option value="">Selecciona una seccion</option>
+              <option value="">Selecciona una sección</option>
               {Object.entries(businessSectionLabels).map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
@@ -820,7 +820,7 @@ export function RegisterBusinessForm({
           </fieldset>
 
           <label className="hidden">
-            Categorias
+            Categorías
             <select
               name="categoryIds"
               aria-label={categoryLabel}
@@ -831,7 +831,7 @@ export function RegisterBusinessForm({
                 const nextCategoryIds = Array.from(event.target.selectedOptions).map((option) => option.value);
                 if (nextCategoryIds.length > maxCategories) {
                   setStatus("error");
-                  setFormMessage(`Tu plan permite seleccionar hasta ${maxCategories} categorias.`);
+                  setFormMessage(`Tu plan permite seleccionar hasta ${maxCategories} categorías.`);
                   return;
                 }
 
@@ -952,7 +952,7 @@ export function RegisterBusinessForm({
                 if (categoryIds.length > nextMaxCategories) {
                   setStatus("error");
                   setFormMessage(
-                    `Tu plan permite seleccionar hasta ${nextMaxCategories} categorias. Elimina categorias sobrantes para continuar.`,
+                    `Tu plan permite seleccionar hasta ${nextMaxCategories} categorías. Elimina categorías sobrantes para continuar.`,
                   );
                 } else if (locationIds.length > nextMaxLocations) {
                   setStatus("error");

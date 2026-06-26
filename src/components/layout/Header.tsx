@@ -27,11 +27,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-casero-dark/10 bg-white/92 backdrop-blur">
       <Container className="flex min-h-16 items-center justify-between gap-4">
-        <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="Casero Cancun" onClick={closeMenu}>
+        <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="Casero Cancún" onClick={closeMenu}>
           <span className="grid h-10 w-10 place-items-center rounded-md bg-casero-green font-heading text-lg font-extrabold text-white">
             C
           </span>
-          <span className="truncate font-heading text-lg font-extrabold text-casero-dark">Casero Cancun</span>
+          <span className="truncate font-heading text-lg font-extrabold text-casero-dark">Casero Cancún</span>
         </Link>
 
         <nav className="hidden items-center gap-4 text-sm font-semibold text-casero-text/75 2xl:flex">
@@ -52,7 +52,7 @@ export function Header() {
           <button
             className="grid h-11 w-11 place-items-center rounded-md border border-casero-dark/10 bg-white text-casero-dark"
             type="button"
-            aria-label={isOpen ? "Cerrar menu" : "Abrir menu"}
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={isOpen}
             onClick={() => setIsOpen((current) => !current)}
           >

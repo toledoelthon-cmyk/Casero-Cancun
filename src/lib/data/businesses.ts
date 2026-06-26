@@ -60,7 +60,7 @@ function fallbackBusinesses() {
         locationNames.map((locationName) => demoLocations.find((location) => location.name === locationName)?.slug ?? slugify(locationName)),
       longDescription:
         business.longDescription ??
-        `${business.shortDescription} Perfil demo preparado para mostrar como se vera un negocio publicado en Casero Cancun.`,
+        `${business.shortDescription} Perfil demo preparado para mostrar cómo se verá un negocio publicado en Casero Cancún.`,
       mainService: business.mainService ?? business.category,
       media: business.media ?? [],
     };
@@ -73,7 +73,7 @@ function buildBadges(profile: BusinessProfile) {
     profile.attends_airbnb ? "Atiende Airbnb" : null,
     profile.invoices ? "Factura" : null,
     profile.emergency_service ? "Urgencias" : null,
-    profile.offers_warranty ? "Garantia" : null,
+    profile.offers_warranty ? "Garantía" : null,
   ].filter((badge): badge is string => Boolean(badge));
 }
 
@@ -81,21 +81,21 @@ function buildFeatures(profile: BusinessProfile) {
   return [
     profile.service_at_home ? "Servicio a domicilio" : null,
     profile.free_estimate ? "Presupuesto sin costo" : null,
-    profile.service_24_7 ? "Atencion 24/7" : null,
+    profile.service_24_7 ? "Atención 24/7" : null,
     profile.by_appointment ? "Con cita previa" : null,
     profile.accepts_card ? "Acepta tarjeta" : null,
     profile.accepts_transfer ? "Acepta transferencia" : null,
     profile.attends_condos ? "Atiende condominios" : null,
-    profile.retail_sales ? "Venta al publico" : null,
+    profile.retail_sales ? "Venta al público" : null,
     profile.wholesale_sales ? "Venta por mayoreo" : null,
     profile.delivery_available ? "Entrega a domicilio" : null,
     profile.authorized_distributor ? "Distribuidor autorizado" : null,
-    profile.pet_veterinary_service ? "Atencion veterinaria" : null,
-    profile.pet_grooming ? "Estetica / bano y corte" : null,
-    profile.pet_daycare ? "Guarderia" : null,
+    profile.pet_veterinary_service ? "Atención veterinaria" : null,
+    profile.pet_grooming ? "Estética / baño y corte" : null,
+    profile.pet_daycare ? "Guardería" : null,
     profile.pet_food_accessories ? "Alimentos o accesorios" : null,
-    profile.auto_tow_service ? "Grua disponible" : null,
-    profile.auto_diagnostics ? "Diagnostico" : null,
+    profile.auto_tow_service ? "Grúa disponible" : null,
+    profile.auto_diagnostics ? "Diagnóstico" : null,
     profile.auto_parts ? "Refacciones" : null,
     profile.auto_wash_detailing ? "Lavado / detallado" : null,
   ].filter((feature): feature is string => Boolean(feature));
@@ -122,7 +122,7 @@ function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
   const categoryNames = categoryRows.map((category) => category.name);
   const locationNames = locationRows.map((location) => location.name);
   const category = categoryNames[0] ?? row.main_service ?? "Servicio local";
-  const location = locationNames[0] ?? row.address ?? "Cancun y alrededores";
+  const location = locationNames[0] ?? row.address ?? "Cancún y alrededores";
   const section = row.section ?? categoryRows.find((categoryItem) => categoryItem.section)?.section ?? undefined;
   const media =
     row.business_media
@@ -149,7 +149,7 @@ function mapSupabaseBusiness(row: SupabaseBusinessRow): DemoBusiness {
     location,
     locationSlugs: locationRows.map((locationItem) => locationItem.slug),
     locations: locationNames.length > 0 ? locationNames : [location],
-    shortDescription: row.short_description ?? row.long_description ?? "Negocio local publicado en Casero Cancun.",
+    shortDescription: row.short_description ?? row.long_description ?? "Negocio local publicado en Casero Cancún.",
     longDescription: row.long_description ?? row.short_description ?? undefined,
     mainService: row.main_service ?? category,
     whatsapp: row.whatsapp ?? row.phone ?? "",

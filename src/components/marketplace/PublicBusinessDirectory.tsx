@@ -284,7 +284,7 @@ export function PublicBusinessDirectory({
           ) : (
             <Card className="p-5 sm:p-6">
               <p className="text-sm leading-7 text-casero-text/70">
-                No encontramos negocios publicados con esos filtros. Prueba con otra categoria, zona o texto de busqueda.
+                No encontramos negocios publicados con esos filtros. Prueba con otra categoría, zona o texto de búsqueda.
               </p>
             </Card>
           )}

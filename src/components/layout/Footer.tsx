@@ -9,12 +9,12 @@ const footerLinks = [
   { href: "/tiendas-y-materiales", label: "Tiendas y materiales" },
   { href: "/mascotas", label: "Mascotas" },
   { href: "/servicios-para-tu-auto", label: "Servicios para tu auto" },
-  { href: "/categorias", label: "Categorias" },
+  { href: "/categorias", label: "Categorías" },
   { href: "/planes", label: "Planes" },
   { href: "/registrar-mi-negocio", label: "Registrar negocio" },
   { href: "/contacto", label: "Contacto" },
   { href: "/aviso-de-privacidad", label: "Aviso de privacidad" },
-  { href: "/terminos-y-condiciones", label: "Terminos y condiciones" },
+  { href: "/terminos-y-condiciones", label: "Términos y condiciones" },
 ];
 
 export function Footer() {
@@ -24,10 +24,10 @@ export function Footer() {
         <div>
           <p className="font-heading text-xl font-extrabold">{contact.brand}</p>
           <p className="mt-3 max-w-xl text-sm leading-6 text-white/70">
-            Servicios, tiendas, mascotas y soluciones para tu auto en Cancun.
+            Servicios, tiendas, mascotas y soluciones para tu auto en Cancún.
           </p>
           <p className="mt-5 text-xs leading-5 text-white/50">
-            Casero Cancun funciona como plataforma de conexion. Cada proveedor, tienda o negocio es responsable de la
+            Casero Cancún funciona como plataforma de conexion. Cada proveedor, tienda o negocio es responsable de la
             informacion publicada y de los servicios o productos que ofrece.
           </p>
         </div>
@@ -60,7 +60,7 @@ export function Footer() {
         </nav>
       </Container>
       <div className="border-t border-white/10 py-4">
-        <Container className="text-sm text-white/55">(c) 2026 Casero Cancun. Hecho para negocios locales.</Container>
+        <Container className="text-sm text-white/55">(c) 2026 Casero Cancún. Hecho para negocios locales.</Container>
       </div>
     </footer>
   );

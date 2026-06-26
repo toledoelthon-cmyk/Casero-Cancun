@@ -37,7 +37,7 @@ export async function SectionBusinessPage({
       </div>
 
       <div className="mt-8 sm:mt-10">
-        <h2 className="font-heading text-xl font-bold text-casero-dark">Categorias</h2>
+        <h2 className="font-heading text-xl font-bold text-casero-dark">Categorías</h2>
         <div className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {categories.map((category) => (
             <CategoryCard key={category.slug} category={category} />
@@ -50,11 +50,11 @@ export async function SectionBusinessPage({
           <SectionHeader
             eyebrow="Negocios publicados"
             title="Listos para contactar"
-            description="Solo mostramos negocios publicados por el equipo de Casero Cancun."
+            description="Solo mostramos negocios publicados por el equipo de Casero Cancún."
           />
           <form className="w-full rounded-lg border border-casero-dark/10 bg-white p-4 shadow-sm md:w-72">
             <label className="text-sm font-bold text-casero-dark" htmlFor="location">
-              Filtrar por ubicacion
+              Filtrar por ubicación
             </label>
             <select
               id="location"
@@ -81,7 +81,7 @@ export async function SectionBusinessPage({
           ) : (
             <Card>
               <p className="text-sm leading-7 text-casero-text/70">
-                Proximamente habra negocios publicados para esta seccion y zona.
+                Próximamente habrá negocios publicados para esta sección y zona.
               </p>
             </Card>
           )}
@@ -89,9 +89,9 @@ export async function SectionBusinessPage({
       </div>
 
       <div className="mt-10 rounded-lg bg-casero-dark p-5 text-white shadow-soft md:p-8">
-        <h2 className="font-heading text-xl font-extrabold sm:text-2xl">Registra tu negocio en esta seccion</h2>
+        <h2 className="font-heading text-xl font-extrabold sm:text-2xl">Registra tu negocio en esta sección</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/70">
-          Aparece en Casero Cancun para que clientes locales encuentren tu negocio y te contacten directo por WhatsApp.
+          Aparece en Casero Cancún para que clientes locales encuentren tu negocio y te contacten directo por WhatsApp.
         </p>
         <Button href="/registrar-mi-negocio" className="mt-5 w-full sm:w-auto" variant="primary">
           Registrar negocio

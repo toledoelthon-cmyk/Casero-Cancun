@@ -4,8 +4,8 @@ import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
 import { getAdminSession } from "@/lib/auth/admin";
 
 export const metadata: Metadata = {
-  title: "Login admin | Casero Cancun",
-  description: "Acceso administrativo para Casero Cancun.",
+  title: "Login admin | Casero Cancún",
+  description: "Acceso administrativo para Casero Cancún.",
 };
 
 export const dynamic = "force-dynamic";

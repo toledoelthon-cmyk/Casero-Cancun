@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Mascotas Cancun | Veterinarias, estetica, alimentos y servicios",
-  description: "Encuentra mascotas Cancun: veterinarias, estetica canina, alimentos, accesorios, paseadores y servicios para mascotas.",
+  title: "Mascotas Cancún | Veterinarias, estética, alimentos y servicios",
+  description: "Encuentra mascotas Cancún: veterinarias, estética canina, alimentos, accesorios, paseadores y servicios para mascotas.",
 };
 
 export const dynamic = "force-dynamic";
@@ -21,8 +21,8 @@ export default async function PetsPage({ searchParams }: PageProps) {
     <SectionBusinessPage
       section="pets"
       eyebrow="Mascotas"
-      title="Servicios y tiendas para mascotas en Cancun"
-      description="Veterinarias, estetica, guarderia, alimentos, accesorios y servicios a domicilio para mascotas."
+      title="Servicios y tiendas para mascotas en Cancún"
+      description="Veterinarias, estética, guardería, alimentos, accesorios y servicios a domicilio para mascotas."
       categories={petCategories}
       selectedLocationSlug={ubicacion ?? "all"}
     />

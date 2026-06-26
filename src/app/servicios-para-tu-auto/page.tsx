@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Servicios automotrices Cancun | Talleres, lavado, gruas y llanteras",
-  description: "Encuentra servicios automotrices Cancun: mecanicos, talleres, lavado, gruas, llanteras, diagnostico y refacciones.",
+  title: "Servicios automotrices Cancún | Talleres, lavado, grúas y llanteras",
+  description: "Encuentra servicios automotrices Cancún: mecánicos, talleres, lavado, grúas, llanteras, diagnóstico y refacciones.",
 };
 
 export const dynamic = "force-dynamic";
@@ -21,8 +21,8 @@ export default async function AutoServicesPage({ searchParams }: PageProps) {
     <SectionBusinessPage
       section="auto_services"
       eyebrow="Servicios para tu auto"
-      title="Servicios para tu auto en Cancun"
-      description="Mecanicos, talleres, diagnostico, lavado, gruas, llanteras y soluciones automotrices locales."
+      title="Servicios para tu auto en Cancún"
+      description="Mecánicos, talleres, diagnóstico, lavado, grúas, llanteras y soluciones automotrices locales."
       categories={autoServiceCategories}
       selectedLocationSlug={ubicacion ?? "all"}
     />
