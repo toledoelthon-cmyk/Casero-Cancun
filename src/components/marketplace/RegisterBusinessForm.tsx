@@ -5,6 +5,7 @@ import { MapPicker } from "@/components/maps/MapPicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { RegistrationCategory, RegistrationLocation, RegistrationPlan } from "@/lib/data/registration";
+import { whatsappUrl } from "@/lib/contact";
 import { createSupabaseBrowserClient, missingSupabaseMessage } from "@/lib/supabase/client";
 import type { BusinessProfileInsert, CategorySection, LocationMode, ProfileType } from "@/lib/supabase/types";
 import { slugify } from "@/lib/utils/slugify";
@@ -601,6 +602,13 @@ export function RegisterBusinessForm({
           }
         >
           {formMessage}
+          {status === "success" ? (
+            <div className="mt-3">
+              <Button href={whatsappUrl} variant="secondary">
+                Avisar por WhatsApp
+              </Button>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

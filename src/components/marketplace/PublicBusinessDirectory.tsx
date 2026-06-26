@@ -44,6 +44,11 @@ function normalize(value: string) {
 function matchesAttribute(business: DemoBusiness, attribute: AttributeValue) {
   const badges = business.badges.map(normalize);
   const features = (business.features ?? []).map(normalize);
+  const hasCoordinates =
+    typeof business.latitude === "number" &&
+    Number.isFinite(business.latitude) &&
+    typeof business.longitude === "number" &&
+    Number.isFinite(business.longitude);
 
   if (attribute === "verified") return business.verified;
   if (attribute === "emergency") return badges.includes("urgencias");
@@ -52,7 +57,7 @@ function matchesAttribute(business: DemoBusiness, attribute: AttributeValue) {
   if (attribute === "card") return features.includes("acepta tarjeta");
   if (attribute === "airbnb") return badges.includes("atiende airbnb");
   if (attribute === "physical") return Boolean(business.hasPhysicalLocation);
-  if (attribute === "map") return Boolean(business.showMap && business.latitude && business.longitude);
+  if (attribute === "map") return Boolean(business.showMap && hasCoordinates);
   return true;
 }
 
@@ -90,8 +95,12 @@ export function PublicBusinessDirectory({
           business.shortDescription,
           business.category,
           ...(business.categories ?? []),
+          business.mainService ?? "",
+          ...(business.features ?? []),
+          ...(business.badges ?? []),
           business.location,
           ...(business.locations ?? []),
+          business.address ?? "",
         ].join(" "),
       );
 
@@ -275,7 +284,7 @@ export function PublicBusinessDirectory({
           ) : (
             <Card className="p-5 sm:p-6">
               <p className="text-sm leading-7 text-casero-text/70">
-                No encontramos negocios publicados con esos filtros.
+                No encontramos negocios publicados con esos filtros. Prueba con otra categoria, zona o texto de busqueda.
               </p>
             </Card>
           )}

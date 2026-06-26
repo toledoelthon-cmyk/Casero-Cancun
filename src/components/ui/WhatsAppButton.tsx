@@ -1,5 +1,6 @@
 import { MessageCircle } from "lucide-react";
 import { contact } from "@/lib/contact";
+import { normalizeWhatsapp } from "@/lib/utils/whatsapp";
 import { Button } from "./Button";
 
 type WhatsAppButtonProps = {
@@ -15,7 +16,8 @@ export function WhatsAppButton({
   message = "Hola, vengo de Casero Cancún y quiero información.",
   className,
 }: WhatsAppButtonProps) {
-  const href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  const normalizedPhone = normalizeWhatsapp(phone) ?? contact.whatsappLinkNumber;
+  const href = `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(message)}`;
 
   return (
     <Button href={href} variant="secondary" className={className}>

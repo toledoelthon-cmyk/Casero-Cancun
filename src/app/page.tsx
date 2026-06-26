@@ -159,16 +159,20 @@ export default function Home() {
             const Icon = section.icon;
 
             return (
-              <div key={section.href} className="flex h-full flex-col rounded-lg border border-casero-dark/10 bg-white p-4 shadow-sm sm:p-5">
+              <Link
+                key={section.href}
+                href={section.href}
+                className="group flex h-full cursor-pointer flex-col rounded-lg border border-casero-dark/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/40 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green sm:p-5"
+              >
                 <span className="grid h-12 w-12 place-items-center rounded-md bg-casero-beige text-casero-green">
                   <Icon className="h-6 w-6" aria-hidden />
                 </span>
                 <h2 className="mt-5 font-heading text-xl font-extrabold text-casero-dark">{section.title}</h2>
                 <p className="mt-3 flex-1 text-sm leading-6 text-casero-text/70">{section.text}</p>
-                <Button href={section.href} className="mt-5 w-full" variant="outline">
+                <span className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-casero-dark/15 bg-white px-5 py-2.5 text-sm font-semibold text-casero-dark transition group-hover:border-casero-green group-hover:text-casero-green">
                   {section.button}
-                </Button>
-              </div>
+                </span>
+              </Link>
             );
           })}
         </div>
