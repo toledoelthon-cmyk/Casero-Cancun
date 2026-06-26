@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { BadgeCheck, Car, HeartHandshake, MapPin, MessageCircle, Search, ShieldCheck, Store, Wrench } from "lucide-react";
 import { CategoryCard } from "@/components/marketplace/CategoryCard";
 import { TrustFeatureCard } from "@/components/marketplace/TrustFeatureCard";
@@ -73,6 +74,13 @@ const steps = [
   "Agenda directamente con el negocio",
 ];
 
+const quickSearchLinks = [
+  { label: "Plomeria", href: "/categoria/plomeria" },
+  { label: "Ferreterias", href: "/categoria/ferreterias" },
+  { label: "Veterinarias", href: "/categoria/veterinarias" },
+  { label: "Talleres mecanicos", href: "/categoria/talleres-mecanicos" },
+];
+
 export default function Home() {
   const highlightedServices = serviceCategories.filter((category) =>
     ["aire-acondicionado", "plomeria", "electricidad", "limpieza-del-hogar", "fumigacion", "mantenimiento-airbnb"].includes(
@@ -123,13 +131,17 @@ export default function Home() {
               <ShieldCheck className="h-8 w-8 text-casero-orange" aria-hidden />
             </div>
             <div className="mt-5 grid gap-3">
-              {["Plomeria", "Ferreterias", "Veterinarias", "Talleres mecanicos"].map((item) => (
-                <div key={item} className="flex items-center gap-3 rounded-md bg-white/10 p-3 sm:p-4">
+              {quickSearchLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex cursor-pointer items-center gap-3 rounded-md bg-white/10 p-3 transition hover:bg-white/15 active:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-orange sm:p-4"
+                >
                   <span className="grid h-9 w-9 place-items-center rounded-md bg-white/10">
                     <Store className="h-4 w-4 text-casero-orange" aria-hidden />
                   </span>
-                  <span className="font-semibold">{item}</span>
-                </div>
+                  <span className="font-semibold">{item.label}</span>
+                </Link>
               ))}
             </div>
           </div>
