@@ -11,16 +11,24 @@ import type { BusinessProfileInsert, CategorySection, LocationMode, ProfileType 
 import { slugify } from "@/lib/utils/slugify";
 import { normalizeWhatsapp } from "@/lib/utils/whatsapp";
 
+type RegistrationAuthContext =
+  | { status: "public" }
+  | { status: "provider"; userId: string; email: string | null; fullName: string | null }
+  | { status: "admin"; userId: string; email: string | null; fullName: string | null };
+
 type RegisterBusinessFormProps = {
   plans: RegistrationPlan[];
   categories: RegistrationCategory[];
   locations: RegistrationLocation[];
   supabaseConfigured: boolean;
   source: "supabase" | "demo";
+  authContext: RegistrationAuthContext;
 };
 
 const successMessage =
   "Tu solicitud fue enviada correctamente. Revisaremos la información de tu negocio y te contactaremos por WhatsApp.";
+const providerSuccessMessage =
+  "Tu negocio fue enviado a revision. Puedes consultar el estado desde tu panel de proveedor.";
 const errorMessage = "No pudimos enviar tu solicitud. Intenta de nuevo o contáctanos por WhatsApp.";
 const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
 const storageBucket = "business-media";
@@ -111,6 +119,7 @@ export function RegisterBusinessForm({
   locations,
   supabaseConfigured,
   source,
+  authContext,
 }: RegisterBusinessFormProps) {
   const [businessSection, setBusinessSection] = useState<CategorySection | "">("");
   const [locationMode, setLocationMode] = useState<LocationMode>("zones_only");
@@ -503,6 +512,7 @@ export function RegisterBusinessForm({
       longitude: shouldShowAddressFields && Number.isFinite(longitude) ? longitude : null,
       status: "pending",
       plan_id: submittedPlanId || null,
+      ...(authContext.status === "provider" ? { owner_user_id: authContext.userId } : {}),
       main_service: selectedCategories[0].name,
       invoices: formData.get("invoices") === "on",
       emergency_service: formData.get("emergencyService") === "on",
@@ -566,7 +576,7 @@ export function RegisterBusinessForm({
       }
 
       setStatus("success");
-      setFormMessage(successMessage);
+      setFormMessage(authContext.status === "provider" ? providerSuccessMessage : successMessage);
       form.reset();
       setBusinessSection("");
       setCategoryIds([]);
@@ -593,6 +603,16 @@ export function RegisterBusinessForm({
 
   return (
     <Card className="p-4 sm:p-6">
+      {authContext.status === "provider" ? (
+        <div className="mb-5 rounded-md border border-casero-green/20 bg-casero-green/10 p-4 text-sm font-semibold text-casero-green">
+          Estas registrando este negocio desde tu cuenta de proveedor.
+        </div>
+      ) : null}
+      {authContext.status === "admin" ? (
+        <div className="mb-5 rounded-md border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm font-semibold text-casero-dark">
+          Estas usando una cuenta admin. Este negocio no se asignara automaticamente a un proveedor.
+        </div>
+      ) : null}
       {formMessage ? (
         <div
           className={
@@ -603,10 +623,16 @@ export function RegisterBusinessForm({
         >
           {formMessage}
           {status === "success" ? (
-            <div className="mt-3">
-              <Button href={whatsappUrl} variant="secondary">
-                Avisar por WhatsApp
-              </Button>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {authContext.status === "provider" ? (
+                <Button href="/proveedor/panel" variant="secondary">
+                  Ir a mi panel
+                </Button>
+              ) : (
+                <Button href={whatsappUrl} variant="secondary">
+                  Avisar por WhatsApp
+                </Button>
+              )}
             </div>
           ) : null}
         </div>
@@ -1398,3 +1424,5 @@ export function RegisterBusinessForm({
     </Card>
   );
 }
+
+

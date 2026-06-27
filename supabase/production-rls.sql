@@ -110,6 +110,8 @@ drop policy if exists "Public read access for categories" on public.categories;
 drop policy if exists "Public read access for locations" on public.locations;
 
 drop policy if exists "Users can read own profile" on public.user_profiles;
+drop policy if exists "Users can create own provider profile" on public.user_profiles;
+drop policy if exists "Providers can update own profile" on public.user_profiles;
 drop policy if exists "Admins can manage user profiles" on public.user_profiles;
 drop policy if exists "Public read plans" on public.plans;
 drop policy if exists "Public read categories" on public.categories;
@@ -154,6 +156,28 @@ create policy "Users can read own profile"
   for select
   to authenticated
   using (id = auth.uid());
+
+create policy "Users can create own provider profile"
+  on public.user_profiles
+  for insert
+  to authenticated
+  with check (
+    id = auth.uid()
+    and role = 'provider'
+  );
+
+create policy "Providers can update own profile"
+  on public.user_profiles
+  for update
+  to authenticated
+  using (
+    id = auth.uid()
+    and role = 'provider'
+  )
+  with check (
+    id = auth.uid()
+    and role = 'provider'
+  );
 
 create policy "Admins can manage user profiles"
   on public.user_profiles
@@ -263,12 +287,12 @@ create policy "Providers update own pending or paused business profiles"
   using (
     public.is_provider()
     and owner_user_id = auth.uid()
-    and status in ('pending', 'paused')
+    and status in ('pending', 'published', 'paused', 'rejected')
   )
   with check (
     public.is_provider()
     and owner_user_id = auth.uid()
-    and status in ('pending', 'paused')
+    and status = 'pending'
     and coalesce(is_verified, false) = false
     and coalesce(is_featured, false) = false
   );
@@ -550,3 +574,4 @@ create policy "Admins manage business media"
   to authenticated
   using (public.is_admin())
   with check (public.is_admin());
+

@@ -3,18 +3,22 @@ import { MessageCircle, Search, ShieldCheck, Store } from "lucide-react";
 import { RegisterBusinessForm } from "@/components/marketplace/RegisterBusinessForm";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { createSupabaseAuthServerClient } from "@/lib/auth/admin";
 import { getRegistrationOptions } from "@/lib/data/registration";
 
 export const metadata: Metadata = {
-  title: "Registrar mi negocio | Casero Cancún",
-  description: "Registra tu negocio, tienda o servicio para aparecer en Casero Cancún.",
+  title: "Registrar mi negocio | Casero Cancun",
+  description: "Registra tu negocio, tienda o servicio para aparecer en Casero Cancun.",
 };
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const benefits = [
   {
     icon: Search,
-    title: "Más visibilidad local",
-    text: "Aparece en una plataforma creada para búsquedas reales dentro de Cancún.",
+    title: "Mas visibilidad local",
+    text: "Aparece en una plataforma creada para busquedas reales dentro de Cancun.",
   },
   {
     icon: MessageCircle,
@@ -24,17 +28,70 @@ const benefits = [
   {
     icon: Store,
     title: "Perfil profesional",
-    text: "Muestra categoría, zona, badges, reseñas demo y datos de contacto claros.",
+    text: "Muestra categoria, zona, badges, resenas demo y datos de contacto claros.",
   },
   {
     icon: ShieldCheck,
-    title: "Sin comisión por trabajo",
-    text: "Casero Cancún conecta; el acuerdo y seguimiento se hacen directamente con tu cliente.",
+    title: "Sin comision por trabajo",
+    text: "Casero Cancun conecta; el acuerdo y seguimiento se hacen directamente con tu cliente.",
   },
 ];
 
+async function getRegistrationAuthContext() {
+  const supabase = await createSupabaseAuthServerClient();
+
+  if (!supabase) {
+    return { status: "public" as const };
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { status: "public" as const };
+  }
+
+  const { data: profile, error } = await supabase
+    .from("user_profiles")
+    .select("id,email,full_name,role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("registration auth profile lookup failed", {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+      fullError: error,
+    });
+  }
+
+  if (profile?.role === "provider") {
+    return {
+      status: "provider" as const,
+      userId: user.id,
+      email: profile.email ?? user.email ?? null,
+      fullName: profile.full_name,
+    };
+  }
+
+  if (profile?.role === "admin") {
+    return {
+      status: "admin" as const,
+      userId: user.id,
+      email: profile.email ?? user.email ?? null,
+      fullName: profile.full_name,
+    };
+  }
+
+  return { status: "public" as const };
+}
+
 export default async function RegisterBusinessPage() {
   const registrationOptions = await getRegistrationOptions();
+  const registrationAuth = await getRegistrationAuthContext();
 
   return (
     <>
@@ -45,17 +102,17 @@ export default async function RegisterBusinessPage() {
               Registro de proveedores
             </span>
             <h1 className="mt-4 font-heading text-3xl font-extrabold text-casero-dark sm:text-4xl md:text-5xl">
-              Haz que más clientes encuentren tu negocio en Cancún
+              Haz que mas clientes encuentren tu negocio en Cancun
             </h1>
             <p className="mt-4 text-base leading-7 text-casero-text/75 sm:text-lg sm:leading-8">
-              Registra tu servicio, tienda o proveedor local en Casero Cancún y obtén visibilidad
+              Registra tu servicio, tienda o proveedor local en Casero Cancun y obten visibilidad
               en una plataforma creada para conectar negocios locales con clientes reales.
             </p>
           </div>
 
           <div className="mt-8 rounded-lg border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm font-bold text-casero-dark">
-            Primer mes gratis para negocios aprobados · WhatsApp visible · Sin comisión por trabajo
-            realizado · Perfil revisado antes de publicarse
+            Primer mes gratis para negocios aprobados - WhatsApp visible - Sin comision por trabajo
+            realizado - Perfil revisado antes de publicarse
           </div>
         </div>
       </section>
@@ -64,7 +121,7 @@ export default async function RegisterBusinessPage() {
         <SectionHeader
           eyebrow="Beneficios"
           title="Un perfil pensado para que te contacten mejor"
-          description="La recepción de solicitudes guardará negocios pendientes cuando Supabase esté configurado."
+          description="La recepcion de solicitudes guardara negocios pendientes cuando Supabase este configurado."
         />
         <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((benefit) => (
@@ -82,23 +139,23 @@ export default async function RegisterBusinessPage() {
           <div>
             <SectionHeader
               eyebrow="Solicitud"
-              title="Cuéntanos sobre tu negocio"
-              description="Completa los datos principales para enviar tu negocio a revisión."
+              title="Cuentanos sobre tu negocio"
+              description="Completa los datos principales para enviar tu negocio a revision."
             />
             <div className="mt-6">
-              <RegisterBusinessForm {...registrationOptions} />
+              <RegisterBusinessForm {...registrationOptions} authContext={registrationAuth} />
             </div>
           </div>
 
           <aside className="space-y-4">
             <Card>
-              <h2 className="font-heading text-lg font-bold text-casero-dark">Qué pasa después</h2>
+              <h2 className="font-heading text-lg font-bold text-casero-dark">Que pasa despues</h2>
               <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                Cada solicitud entrará a revisión antes de publicarse en el directorio.
+                Cada solicitud entrara a revision antes de publicarse en el directorio.
               </p>
             </Card>
             <Card>
-              <h2 className="font-heading text-lg font-bold text-casero-dark">Estado de publicación</h2>
+              <h2 className="font-heading text-lg font-bold text-casero-dark">Estado de publicacion</h2>
               <p className="mt-2 text-sm leading-6 text-casero-text/70">
                 La estructura contempla perfiles pendientes, publicados, pausados y rechazados.
               </p>
@@ -109,3 +166,4 @@ export default async function RegisterBusinessPage() {
     </>
   );
 }
+
