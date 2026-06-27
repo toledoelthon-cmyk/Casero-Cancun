@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { MessageCircle, Search, ShieldCheck, Store } from "lucide-react";
 import { RegisterBusinessForm } from "@/components/marketplace/RegisterBusinessForm";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { createSupabaseAuthServerClient } from "@/lib/auth/admin";
 import { getRegistrationOptions } from "@/lib/data/registration";
@@ -142,7 +143,15 @@ export default async function RegisterBusinessPage() {
               title="Cuentanos sobre tu negocio"
               description="Completa los datos principales para enviar tu negocio a revision."
             />
-            <div className="mt-6">
+            <div className="mt-6 grid gap-4">
+              {registrationAuth.status !== "provider" ? (
+                <div className="rounded-lg border border-casero-green/20 bg-casero-green/10 p-4 text-sm font-semibold text-casero-green">
+                  <p>Si ya tienes cuenta de proveedor, inicia sesion antes de registrar tu negocio para que quede asociado a tu panel.</p>
+                  <Button href="/proveedor/login" variant="secondary" className="mt-3">
+                    Iniciar sesion como proveedor
+                  </Button>
+                </div>
+              ) : null}
               <RegisterBusinessForm {...registrationOptions} authContext={registrationAuth} />
             </div>
           </div>
@@ -166,4 +175,5 @@ export default async function RegisterBusinessPage() {
     </>
   );
 }
+
 

@@ -5,7 +5,7 @@ import { ProviderBusinessEditForm, type ProviderEditableBusiness } from "@/compo
 import { createSupabaseAuthServerClient } from "@/lib/auth/admin";
 import { getProviderAccess } from "@/lib/auth/provider";
 import { getRegistrationOptions } from "@/lib/data/registration";
-import type { BusinessProfile, Category, Location } from "@/lib/supabase/types";
+import type { BusinessMedia, BusinessProfile, Category, Location, Plan } from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
   title: "Editar negocio | Casero Cancun",
@@ -16,8 +16,10 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 type EditBusinessRow = BusinessProfile & {
+  plans?: Pick<Plan, "slug"> | null;
   business_categories?: Array<{ categories?: Pick<Category, "id"> | null }> | null;
   business_locations?: Array<{ locations?: Pick<Location, "id"> | null }> | null;
+  business_media?: Array<Pick<BusinessMedia, "id" | "url" | "alt" | "sort_order">> | null;
 };
 
 type EditPageProps = {
@@ -76,6 +78,11 @@ function mapEditableBusiness(row: EditBusinessRow): ProviderEditableBusiness {
       row.business_locations
         ?.map((item) => item.locations?.id)
         .filter((id): id is string => Boolean(id)) ?? [],
+    planSlug: row.plans?.slug ?? null,
+    media:
+      row.business_media
+        ?.slice()
+        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)) ?? [],
   };
 }
 
@@ -116,8 +123,10 @@ export default async function ProviderBusinessEditPage({ params }: EditPageProps
       .select(
         `
         *,
+        plans(slug),
         business_categories(categories(id)),
-        business_locations(locations(id))
+        business_locations(locations(id)),
+        business_media(id,url,alt,sort_order)
       `,
       )
       .eq("id", id)

@@ -6,6 +6,7 @@ import { MapPicker } from "@/components/maps/MapPicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { ProviderBusinessImageManager, type ProviderEditableMedia } from "@/components/provider/ProviderBusinessImageManager";
 import type { CategorySection, LocationMode, ProfileType, PublicationStatus } from "@/lib/supabase/types";
 import type { RegistrationCategory, RegistrationLocation } from "@/lib/data/registration";
 
@@ -54,6 +55,8 @@ export type ProviderEditableBusiness = {
   auto_wash_detailing: boolean | null;
   categoryIds: string[];
   locationIds: string[];
+  planSlug: string | null;
+  media: ProviderEditableMedia[];
 };
 
 type ProviderBusinessEditFormProps = {
@@ -426,6 +429,14 @@ export function ProviderBusinessEditForm({ business, categories, locations }: Pr
             ))}
           </div>
         </fieldset>
+
+        <ProviderBusinessImageManager
+          businessId={business.id}
+          businessName={business.business_name}
+          businessStatus={business.status}
+          planSlug={business.planSlug}
+          media={business.media}
+        />
 
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button type="submit" variant="secondary" disabled={isSaving}>

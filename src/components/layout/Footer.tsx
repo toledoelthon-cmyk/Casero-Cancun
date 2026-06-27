@@ -12,6 +12,7 @@ const footerLinks = [
   { href: "/categorias", label: "Categorías" },
   { href: "/planes", label: "Planes" },
   { href: "/registrar-mi-negocio", label: "Registrar negocio" },
+  { href: "/proveedor/login", label: "Proveedores" },
   { href: "/contacto", label: "Contacto" },
   { href: "/aviso-de-privacidad", label: "Aviso de privacidad" },
   { href: "/terminos-y-condiciones", label: "Términos y condiciones" },
@@ -65,3 +66,4 @@ export function Footer() {
     </footer>
   );
 }
+

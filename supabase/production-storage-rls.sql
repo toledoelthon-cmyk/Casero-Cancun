@@ -61,7 +61,6 @@ create policy "Providers upload own business media storage"
       from public.business_profiles bp
       where bp.id = split_part(name, '/', 1)::uuid
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   );
 
@@ -77,7 +76,6 @@ create policy "Providers update own business media storage"
       from public.business_profiles bp
       where bp.id = split_part(name, '/', 1)::uuid
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   )
   with check (
@@ -88,7 +86,6 @@ create policy "Providers update own business media storage"
       from public.business_profiles bp
       where bp.id = split_part(name, '/', 1)::uuid
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   );
 
@@ -104,7 +101,6 @@ create policy "Providers delete own business media storage"
       from public.business_profiles bp
       where bp.id = split_part(name, '/', 1)::uuid
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   );
 
@@ -114,3 +110,5 @@ create policy "Admins manage business-media storage"
   to authenticated
   using (bucket_id = 'business-media' and public.is_admin())
   with check (bucket_id = 'business-media' and public.is_admin());
+
+

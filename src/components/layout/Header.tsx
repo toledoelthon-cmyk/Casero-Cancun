@@ -14,6 +14,7 @@ const links = [
   { href: "/servicios-para-tu-auto", label: "Servicios para tu auto" },
   { href: "/planes", label: "Planes" },
   { href: "/registrar-mi-negocio", label: "Registrar negocio" },
+  { href: "/proveedor/login", label: "Proveedores" },
   { href: "/contacto", label: "Contacto" },
 ];
 
@@ -86,3 +87,4 @@ export function Header() {
     </header>
   );
 }
+

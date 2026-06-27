@@ -178,6 +178,30 @@ export default function Home() {
         </div>
       </section>
 
+
+      <section className="container-page py-10 sm:py-16">
+        <div className="rounded-lg border border-casero-green/20 bg-white p-5 shadow-sm sm:p-8 md:p-10">
+          <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-casero-green">Para proveedores</p>
+              <h2 className="mt-3 font-heading text-2xl font-extrabold text-casero-dark sm:text-3xl">
+                Tienes un negocio o prestas servicios en Cancun?
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-casero-text/70 sm:text-base sm:leading-7">
+                Crea tu cuenta de proveedor, registra tu negocio y administra tu perfil desde tu panel.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:flex lg:flex-col xl:flex-row">
+              <Button href="/proveedor/login" variant="secondary" className="w-full sm:w-auto">
+                Crear cuenta de proveedor
+              </Button>
+              <Button href="/registrar-mi-negocio" variant="outline" className="w-full sm:w-auto">
+                Registrar mi negocio
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
       <section className="bg-casero-beige/55 py-10 sm:py-16">
         <div className="container-page">
           <SectionHeader
@@ -232,3 +256,4 @@ export default function Home() {
     </>
   );
 }
+

@@ -145,8 +145,11 @@ drop policy if exists "Public read media for published businesses" on public.bus
 drop policy if exists "Temporary public insert media for pending unowned businesses" on public.business_media;
 drop policy if exists "Providers read media for own businesses" on public.business_media;
 drop policy if exists "Providers insert media for own pending or paused businesses" on public.business_media;
+drop policy if exists "Providers insert media for own businesses" on public.business_media;
 drop policy if exists "Providers update media for own pending or paused businesses" on public.business_media;
+drop policy if exists "Providers update media for own businesses" on public.business_media;
 drop policy if exists "Providers delete media for own pending or paused businesses" on public.business_media;
+drop policy if exists "Providers delete media for own businesses" on public.business_media;
 drop policy if exists "Admins manage business media" on public.business_media;
 
 -- user_profiles
@@ -517,7 +520,7 @@ create policy "Providers read media for own businesses"
     )
   );
 
-create policy "Providers insert media for own pending or paused businesses"
+create policy "Providers insert media for own businesses"
   on public.business_media
   for insert
   to authenticated
@@ -527,11 +530,10 @@ create policy "Providers insert media for own pending or paused businesses"
       from public.business_profiles bp
       where bp.id = business_media.business_id
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   );
 
-create policy "Providers update media for own pending or paused businesses"
+create policy "Providers update media for own businesses"
   on public.business_media
   for update
   to authenticated
@@ -541,7 +543,6 @@ create policy "Providers update media for own pending or paused businesses"
       from public.business_profiles bp
       where bp.id = business_media.business_id
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   )
   with check (
@@ -550,11 +551,10 @@ create policy "Providers update media for own pending or paused businesses"
       from public.business_profiles bp
       where bp.id = business_media.business_id
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   );
 
-create policy "Providers delete media for own pending or paused businesses"
+create policy "Providers delete media for own businesses"
   on public.business_media
   for delete
   to authenticated
@@ -564,7 +564,6 @@ create policy "Providers delete media for own pending or paused businesses"
       from public.business_profiles bp
       where bp.id = business_media.business_id
         and bp.owner_user_id = auth.uid()
-        and bp.status in ('pending', 'paused')
     )
   );
 
@@ -574,4 +573,5 @@ create policy "Admins manage business media"
   to authenticated
   using (public.is_admin())
   with check (public.is_admin());
+
 
