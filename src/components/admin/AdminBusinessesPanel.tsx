@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { CategorySection, LocationMode, ProfileType, PublicationStatus } from "@/lib/supabase/types";
+import type { BusinessProfileInsert, CategorySection, LocationMode, MembershipStatus, PaymentStatus, ProfileType, PublicationStatus } from "@/lib/supabase/types";
 
 type RelatedCategory = {
   id: string;
@@ -99,6 +99,15 @@ type AdminBusiness = {
   created_at: string | null;
   plan_id: string | null;
   planName: string | null;
+  membership_status: MembershipStatus | null;
+  membership_started_at: string | null;
+  membership_expires_at: string | null;
+  trial_ends_at: string | null;
+  payment_status: PaymentStatus | null;
+  last_payment_at: string | null;
+  next_payment_due_at: string | null;
+  payment_exempt_reason: string | null;
+  payment_exempt_until: string | null;
   categories: RelatedCategory[];
   locations: RelatedLocation[];
   media: MediaItem[];
@@ -153,10 +162,21 @@ type AdminBusinessRow = {
   created_at: string | null;
   plan_id: string | null;
   plans?: { name: string | null } | null;
+  membership_status: MembershipStatus | null;
+  membership_started_at: string | null;
+  membership_expires_at: string | null;
+  trial_ends_at: string | null;
+  payment_status: PaymentStatus | null;
+  last_payment_at: string | null;
+  next_payment_due_at: string | null;
+  payment_exempt_reason: string | null;
+  payment_exempt_until: string | null;
   business_categories?: Array<{ categories?: RelatedCategory | null }> | null;
   business_locations?: Array<{ locations?: RelatedLocation | null }> | null;
   business_media?: MediaItem[] | null;
 };
+
+type AdminBusinessUpdate = Partial<BusinessProfileInsert>;
 
 type StatusFilter = "all" | PublicationStatus;
 
@@ -190,6 +210,46 @@ const sectionLabels: Record<CategorySection, string> = {
   pets: "Mascotas",
   auto_services: "Servicios para tu auto",
 };
+
+const membershipLabels: Record<string, string> = {
+  trial: "Prueba gratis",
+  active: "Activa",
+  past_due: "Pago pendiente",
+  expired: "Vencida",
+  cancelled: "Cancelada",
+  manual_review: "Pendiente de activacion",
+  exempt: "Exento de pago",
+};
+
+const paymentLabels: Record<string, string> = {
+  unpaid: "Sin pagar",
+  paid: "Pagado",
+  pending: "Pendiente",
+  failed: "Fallido",
+  refunded: "Reembolsado",
+  manual: "Manual",
+};
+
+function addDaysIso(days: number) {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toISOString();
+}
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function membershipBadge(status: MembershipStatus | null) {
+  const value = status ?? "manual_review";
+  return <Badge tone={value === "active" || value === "trial" || value === "exempt" ? "green" : value === "expired" || value === "cancelled" ? "orange" : "neutral"}>{membershipLabels[value] ?? value}</Badge>;
+}
+
+function paymentBadge(status: PaymentStatus | null) {
+  const value = status ?? "unpaid";
+  return <Badge tone={value === "paid" || value === "manual" ? "green" : value === "failed" ? "orange" : "neutral"}>Pago: {paymentLabels[value] ?? value}</Badge>;
+}
+
 
 const profileTypeLabels: Record<ProfileType, string> = {
   service_provider: "Proveedor de servicio",
@@ -255,6 +315,15 @@ function mapBusiness(row: AdminBusinessRow): AdminBusiness {
     created_at: row.created_at,
     plan_id: row.plan_id,
     planName: row.plans?.name ?? null,
+    membership_status: row.membership_status ?? "manual_review",
+    membership_started_at: row.membership_started_at,
+    membership_expires_at: row.membership_expires_at,
+    trial_ends_at: row.trial_ends_at,
+    payment_status: row.payment_status ?? "unpaid",
+    last_payment_at: row.last_payment_at,
+    next_payment_due_at: row.next_payment_due_at,
+    payment_exempt_reason: row.payment_exempt_reason,
+    payment_exempt_until: row.payment_exempt_until,
     categories:
       row.business_categories
         ?.map((item) => item.categories)
@@ -379,7 +448,7 @@ function AdminActions({
 }: {
   business: AdminBusiness;
   disabled: boolean;
-  onUpdate: (id: string, updates: Partial<Pick<AdminBusiness, "status" | "is_featured" | "is_verified">>) => void;
+  onUpdate: (id: string, updates: AdminBusinessUpdate) => void;
 }) {
   const buttonClass = "min-h-10 rounded-md px-3 py-2 text-xs font-bold disabled:opacity-50";
 
@@ -403,6 +472,24 @@ function AdminActions({
       <button className={`${buttonClass} border border-casero-dark/10 bg-white text-casero-dark`} disabled={disabled} type="button" onClick={() => onUpdate(business.id, { is_featured: !business.is_featured })}>
         {business.is_featured ? "Quitar destacado" : "Destacar"}
       </button>
+      <button className={`${buttonClass} bg-casero-orange text-casero-dark`} disabled={disabled} type="button" onClick={() => { const expiresAt = addDaysIso(30); onUpdate(business.id, { membership_status: "trial", payment_status: "manual", membership_started_at: nowIso(), trial_ends_at: expiresAt, membership_expires_at: expiresAt, last_payment_at: null, next_payment_due_at: expiresAt, payment_exempt_reason: null, payment_exempt_until: null }); }}>
+        Activar prueba 30 dias
+      </button>
+      <button className={`${buttonClass} bg-casero-green text-white`} disabled={disabled} type="button" onClick={() => { const now = nowIso(); const expiresAt = addDaysIso(30); onUpdate(business.id, { membership_status: "active", payment_status: "manual", membership_started_at: business.membership_started_at ?? now, last_payment_at: now, next_payment_due_at: expiresAt, membership_expires_at: expiresAt, trial_ends_at: null, payment_exempt_reason: null, payment_exempt_until: null }); }}>
+        Activar manual 30 dias
+      </button>
+      <button className={`${buttonClass} border border-casero-dark/10 bg-white text-casero-dark`} disabled={disabled} type="button" onClick={() => onUpdate(business.id, { membership_status: "expired" })}>
+        Marcar vencida
+      </button>
+      <button className={`${buttonClass} border border-casero-dark/10 bg-white text-casero-dark`} disabled={disabled} type="button" onClick={() => onUpdate(business.id, { membership_status: "cancelled" })}>
+        Cancelar membresia
+      </button>
+      <button className={`${buttonClass} border border-casero-dark/10 bg-white text-casero-dark`} disabled={disabled} type="button" onClick={() => onUpdate(business.id, { membership_status: "exempt", payment_status: "manual", payment_exempt_reason: "Exencion manual aplicada por administrador", payment_exempt_until: null, membership_expires_at: null, trial_ends_at: null, next_payment_due_at: null })}>
+        Exentar pago
+      </button>
+      <button className={`${buttonClass} border border-casero-dark/10 bg-white text-casero-dark`} disabled={disabled} type="button" onClick={() => onUpdate(business.id, { membership_status: "manual_review", payment_status: "unpaid", payment_exempt_reason: null, payment_exempt_until: null, membership_expires_at: null, trial_ends_at: null, next_payment_due_at: null, last_payment_at: null })}>
+        Quitar exencion
+      </button>
     </div>
   );
 }
@@ -416,7 +503,7 @@ function DetailModal({
   business: AdminBusiness;
   actionLoadingId: string | null;
   onClose: () => void;
-  onUpdate: (id: string, updates: Partial<Pick<AdminBusiness, "status" | "is_featured" | "is_verified">>) => void;
+  onUpdate: (id: string, updates: AdminBusinessUpdate) => void;
 }) {
   const attributes = [
     ["Emite factura", business.invoices],
@@ -452,6 +539,8 @@ function DetailModal({
               {statusBadge(business.status)}
               {business.is_verified ? <Badge tone="green">Verificado</Badge> : <Badge>No verificado</Badge>}
               {business.is_featured ? <Badge tone="orange">Destacado</Badge> : null}
+              {membershipBadge(business.membership_status)}
+              {paymentBadge(business.payment_status)}
             </div>
             <h2 className="mt-3 font-heading text-2xl font-extrabold text-casero-dark">{business.business_name}</h2>
             <p className="mt-1 text-sm font-semibold text-casero-text/55">/{business.slug}</p>
@@ -473,6 +562,15 @@ function DetailModal({
               <div><dt className="font-bold text-casero-dark">Sección</dt><dd>{getSection(business)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Plan</dt><dd>{business.planName ?? business.plan_id ?? "Sin plan"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Fecha</dt><dd>{formatDate(business.created_at)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Estado de membresia</dt><dd>{membershipLabels[business.membership_status ?? "manual_review"]}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Estado de pago</dt><dd>{paymentLabels[business.payment_status ?? "unpaid"]}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Inicio de membresia</dt><dd>{formatDate(business.membership_started_at)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Vencimiento de membresia</dt><dd>{formatDate(business.membership_expires_at)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Fin de prueba gratis</dt><dd>{formatDate(business.trial_ends_at)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Proximo pago</dt><dd>{formatDate(business.next_payment_due_at)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Ultimo pago</dt><dd>{formatDate(business.last_payment_at)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Razon de exencion</dt><dd>{business.payment_exempt_reason ?? "Sin exencion"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Limite de exencion</dt><dd>{formatDate(business.payment_exempt_until)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Modo de ubicación</dt><dd>{getLocationModeLabel(business.location_mode)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "Sí" : "No"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Dirección</dt><dd>{business.address ?? "No capturada"}</dd></div>
@@ -1117,6 +1215,15 @@ export function AdminBusinessesPanel() {
           auto_wash_detailing,
           created_at,
           plan_id,
+          membership_status,
+          membership_started_at,
+          membership_expires_at,
+          trial_ends_at,
+          payment_status,
+          last_payment_at,
+          next_payment_due_at,
+          payment_exempt_reason,
+          payment_exempt_until,
           plans(name),
           business_categories(categories(id,name,slug,section)),
           business_locations(locations(id,name,slug)),
@@ -1199,7 +1306,7 @@ export function AdminBusinessesPanel() {
     window.location.assign("/admin/login");
   }
 
-  async function updateBusiness(id: string, updates: Partial<Pick<AdminBusiness, "status" | "is_featured" | "is_verified">>) {
+  async function updateBusiness(id: string, updates: AdminBusinessUpdate) {
     const supabase = createSupabaseBrowserClient();
 
     if (!supabase) {
@@ -1754,3 +1861,7 @@ export function AdminBusinessesPanel() {
     </section>
   );
 }
+
+
+
+

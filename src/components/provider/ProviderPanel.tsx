@@ -20,6 +20,25 @@ const statusLabels = {
   rejected: "Rechazado",
 } as const;
 
+const membershipLabels: Record<string, string> = {
+  trial: "Prueba gratis",
+  active: "Activa",
+  past_due: "Pago pendiente",
+  expired: "Vencida",
+  cancelled: "Cancelada",
+  manual_review: "Pendiente de activacion",
+  exempt: "Exento de pago",
+};
+
+const paymentLabels: Record<string, string> = {
+  unpaid: "Sin pagar",
+  paid: "Pagado",
+  pending: "Pendiente",
+  failed: "Fallido",
+  refunded: "Reembolsado",
+  manual: "Manual",
+};
+
 const statusStyles: Record<string, string> = {
   pending: "bg-amber-50 text-amber-800 ring-amber-200",
   published: "bg-emerald-50 text-emerald-800 ring-emerald-200",
@@ -58,6 +77,39 @@ function isUsableImageUrl(url: string | null | undefined) {
     return url.startsWith("/");
   }
 }
+
+function getMembershipMessage(business: ProviderBusiness) {
+  const membershipStatus = business.membership_status ?? "manual_review";
+
+  if (membershipStatus === "trial") {
+    return `Prueba gratis activa hasta ${formatDate(business.trial_ends_at ?? business.membership_expires_at)}`;
+  }
+
+  if (membershipStatus === "active") {
+    return `Membresia activa hasta ${formatDate(business.membership_expires_at)}`;
+  }
+
+  if (membershipStatus === "past_due") {
+    return "Pago pendiente. Tu membresia requiere atencion.";
+  }
+
+  if (membershipStatus === "expired") {
+    return "Membresia vencida";
+  }
+
+  if (membershipStatus === "cancelled") {
+    return "Membresia cancelada";
+  }
+
+  if (membershipStatus === "exempt") {
+    return business.payment_exempt_until
+      ? `Membresia exenta de pago hasta ${formatDate(business.payment_exempt_until)}`
+      : "Membresia exenta de pago";
+  }
+
+  return "Pendiente de activacion";
+}
+
 
 function getPlaceholderMeta(section: ProviderBusiness["section"]) {
   if (section === "stores_materials") {
@@ -112,6 +164,8 @@ function ProviderBusinessCard({ business }: { business: ProviderBusiness }) {
   const sectionLabel = business.section ? sectionLabels[business.section] : "Sin seccion";
   const categories = business.categories.map((category) => category.name);
   const locations = business.locations.map((location) => location.name);
+  const membershipStatus = business.membership_status ?? "manual_review";
+  const paymentStatus = business.payment_status ?? "unpaid";
 
   return (
     <article className="overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm">
@@ -147,6 +201,21 @@ function ProviderBusinessCard({ business }: { business: ProviderBusiness }) {
             <dd className="mt-1 text-casero-text/70">{sectionLabel}</dd>
           </div>
         </dl>
+
+        <div className="mt-5 rounded-md bg-casero-background p-3 text-sm">
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-md bg-casero-green/10 px-2.5 py-1 text-xs font-bold text-casero-green">
+              {membershipLabels[membershipStatus] ?? membershipStatus}
+            </span>
+            <span className="rounded-md bg-casero-beige px-2.5 py-1 text-xs font-bold text-casero-dark">
+              Pago: {paymentLabels[paymentStatus] ?? paymentStatus}
+            </span>
+          </div>
+          <p className="mt-2 font-semibold text-casero-text/75">{getMembershipMessage(business)}</p>
+          {business.next_payment_due_at ? (
+            <p className="mt-1 text-xs font-semibold text-casero-text/55">Proximo pago: {formatDate(business.next_payment_due_at)}</p>
+          ) : null}
+        </div>
 
         <div className="mt-5 grid gap-4">
           <div>
@@ -253,4 +322,5 @@ export function ProviderPanel({ profile, businesses, updateMessage }: ProviderPa
     </section>
   );
 }
+
 

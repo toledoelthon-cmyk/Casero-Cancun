@@ -19,6 +19,9 @@ type SupabaseBusinessRow = BusinessProfile & {
   business_media?: BusinessMedia[] | null;
 };
 
+// Future payment phase: keep public visibility based on status only for now. Later use status === "published" and membership_status in ["trial", "active", "exempt"].
+
+
 const businessSelect = `
   *,
   business_categories(categories(*)),
@@ -277,3 +280,4 @@ export async function getPublishedBusinessesByLocation(slug: string) {
 export async function getBusinessesByLocation(slug: string) {
   return getPublishedBusinessesByLocation(slug);
 }
+

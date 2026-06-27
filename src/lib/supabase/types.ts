@@ -5,6 +5,8 @@ export type CategoryType = "service" | "store";
 export type CategorySection = "home_services" | "stores_materials" | "pets" | "auto_services";
 export type LocationMode = "physical" | "home_service" | "both" | "zones_only";
 export type PublicationStatus = "pending" | "published" | "paused" | "rejected";
+export type MembershipStatus = "trial" | "active" | "past_due" | "expired" | "cancelled" | "manual_review" | "exempt";
+export type PaymentStatus = "unpaid" | "paid" | "pending" | "failed" | "refunded" | "manual";
 export type UserRole = "admin" | "provider";
 
 export type UserProfile = {
@@ -100,6 +102,15 @@ export type BusinessProfile = {
   auto_wash_detailing: boolean | null;
   created_at: string | null;
   updated_at: string | null;
+  membership_status: MembershipStatus | null;
+  membership_started_at: string | null;
+  membership_expires_at: string | null;
+  trial_ends_at: string | null;
+  payment_status: PaymentStatus | null;
+  last_payment_at: string | null;
+  next_payment_due_at: string | null;
+  payment_exempt_reason: string | null;
+  payment_exempt_until: string | null;
 };
 
 export type BusinessProfileInsert = {
@@ -154,6 +165,15 @@ export type BusinessProfileInsert = {
   auto_wash_detailing?: boolean | null;
   created_at?: string | null;
   updated_at?: string | null;
+  membership_status?: MembershipStatus | null;
+  membership_started_at?: string | null;
+  membership_expires_at?: string | null;
+  trial_ends_at?: string | null;
+  payment_status?: PaymentStatus | null;
+  last_payment_at?: string | null;
+  next_payment_due_at?: string | null;
+  payment_exempt_reason?: string | null;
+  payment_exempt_until?: string | null;
 };
 
 export type BusinessWithRelations = BusinessProfile & {
@@ -289,3 +309,4 @@ export type Database = {
     CompositeTypes: Record<string, never>;
   };
 };
+

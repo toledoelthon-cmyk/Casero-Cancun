@@ -575,3 +575,10 @@ create policy "Admins manage business media"
   with check (public.is_admin());
 
 
+
+-- Membership/payment fields are admin-only application fields:
+-- membership_status, payment_status, membership_started_at,
+-- membership_expires_at, trial_ends_at, last_payment_at,
+-- next_payment_due_at, payment_exempt_reason, payment_exempt_until.
+-- Provider forms must never send these fields; admin screens are the only UI
+-- allowed to update them until payment automation is implemented.

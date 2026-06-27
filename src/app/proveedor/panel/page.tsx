@@ -16,7 +16,7 @@ export const revalidate = 0;
 
 export type ProviderBusiness = Pick<
   BusinessProfile,
-  "id" | "business_name" | "slug" | "status" | "section" | "created_at" | "updated_at"
+  "id" | "business_name" | "slug" | "status" | "section" | "created_at" | "updated_at" | "membership_status" | "membership_expires_at" | "trial_ends_at" | "payment_status" | "next_payment_due_at" | "last_payment_at" | "payment_exempt_reason" | "payment_exempt_until"
 > & {
   plan?: Pick<Plan, "id" | "name" | "slug"> | null;
   categories: Pick<Category, "id" | "name" | "slug">[];
@@ -26,7 +26,7 @@ export type ProviderBusiness = Pick<
 
 type ProviderBusinessRow = Pick<
   BusinessProfile,
-  "id" | "business_name" | "slug" | "status" | "section" | "created_at" | "updated_at"
+  "id" | "business_name" | "slug" | "status" | "section" | "created_at" | "updated_at" | "membership_status" | "membership_expires_at" | "trial_ends_at" | "payment_status" | "next_payment_due_at" | "last_payment_at" | "payment_exempt_reason" | "payment_exempt_until"
 > & {
   plans?: Pick<Plan, "id" | "name" | "slug"> | null;
   business_categories?: Array<{
@@ -85,6 +85,14 @@ function mapProviderBusiness(row: ProviderBusinessRow): ProviderBusiness {
     section: row.section,
     created_at: row.created_at,
     updated_at: row.updated_at,
+    membership_status: row.membership_status,
+    membership_expires_at: row.membership_expires_at,
+    trial_ends_at: row.trial_ends_at,
+    payment_status: row.payment_status,
+    next_payment_due_at: row.next_payment_due_at,
+    last_payment_at: row.last_payment_at,
+    payment_exempt_reason: row.payment_exempt_reason,
+    payment_exempt_until: row.payment_exempt_until,
     plan: row.plans ?? null,
     categories,
     locations,
@@ -133,6 +141,14 @@ export default async function ProviderPanelPage({ searchParams }: ProviderPanelP
           section,
           created_at,
           updated_at,
+          membership_status,
+          membership_expires_at,
+          trial_ends_at,
+          payment_status,
+          next_payment_due_at,
+          last_payment_at,
+          payment_exempt_reason,
+          payment_exempt_until,
           plans(id,name,slug),
           business_categories(categories(id,name,slug)),
           business_locations(locations(id,name,slug)),
@@ -161,4 +177,5 @@ export default async function ProviderPanelPage({ searchParams }: ProviderPanelP
     />
   );
 }
+
 
