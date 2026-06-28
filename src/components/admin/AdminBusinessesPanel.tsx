@@ -259,10 +259,10 @@ const profileTypeLabels: Record<ProfileType, string> = {
 };
 
 const locationModeLabels: Record<LocationMode, string> = {
-  physical: "Local fÃ­sico",
+  physical: "Local físico",
   home_service: "Servicio a domicilio",
-  both: "Local fÃ­sico y servicio a domicilio",
-  zones_only: "Solo zonas de atenciÃ³n",
+  both: "Local físico y servicio a domicilio",
+  zones_only: "Solo zonas de atención",
 };
 
 function mapBusiness(row: AdminBusinessRow): AdminBusiness {
@@ -352,7 +352,7 @@ function formatDate(value: string | null) {
 
 function getSection(business: AdminBusiness) {
   const section = business.section ?? business.categories.find((category) => category.section)?.section;
-  return section ? sectionLabels[section] : "Sin secciÃ³n";
+  return section ? sectionLabels[section] : "Sin sección";
 }
 
 function getProfileTypeLabel(profileType: ProfileType) {
@@ -537,23 +537,23 @@ function DetailModal({
     ["Emite factura", business.invoices],
     ["Atiende urgencias", business.emergency_service],
     ["Atiende Airbnb", business.attends_airbnb],
-    ["Ofrece garantÃ­a", business.offers_warranty],
+    ["Ofrece garantía", business.offers_warranty],
     ["Acepta tarjeta", business.accepts_card],
     ["Acepta transferencia", business.accepts_transfer],
     ["Servicio a domicilio", business.service_at_home],
-    ["AtenciÃ³n 24/7", business.service_24_7],
+    ["Atención 24/7", business.service_24_7],
     ["Cita previa", business.by_appointment],
     ["Presupuesto sin costo", business.free_estimate],
-    ["Venta al pÃºblico", business.retail_sales],
+    ["Venta al público", business.retail_sales],
     ["Venta por mayoreo", business.wholesale_sales],
     ["Entrega a domicilio", business.delivery_available],
     ["Distribuidor autorizado", business.authorized_distributor],
-    ["AtenciÃ³n veterinaria", business.pet_veterinary_service],
-    ["EstÃ©tica mascotas", business.pet_grooming],
-    ["GuarderÃ­a mascotas", business.pet_daycare],
+    ["Atención veterinaria", business.pet_veterinary_service],
+    ["Estética mascotas", business.pet_grooming],
+    ["Guardería mascotas", business.pet_daycare],
     ["Alimentos/accesorios mascotas", business.pet_food_accessories],
-    ["GrÃºa disponible", business.auto_tow_service],
-    ["DiagnÃ³stico automotriz", business.auto_diagnostics],
+    ["Grúa disponible", business.auto_tow_service],
+    ["Diagnóstico automotriz", business.auto_diagnostics],
     ["Refacciones", business.auto_parts],
     ["Lavado / detallado", business.auto_wash_detailing],
   ];
@@ -580,15 +580,15 @@ function DetailModal({
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
           <Card>
-            <h3 className="font-heading text-lg font-bold text-casero-dark">InformaciÃ³n principal</h3>
+            <h3 className="font-heading text-lg font-bold text-casero-dark">Información principal</h3>
             <AdminViewStatsSummary stats={business.viewStats} />
             <dl className="mt-4 grid gap-3 text-sm text-casero-text/75 sm:grid-cols-2">
               <div><dt className="font-bold text-casero-dark">Responsable</dt><dd>{business.responsible_name ?? "No capturado"}</dd></div>
               <div><dt className="font-bold text-casero-dark">WhatsApp</dt><dd>{business.whatsapp ?? "Sin WhatsApp"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Correo</dt><dd>{business.email ?? "Sin correo"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">TelÃ©fono</dt><dd>{business.phone ?? "Sin telÃ©fono"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Teléfono</dt><dd>{business.phone ?? "Sin teléfono"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Tipo</dt><dd>{getProfileTypeLabel(business.profile_type)}</dd></div>
-              <div><dt className="font-bold text-casero-dark">SecciÃ³n</dt><dd>{getSection(business)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Sección</dt><dd>{getSection(business)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Plan</dt><dd>{business.planName ?? business.plan_id ?? "Sin plan"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Fecha</dt><dd>{formatDate(business.created_at)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Estado de membresia</dt><dd>{membershipLabels[business.membership_status ?? "manual_review"]}</dd></div>
@@ -600,9 +600,9 @@ function DetailModal({
               <div><dt className="font-bold text-casero-dark">Ultimo pago</dt><dd>{formatDate(business.last_payment_at)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Razon de exencion</dt><dd>{business.payment_exempt_reason ?? "Sin exencion"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Limite de exencion</dt><dd>{formatDate(business.payment_exempt_until)}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Modo de ubicaciÃ³n</dt><dd>{getLocationModeLabel(business.location_mode)}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "SÃ­" : "No"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">DirecciÃ³n</dt><dd>{business.address ?? "No capturada"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Modo de ubicación</dt><dd>{getLocationModeLabel(business.location_mode)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "Sí" : "No"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Dirección</dt><dd>{business.address ?? "No capturada"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Coordenadas</dt><dd>{hasCoordinates(business.latitude, business.longitude) ? `${business.latitude}, ${business.longitude}` : "No capturadas"}</dd></div>
             </dl>
 
@@ -626,9 +626,9 @@ function DetailModal({
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-sm font-bold text-casero-dark">CategorÃ­as</p>
+                <p className="text-sm font-bold text-casero-dark">Categorías</p>
                 <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                  {business.categories.map((category) => category.name).join(", ") || "Sin categorÃ­as"}
+                  {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}
                 </p>
               </div>
               <div>
@@ -651,11 +651,11 @@ function DetailModal({
                 />
               ) : business.show_map ? (
                 <p className="rounded-md bg-casero-orange/10 p-4 text-sm font-semibold text-casero-dark">
-                  Este negocio solicitÃ³ mostrar mapa, pero aÃºn no capturÃ³ coordenadas.
+                  Este negocio solicitó mostrar mapa, pero aún no capturó coordenadas.
                 </p>
               ) : (
                 <p className="rounded-md bg-white p-4 text-sm font-semibold text-casero-text/65">
-                  Este negocio no solicitÃ³ mostrar mapa.
+                  Este negocio no solicitó mostrar mapa.
                 </p>
               )}
             </div>
@@ -672,20 +672,20 @@ function DetailModal({
             </div>
             {business.status === "published" ? (
               <Link className="mt-5 inline-flex rounded-md bg-casero-green px-4 py-2 text-sm font-bold text-white" href={`/negocio/${business.slug}`}>
-                Ver perfil pÃºblico
+                Ver perfil público
               </Link>
             ) : null}
           </Card>
         </div>
 
         <Card className="mt-5">
-          <h3 className="font-heading text-lg font-bold text-casero-dark">DescripciÃ³n</h3>
-          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.short_description ?? "Sin descripciÃ³n breve."}</p>
-          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.long_description ?? "Sin descripciÃ³n larga."}</p>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">Descripción</h3>
+          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.short_description ?? "Sin descripción breve."}</p>
+          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.long_description ?? "Sin descripción larga."}</p>
         </Card>
 
         <Card className="mt-5">
-          <h3 className="font-heading text-lg font-bold text-casero-dark">GalerÃ­a</h3>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">Galería</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {business.media.length > 0 ? (
               business.media.map((item, index) => (
@@ -698,7 +698,7 @@ function DetailModal({
                 />
               ))
             ) : (
-              <p className="text-sm text-casero-text/70">Sin imÃ¡genes cargadas.</p>
+              <p className="text-sm text-casero-text/70">Sin imágenes cargadas.</p>
             )}
           </div>
         </Card>
@@ -939,11 +939,11 @@ function EditBusinessModal({
               ["business_name", "Nombre del negocio", business.business_name, true],
               ["responsible_name", "Responsable", business.responsible_name ?? "", false],
               ["whatsapp", "WhatsApp", business.whatsapp ?? "", true],
-              ["phone", "TelÃ©fono", business.phone ?? "", false],
+              ["phone", "Teléfono", business.phone ?? "", false],
               ["email", "Correo", business.email ?? "", true],
               ["main_service", "Servicio principal", business.categories[0]?.name ?? "", false],
-              ["address", "DirecciÃ³n", business.address ?? "", false],
-              ["postal_code", "CÃ³digo postal", business.postal_code ?? "", false],
+              ["address", "Dirección", business.address ?? "", false],
+              ["postal_code", "Código postal", business.postal_code ?? "", false],
               ["latitude", "Latitud", business.latitude?.toString() ?? "", false],
               ["longitude", "Longitud", business.longitude?.toString() ?? "", false],
             ].map(([name, label, value, required]) => (
@@ -958,18 +958,18 @@ function EditBusinessModal({
               </label>
             ))}
             <label className="text-sm font-bold text-casero-dark md:col-span-2">
-              DescripciÃ³n breve
+              Descripción breve
               <textarea name="short_description" defaultValue={business.short_description ?? ""} className="mt-2 min-h-24 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green" />
             </label>
             <label className="text-sm font-bold text-casero-dark md:col-span-2">
-              DescripciÃ³n larga
+              Descripción larga
               <textarea name="long_description" defaultValue={business.long_description ?? ""} className="mt-2 min-h-28 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green" />
             </label>
           </div>
         </Card>
 
         <Card>
-          <h3 className="font-heading text-lg font-bold text-casero-dark">ClasificaciÃ³n y publicaciÃ³n</h3>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">Clasificación y publicación</h3>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             <label className="text-sm font-bold text-casero-dark">
               Plan
@@ -988,7 +988,7 @@ function EditBusinessModal({
               </select>
             </label>
             <label className="text-sm font-bold text-casero-dark">
-              SecciÃ³n
+              Sección
               <select
                 name="section"
                 value={section}
@@ -1012,7 +1012,7 @@ function EditBusinessModal({
               </select>
             </label>
             <label className="text-sm font-bold text-casero-dark">
-              Modo de ubicaciÃ³n
+              Modo de ubicación
               <select name="location_mode" defaultValue={business.location_mode ?? "zones_only"} className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green">
                 {Object.entries(locationModeLabels).map(([value, label]) => (
                   <option key={value} value={value}>{label}</option>
@@ -1023,13 +1023,13 @@ function EditBusinessModal({
         </Card>
 
         <Card>
-          <h3 className="font-heading text-lg font-bold text-casero-dark">CategorÃ­as y zonas</h3>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">Categorías y zonas</h3>
           <p className="mt-2 text-sm text-casero-text/65">
-            LÃ­mite del plan: {limits.maxCategories} categorÃ­as y {limits.maxLocations} zonas.
+            Límite del plan: {limits.maxCategories} categorías y {limits.maxLocations} zonas.
           </p>
           <div className="mt-4 grid gap-5 lg:grid-cols-2">
             <div>
-              <p className="text-sm font-bold text-casero-dark">CategorÃ­as seleccionadas: {categoryIds.length}</p>
+              <p className="text-sm font-bold text-casero-dark">Categorías seleccionadas: {categoryIds.length}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {filteredCategories.map((category) => {
                   const active = categoryIds.includes(category.id);
@@ -1071,11 +1071,11 @@ function EditBusinessModal({
           <h3 className="font-heading text-lg font-bold text-casero-dark">Atributos</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              ["has_physical_location", "Tiene ubicaciÃ³n fÃ­sica", business.has_physical_location],
+              ["has_physical_location", "Tiene ubicación física", business.has_physical_location],
               ["show_map", "Mostrar mapa", business.show_map],
               ["service_at_home", "Servicio a domicilio", business.service_at_home],
               ["emergency_service", "Atiende urgencias", business.emergency_service],
-              ["service_24_7", "AtenciÃ³n 24/7", business.service_24_7],
+              ["service_24_7", "Atención 24/7", business.service_24_7],
               ["by_appointment", "Con cita previa", business.by_appointment],
               ["free_estimate", "Presupuesto sin costo", business.free_estimate],
               ["invoices", "Emite factura", business.invoices],
@@ -1083,17 +1083,17 @@ function EditBusinessModal({
               ["accepts_transfer", "Acepta transferencia", business.accepts_transfer],
               ["attends_airbnb", "Atiende Airbnb", business.attends_airbnb],
               ["attends_condos", "Atiende condominios", business.attends_condos],
-              ["offers_warranty", "Ofrece garantÃ­a", business.offers_warranty],
-              ["retail_sales", "Venta al pÃºblico", business.retail_sales],
+              ["offers_warranty", "Ofrece garantía", business.offers_warranty],
+              ["retail_sales", "Venta al público", business.retail_sales],
               ["wholesale_sales", "Venta por mayoreo", business.wholesale_sales],
               ["delivery_available", "Entrega a domicilio", business.delivery_available],
               ["authorized_distributor", "Distribuidor autorizado", business.authorized_distributor],
-              ["pet_veterinary_service", "AtenciÃ³n veterinaria", business.pet_veterinary_service],
-              ["pet_grooming", "EstÃ©tica mascotas", business.pet_grooming],
-              ["pet_daycare", "GuarderÃ­a mascotas", business.pet_daycare],
+              ["pet_veterinary_service", "Atención veterinaria", business.pet_veterinary_service],
+              ["pet_grooming", "Estética mascotas", business.pet_grooming],
+              ["pet_daycare", "Guardería mascotas", business.pet_daycare],
               ["pet_food_accessories", "Alimentos/accesorios mascotas", business.pet_food_accessories],
-              ["auto_tow_service", "GrÃºa disponible", business.auto_tow_service],
-              ["auto_diagnostics", "DiagnÃ³stico automotriz", business.auto_diagnostics],
+              ["auto_tow_service", "Grúa disponible", business.auto_tow_service],
+              ["auto_diagnostics", "Diagnóstico automotriz", business.auto_diagnostics],
               ["auto_parts", "Refacciones", business.auto_parts],
               ["auto_wash_detailing", "Lavado / detallado", business.auto_wash_detailing],
               ["is_verified", "Verificado", business.is_verified],
@@ -1117,16 +1117,16 @@ function EditBusinessModal({
         <Card>
           <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
             <div>
-              <h3 className="font-heading text-lg font-bold text-casero-dark">ImÃ¡genes del negocio</h3>
+              <h3 className="font-heading text-lg font-bold text-casero-dark">Imágenes del negocio</h3>
               <p className="mt-2 text-sm text-casero-text/65">
-                {business.media.length} de {limits.maxImages} imÃ¡genes permitidas por plan. TamaÃ±o mÃ¡ximo: {limits.maxImageSizeMb} MB por imagen.
+                {business.media.length} de {limits.maxImages} imágenes permitidas por plan. Tamaño máximo: {limits.maxImageSizeMb} MB por imagen.
               </p>
               <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-casero-text/60">
                 Verifica monto, fecha, referencia y cuenta destino antes de activar.
               </p>
             </div>
             <Badge tone={business.media.length >= limits.maxImages ? "orange" : "green"}>
-              {business.media.length >= limits.maxImages ? "LÃ­mite alcanzado" : "Puede agregar imÃ¡genes"}
+              {business.media.length >= limits.maxImages ? "Límite alcanzado" : "Puede agregar imágenes"}
             </Badge>
           </div>
 
@@ -1195,13 +1195,13 @@ function EditBusinessModal({
               })
             ) : (
               <div className="rounded-lg border border-dashed border-casero-dark/15 bg-white p-5 text-sm text-casero-text/65 md:col-span-2">
-                Este negocio todavÃ­a no tiene imÃ¡genes.
+                Este negocio todavía no tiene imágenes.
               </div>
             )}
           </div>
 
           <div className="mt-5 rounded-lg bg-casero-background p-4">
-            <h4 className="text-sm font-bold text-casero-dark">Agregar nuevas imÃ¡genes</h4>
+            <h4 className="text-sm font-bold text-casero-dark">Agregar nuevas imágenes</h4>
             <div className="mt-3 grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
               <label className="text-sm font-bold text-casero-dark">
                 Archivos
@@ -1214,11 +1214,11 @@ function EditBusinessModal({
                 />
               </label>
               <label className="text-sm font-bold text-casero-dark">
-                Alt para estas imÃ¡genes
+                Alt para estas imágenes
                 <input
                   value={uploadAlt}
                   onChange={(event) => setUploadAlt(event.target.value)}
-                  placeholder="Ej. Trabajo realizado en CancÃºn"
+                  placeholder="Ej. Trabajo realizado en Cancún"
                   className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green"
                 />
               </label>
@@ -1228,7 +1228,7 @@ function EditBusinessModal({
                 onClick={() => onUploadImages(business, uploadFiles, uploadAlt, selectedPlan)}
                 className="rounded-md bg-casero-orange px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50"
               >
-                Subir imÃ¡genes
+                Subir imágenes
               </button>
             </div>
           </div>
@@ -1346,7 +1346,7 @@ export function AdminBusinessesPanel() {
 
     if (loadError) {
       console.error("admin businesses load error", loadError);
-      setError("No pudimos cargar los negocios. Revisa la consola y las polÃ­ticas de Supabase.");
+      setError("No pudimos cargar los negocios. Revisa la consola y las políticas de Supabase.");
       setLoading(false);
       return false;
     }
@@ -1363,7 +1363,7 @@ export function AdminBusinessesPanel() {
         categoriesError: categoriesResult.error,
         locationsError: locationsResult.error,
       });
-      setError("No pudimos cargar planes, categorÃ­as o ubicaciones para ediciÃ³n.");
+      setError("No pudimos cargar planes, categorías o ubicaciones para edición.");
     } else {
       setPlans((plansResult.data ?? []) as AdminPlanOption[]);
       setCategories((categoriesResult.data ?? []) as AdminCategoryOption[]);
@@ -1448,7 +1448,7 @@ export function AdminBusinessesPanel() {
 
     if (updateError) {
       console.error("admin business update error", { id, updates, error: updateError });
-      setError("No pudimos actualizar el negocio. Revisa la consola y las polÃ­ticas temporales.");
+      setError("No pudimos actualizar el negocio. Revisa la consola y las políticas temporales.");
       setActionLoadingId(null);
       return;
     }
@@ -1601,12 +1601,12 @@ export function AdminBusinessesPanel() {
     }
 
     if (categoryIds.length === 0 || locationIds.length === 0) {
-      setEditError("Selecciona al menos una categorÃ­a y una ubicaciÃ³n.");
+      setEditError("Selecciona al menos una categoría y una ubicación.");
       return;
     }
 
     if (categoryIds.length > limits.maxCategories) {
-      setEditError(`El plan seleccionado permite hasta ${limits.maxCategories} categorÃ­as.`);
+      setEditError(`El plan seleccionado permite hasta ${limits.maxCategories} categorías.`);
       return;
     }
 
@@ -1688,7 +1688,7 @@ export function AdminBusinessesPanel() {
         categoriesError: deleteCategories.error,
         locationsError: deleteLocations.error,
       });
-      setEditError("No pudimos reemplazar categorÃ­as o ubicaciones.");
+      setEditError("No pudimos reemplazar categorías o ubicaciones.");
       setEditSaving(false);
       return;
     }
@@ -1705,7 +1705,7 @@ export function AdminBusinessesPanel() {
         categoriesError: insertCategories.error,
         locationsError: insertLocations.error,
       });
-      setEditError("No pudimos guardar categorÃ­as o ubicaciones.");
+      setEditError("No pudimos guardar categorías o ubicaciones.");
       setEditSaving(false);
       return;
     }
@@ -1737,13 +1737,13 @@ export function AdminBusinessesPanel() {
 
     if (updateError) {
       console.error("admin business media order error", { businessId: business.id, orderedMedia, error: updateError });
-      setEditError("No pudimos reordenar las imÃ¡genes. Revisa la consola.");
+      setEditError("No pudimos reordenar las imágenes. Revisa la consola.");
       setMediaActionLoadingId(null);
       return;
     }
 
     await loadBusinesses();
-    setNotice("ImÃ¡genes actualizadas correctamente.");
+    setNotice("Imágenes actualizadas correctamente.");
     setMediaActionLoadingId(null);
   }
 
@@ -1853,7 +1853,7 @@ export function AdminBusinessesPanel() {
     }
 
     if (availableSlots <= 0 || files.length > availableSlots) {
-      setEditError(`Este plan permite hasta ${limits.maxImages} imÃ¡genes.`);
+      setEditError(`Este plan permite hasta ${limits.maxImages} imágenes.`);
       return;
     }
 
@@ -1905,14 +1905,14 @@ export function AdminBusinessesPanel() {
 
       if (mediaError) {
         console.error("admin business media insert error", { businessId: business.id, publicUrl, error: mediaError });
-        setEditError("La imagen subiÃ³, pero no pudimos guardar el registro. Revisa la consola.");
+        setEditError("La imagen subió, pero no pudimos guardar el registro. Revisa la consola.");
         setMediaActionLoadingId(null);
         return;
       }
     }
 
     await loadBusinesses();
-    setNotice("ImÃ¡genes subidas correctamente.");
+    setNotice("Imágenes subidas correctamente.");
     setMediaActionLoadingId(null);
   }
 
@@ -1925,7 +1925,7 @@ export function AdminBusinessesPanel() {
             Solicitudes de negocios
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-casero-text/70">
-            Revisa categorÃ­as, zonas, imÃ¡genes y atributos antes de publicar negocios en Casero CancÃºn.
+            Revisa categorías, zonas, imágenes y atributos antes de publicar negocios en Casero Cancún.
           </p>
         </div>
         <div className="grid gap-2 sm:flex sm:flex-wrap">
@@ -1933,7 +1933,7 @@ export function AdminBusinessesPanel() {
             Refrescar
           </Button>
           <Button type="button" variant="ghost" className="w-full sm:w-auto" onClick={logout}>
-            Cerrar sesiÃ³n admin
+            Cerrar sesión admin
           </Button>
         </div>
       </div>
@@ -1964,7 +1964,7 @@ export function AdminBusinessesPanel() {
           <thead className="bg-casero-beige/70 text-xs uppercase tracking-[0.12em] text-casero-dark">
             <tr>
               <th className="px-4 py-3">Negocio</th>
-              <th className="px-4 py-3">SecciÃ³n</th>
+              <th className="px-4 py-3">Sección</th>
               <th className="px-4 py-3">Plan</th>
               <th className="px-4 py-3">Contacto</th>
               <th className="px-4 py-3">Estado</th>
@@ -1981,7 +1981,7 @@ export function AdminBusinessesPanel() {
                       <p className="font-heading font-bold text-casero-dark">{business.business_name}</p>
                       <p className="mt-1 text-xs text-casero-text/55">{formatDate(business.created_at)}</p>
                       <p className="mt-2 text-xs text-casero-text/65">
-                        {business.categories.map((category) => category.name).join(", ") || "Sin categorÃ­as"}
+                        {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}
                       </p>
                       <p className="mt-1 text-xs text-casero-text/65">
                         {business.locations.map((location) => location.name).join(", ") || "Sin ubicaciones"}
@@ -2038,12 +2038,12 @@ export function AdminBusinessesPanel() {
             <p className="mt-1 text-xs font-semibold text-casero-text/50">/{business.slug}</p>
             <div className="mt-4 grid gap-2 text-sm text-casero-text/70">
               <p><strong>Tipo:</strong> {getProfileTypeLabel(business.profile_type)}</p>
-              <p><strong>SecciÃ³n:</strong> {getSection(business)}</p>
+              <p><strong>Sección:</strong> {getSection(business)}</p>
               <p><strong>Plan:</strong> {business.planName ?? business.plan_id ?? "Sin plan"}</p>
               <p><strong>WhatsApp:</strong> {business.whatsapp ?? "Sin WhatsApp"}</p>
               <p><strong>Email:</strong> {business.email ?? "Sin correo"}</p>
               <p><strong>Fecha:</strong> {formatDate(business.created_at)}</p>
-              <p><strong>CategorÃ­as:</strong> {business.categories.map((category) => category.name).join(", ") || "Sin categorÃ­as"}</p>
+              <p><strong>Categorías:</strong> {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}</p>
               <p><strong>Ubicaciones:</strong> {business.locations.map((location) => location.name).join(", ") || "Sin ubicaciones"}</p>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">

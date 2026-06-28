@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { createSupabaseAuthServerClient } from "@/lib/auth/admin";
 import { getRegistrationOptions } from "@/lib/data/registration";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Registrar mi negocio | Casero Cancun",
-  description: "Registra tu negocio, tienda o servicio para aparecer en Casero Cancun.",
-};
+export const metadata: Metadata = createPublicMetadata({
+  title: "Registrar mi negocio en Casero Cancún",
+  description:
+    "Registra tu negocio, tienda o servicio local para revisión y publicación en el directorio de Casero Cancún.",
+  path: "/registrar-mi-negocio",
+});
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

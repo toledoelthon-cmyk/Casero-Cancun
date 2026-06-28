@@ -5,6 +5,7 @@ import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { WhatsAppFloatingButton } from "@/components/layout/WhatsAppFloatingButton";
+import { createPublicMetadata } from "@/lib/seo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,11 +19,11 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPublicMetadata({
   title: "Casero Cancún | Servicios locales, tiendas, mascotas y auto",
   description:
-    "Encuentra servicios locales Cancún, tiendas y materiales Cancún, mascotas Cancún y servicios automotrices Cancún con contacto directo por WhatsApp.",
-};
+    "Encuentra servicios del hogar, proveedores locales, tiendas de materiales, mascotas y servicios automotrices en Cancún con contacto directo por WhatsApp.",
+});
 
 export default function RootLayout({
   children,

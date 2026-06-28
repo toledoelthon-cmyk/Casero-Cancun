@@ -6,10 +6,12 @@ import { createSupabaseAuthServerClient } from "@/lib/auth/admin";
 import { getProviderAccess } from "@/lib/auth/provider";
 import { getRegistrationOptions } from "@/lib/data/registration";
 import type { BusinessMedia, BusinessProfile, Category, Location, Plan } from "@/lib/supabase/types";
+import { privatePageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Editar negocio | Casero Cancun",
-  description: "Edicion de negocio para proveedores de Casero Cancun.",
+  title: "Editar negocio | Casero Cancún",
+  description: "Edición de negocio para proveedores registrados en Casero Cancún.",
+  ...privatePageMetadata,
 };
 
 export const dynamic = "force-dynamic";

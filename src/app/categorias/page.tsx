@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { CategoryCard } from "@/components/marketplace/CategoryCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { autoServiceCategories, petCategories, serviceCategories, storeCategories } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Categorías | Servicios locales Cancún, mascotas, auto, tiendas y materiales",
+export const metadata: Metadata = createPublicMetadata({
+  title: "Categorías de servicios locales en Cancún | Casero Cancún",
   description:
-    "Explora categorías de servicios locales Cancún, tiendas y materiales Cancún, mascotas Cancún y servicios automotrices Cancún.",
-};
+    "Explora categorías de servicios del hogar, tiendas de materiales, mascotas y servicios para auto disponibles en Casero Cancún.",
+  path: "/categorias",
+});
 
 export default function CategoriesPage() {
   return (
@@ -16,7 +18,8 @@ export default function CategoriesPage() {
         eyebrow="Categorías"
         title="Busca por tipo de solucion"
         description="Explora las cuatro secciones principales de Casero Cancún y entra a resultados por categoría."
-      />
+          level={1}
+        />
 
       {[
         ["Servicios del hogar", serviceCategories],

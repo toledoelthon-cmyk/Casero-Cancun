@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { contact, whatsappUrl } from "@/lib/contact";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPublicMetadata({
   title: "Contacto | Casero Cancún",
-  description: "Contacta a Casero Cancún por WhatsApp o correo para registrar tu negocio o resolver dudas.",
-};
+  description:
+    "Contacta a Casero Cancún por WhatsApp o correo para registrar tu negocio, resolver dudas o pedir información del directorio.",
+  path: "/contacto",
+});
 
 export default function ContactPage() {
   return (
@@ -17,7 +20,8 @@ export default function ContactPage() {
         eyebrow="Contacto"
         title="Hablemos de Casero Cancún"
         description="Escríbenos para registrar tu negocio, resolver dudas o preparar tu perfil dentro de la plataforma."
-      />
+          level={1}
+        />
       <div className="mt-8 grid gap-5 md:grid-cols-3">
         <Card>
           <MessageCircle className="h-8 w-8 text-casero-green" aria-hidden />

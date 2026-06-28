@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import { SectionBusinessPage } from "@/components/marketplace/SectionBusinessPage";
 import { storeCategories } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
 type PageProps = {
   searchParams: Promise<{ ubicacion?: string }>;
 };
 
-export const metadata: Metadata = {
-  title: "Tiendas y materiales Cancún | Ferreterías, herramientas y refacciones",
-  description: "Encuentra tiendas y materiales Cancún: ferreterias, materiales de construcción, herramientas, refacciones y suministros locales.",
-};
+export const metadata: Metadata = createPublicMetadata({
+  title: "Tiendas y materiales en Cancún | Casero Cancún",
+  description:
+    "Encuentra ferreterías, materiales de construcción, herramientas, refacciones y suministros locales para proyectos en Cancún.",
+  path: "/tiendas-y-materiales",
+});
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

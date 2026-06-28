@@ -61,7 +61,7 @@ export function PlanCard({ plan }: PlanCardProps) {
           </>
         ) : (
           <a className={`${externalButtonClass} bg-casero-green text-white shadow-soft hover:bg-emerald-700`} href={manualPayment.whatsappUrl} target="_blank" rel="noreferrer">
-            {manualPayment.paymentUrl ? manualPayment.label : "Solicitar datos por WhatsApp"}
+            Solicitar datos por WhatsApp
           </a>
         )}
       </div>
@@ -71,5 +71,6 @@ export function PlanCard({ plan }: PlanCardProps) {
     </article>
   );
 }
+
 
 

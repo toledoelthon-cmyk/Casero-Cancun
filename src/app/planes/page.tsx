@@ -3,12 +3,14 @@ import { PlanCard } from "@/components/marketplace/PlanCard";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { plans } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Planes | Casero Cancún para servicios, tiendas, mascotas y auto",
+export const metadata: Metadata = createPublicMetadata({
+  title: "Planes para proveedores en Casero Cancún",
   description:
-    "Planes para publicar proveedores de servicios, tiendas y materiales Cancún, negocios de mascotas Cancún, talleres y servicios automotrices Cancún.",
-};
+    "Conoce los planes para publicar tu negocio, tienda o servicio local en Casero Cancún y recibir contactos directos.",
+  path: "/planes",
+});
 
 export default function PlansPage() {
   return (

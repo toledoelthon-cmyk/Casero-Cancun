@@ -1,4 +1,5 @@
-﻿import type { Metadata } from "next";
+import { createPublicMetadata } from "@/lib/seo";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   BadgeCheck,
@@ -114,15 +115,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const business = await getBusinessBySlug(slug);
 
   if (!business) {
-    return {
+    return createPublicMetadata({
       title: "Negocio no encontrado | Casero Cancún",
-    };
+      description: "El perfil solicitado no está disponible en Casero Cancún.",
+      path: `/negocio/${slug}`,
+    });
   }
 
-  return {
+  return createPublicMetadata({
     title: `${business.name} | Casero Cancún`,
     description: business.shortDescription,
-  };
+    path: `/negocio/${business.slug}`,
+    type: "article",
+  });
 }
 
 export default async function BusinessProfilePage({ params }: PageProps) {

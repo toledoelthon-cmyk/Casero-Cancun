@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getPublishedBusinessesByCategory } from "@/lib/data/businesses";
 import { categories } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -18,10 +19,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const category = categories.find((item) => item.slug === slug);
 
-  return {
+  return createPublicMetadata({
     title: category ? `${category.name} | Casero Cancún` : "Categoría no encontrada | Casero Cancún",
-    description: category?.description,
-  };
+    description: category?.description ?? "Explora proveedores y negocios locales publicados por categoría en Casero Cancún.",
+    path: `/categoria/${slug}`,
+  });
 }
 
 export default async function CategoryPage({ params }: PageProps) {
@@ -36,7 +38,7 @@ export default async function CategoryPage({ params }: PageProps) {
 
   return (
     <section className="container-page py-8 sm:py-12">
-      <SectionHeader eyebrow="Categoría" title={category.name} description={category.description} />
+      <SectionHeader eyebrow="Categoría" title={category.name} description={category.description} level={1} />
 
       <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5">
         {relatedBusinesses.length > 0 ? (

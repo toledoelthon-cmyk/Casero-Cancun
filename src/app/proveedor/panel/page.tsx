@@ -1,3 +1,4 @@
+import { privatePageMetadata } from "@/lib/seo";
 ﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -8,8 +9,9 @@ import { getProviderAccess } from "@/lib/auth/provider";
 import type { BusinessMedia, BusinessProfile, Category, Location, Plan } from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
-  title: "Panel proveedor | Casero Cancun",
-  description: "Panel para proveedores registrados en Casero Cancun.",
+  title: "Panel proveedor | Casero Cancún",
+  description: "Panel para proveedores registrados en Casero Cancún.",
+  ...privatePageMetadata,
 };
 
 export const dynamic = "force-dynamic";

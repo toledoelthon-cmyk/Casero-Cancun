@@ -48,7 +48,7 @@ const statusStyles: Record<string, string> = {
 };
 
 const externalPaymentButtonClass =
-  "inline-flex min-h-10 items-center justify-center rounded-md px-3 py-2 text-xs font-bold transition";
+  "inline-flex min-h-10 w-full items-center justify-center rounded-md px-3 py-2 text-xs font-bold transition sm:w-auto";
 
 const sectionLabels = {
   home_services: "Servicios del hogar",
@@ -197,7 +197,7 @@ function PaymentActivationBox({ business }: { business: ProviderBusiness }) {
           <p className="font-heading text-base font-extrabold text-casero-dark">Pagar con CoDi</p>
           <div className="mt-3 flex justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={manualPayment.codiQrUrl ?? ""} alt={`QR CoDi para plan ${planName}`} className="h-44 w-44 rounded-md border border-casero-dark/10 bg-white object-contain p-2" />
+            <img src={manualPayment.codiQrUrl ?? ""} alt={`QR CoDi para pagar plan ${planName} de Casero Cancún`} className="h-44 w-44 rounded-md border border-casero-dark/10 bg-white object-contain p-2" />
           </div>
           <p className="mt-3 text-xs font-semibold text-casero-text/65">La activación no es automática. Tu pago será validado manualmente.</p>
         </div>
@@ -396,6 +396,7 @@ export function ProviderPanel({ profile, businesses, updateMessage }: ProviderPa
     </section>
   );
 }
+
 
 
 

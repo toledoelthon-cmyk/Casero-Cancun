@@ -6,12 +6,14 @@ import { TrustFeatureCard } from "@/components/marketplace/TrustFeatureCard";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { autoServiceCategories, petCategories, serviceCategories, storeCategories } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPublicMetadata({
   title: "Casero Cancún | Servicios locales, mascotas, auto, tiendas y materiales",
   description:
-    "Encuentra servicios locales Cancún, tiendas y materiales Cancún, mascotas Cancún y servicios automotrices Cancún con contacto directo por WhatsApp.",
-};
+    "Directorio local para encontrar servicios del hogar, tiendas de materiales, proveedores para mascotas y servicios automotrices en Cancún.",
+  path: "/",
+});
 
 const mainSections = [
   {

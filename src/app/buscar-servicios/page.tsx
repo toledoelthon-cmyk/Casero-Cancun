@@ -3,12 +3,14 @@ import { PublicBusinessDirectory } from "@/components/marketplace/PublicBusiness
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getPublishedBusinesses } from "@/lib/data/businesses";
 import { categories, locations } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Buscar servicios locales Cancún | Mascotas, auto, tiendas y materiales",
+export const metadata: Metadata = createPublicMetadata({
+  title: "Buscar servicios locales en Cancún | Casero Cancún",
   description:
-    "Busca servicios locales Cancún, tiendas y materiales Cancún, mascotas Cancún y servicios automotrices Cancún en un solo directorio.",
-};
+    "Busca proveedores, tiendas de materiales, servicios para mascotas y servicios automotrices publicados en Cancún.",
+  path: "/buscar-servicios",
+});
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -23,6 +25,7 @@ export default async function SearchServicesPage() {
           eyebrow="Directorio local"
           title="Busca negocios publicados en Casero Cancún"
           description="Filtra por texto, sección, categoría, ubicación y atributos para encontrar proveedores, tiendas y servicios locales."
+          level={1}
         />
       </div>
 

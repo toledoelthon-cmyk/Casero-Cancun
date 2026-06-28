@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getPublishedBusinessesByLocation } from "@/lib/data/businesses";
 import { locations } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -18,10 +19,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const location = locations.find((item) => item.slug === slug);
 
-  return {
+  return createPublicMetadata({
     title: location ? `${location.name} | Casero Cancún` : "Ubicación no encontrada | Casero Cancún",
-    description: location ? `Negocios publicados que atienden ${location.name} en Casero Cancún.` : undefined,
-  };
+    description: location ? `Negocios publicados que atienden ${location.name} en Casero Cancún.` : "Explora negocios locales por zona de atención en Cancún.",
+    path: `/ubicacion/${slug}`,
+  });
 }
 
 export default async function LocationPage({ params }: PageProps) {
@@ -43,7 +45,7 @@ export default async function LocationPage({ params }: PageProps) {
         eyebrow="Ubicación"
         title={location.name}
         description="Negocios publicados que atienden esta zona."
-      />
+      level={1} />
 
       {availableCategories.length > 0 ? (
         <Card className="mt-6 p-5 sm:mt-8 sm:p-6">

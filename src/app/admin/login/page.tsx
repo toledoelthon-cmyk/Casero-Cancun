@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
 import { getAdminSession } from "@/lib/auth/admin";
+import { privatePageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Login admin | Casero Cancún",
   description: "Acceso administrativo para Casero Cancún.",
+  ...privatePageMetadata,
 };
 
 export const dynamic = "force-dynamic";

@@ -33,7 +33,7 @@ export async function SectionBusinessPage({
   return (
     <section className="container-page py-8 sm:py-12">
       <div className="rounded-lg bg-white p-5 shadow-sm md:p-8">
-        <SectionHeader eyebrow={eyebrow} title={title} description={description} />
+        <SectionHeader eyebrow={eyebrow} title={title} description={description} level={1} />
       </div>
 
       <div className="mt-8 sm:mt-10">

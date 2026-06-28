@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ProviderLoginForm } from "@/components/provider/ProviderLoginForm";
 import { getProviderAccess } from "@/lib/auth/provider";
+import { privatePageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Login proveedor | Casero Cancun",
-  description: "Acceso y registro de proveedores para Casero Cancun.",
+  title: "Login proveedor | Casero Cancún",
+  description: "Acceso y registro de proveedores para Casero Cancún.",
+  ...privatePageMetadata,
 };
 
 export const dynamic = "force-dynamic";

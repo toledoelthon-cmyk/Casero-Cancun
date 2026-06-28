@@ -3,11 +3,14 @@ import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { locations } from "@/lib/demo-data";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Ubicaciones | Casero Cancún",
-  description: "Explora zonas de atención para servicios, tiendas y proveedores locales en Cancún.",
-};
+export const metadata: Metadata = createPublicMetadata({
+  title: "Zonas y ubicaciones en Cancún | Casero Cancún",
+  description:
+    "Explora zonas de atención en Cancún para encontrar proveedores, tiendas y servicios locales publicados en Casero Cancún.",
+  path: "/ubicaciones",
+});
 
 export default function LocationsPage() {
   return (
@@ -16,7 +19,8 @@ export default function LocationsPage() {
         eyebrow="Ubicaciones"
         title="Busca proveedores por zona de atención"
         description="Tarjetas demo para explorar negocios por zona dentro de Cancún y alrededores."
-      />
+          level={1}
+        />
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {locations.map((location) => (
           <Link
