@@ -11,6 +11,14 @@ export function absoluteUrl(path = "/") {
   return `${siteUrl}${normalizedPath}`;
 }
 
+export const defaultOgImagePath = "/og/casero-cancun-og.png";
+export const defaultOgImage = {
+  url: absoluteUrl(defaultOgImagePath),
+  width: 1200,
+  height: 630,
+  alt: "Casero Cancún | Servicios, proveedores y negocios locales en Cancún",
+};
+
 type PublicMetadataOptions = {
   title: string;
   description?: string;
@@ -39,11 +47,13 @@ export function createPublicMetadata({
       url,
       siteName,
       locale: "es_MX",
+      images: [defaultOgImage],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
+      images: [defaultOgImage.url],
     },
   };
 }
