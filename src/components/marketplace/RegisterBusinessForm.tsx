@@ -62,6 +62,23 @@ function getPlanFileSizeLimit(slug?: string) {
   return 2;
 }
 
+function CodiQrImage({ src, alt, className }: { src: string; alt: string; className: string }) {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <p className="rounded-md bg-casero-background p-3 text-sm font-semibold leading-6 text-casero-text/70">
+        No se pudo cargar el QR. Solicita los datos de pago por WhatsApp.
+      </p>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} className={className} onError={() => setHasError(true)} />
+  );
+}
+
 function getPlanBenefits(slug: string) {
   if (slug === "premium") {
     return ["Perfil destacado", "Prioridad alta en búsquedas", "Hasta 15 fotos", "Promoción destacada"];
@@ -138,7 +155,7 @@ export function RegisterBusinessForm({
   const [businessFiles, setBusinessFiles] = useState<ImagePreview[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [formMessage, setFormMessage] = useState<string | null>(null);
-  const [validationTarget, setValidationTarget] = useState<"plan" | "section" | "categories" | "locations" | "images" | "main" | null>(null);
+  const [validationTarget, setValidationTarget] = useState<"plan" | "section" | "categories" | "locations" | "images" | "legal" | "main" | null>(null);
 
   const filteredCategories = useMemo(() => {
     if (!businessSection) {
@@ -440,6 +457,8 @@ export function RegisterBusinessForm({
     const longitudeInput = shouldShowAddressFields ? String(formData.get("longitude") ?? "").trim() : "";
     const latitude = latitudeInput ? Number(latitudeInput) : null;
     const longitude = longitudeInput ? Number(longitudeInput) : null;
+    const acceptedLegal = formData.get("acceptedLegal") === "on";
+    const acceptedTruthReview = formData.get("acceptedTruthReview") === "on";
 
     const normalizedWhatsapp = normalizeWhatsapp(whatsappInput);
     const normalizedPhone = phoneInput ? normalizeWhatsapp(phoneInput) : null;
@@ -468,7 +487,9 @@ export function RegisterBusinessForm({
       locationIds.length === 0 ||
       !shortDescription ||
       imageValidationError ||
-      selectionValidationError
+      selectionValidationError ||
+      !acceptedLegal ||
+      !acceptedTruthReview
     ) {
       const nextValidationTarget = imageValidationError
         ? "images"
@@ -480,7 +501,9 @@ export function RegisterBusinessForm({
               ? "categories"
               : locationIds.length === 0 || selectionValidationError?.includes("ubic")
                 ? "locations"
-                : "main";
+                : !acceptedLegal || !acceptedTruthReview
+                  ? "legal"
+                  : "main";
 
       setStatus("error");
       setValidationTarget(nextValidationTarget);
@@ -664,8 +687,13 @@ export function RegisterBusinessForm({
                         <p className="font-heading text-lg font-extrabold text-casero-dark">Paga tu membresía por CoDi</p>
                         <p className="mt-2 text-sm leading-6 text-casero-text/75">{manualPayment.codiInstructions}</p>
                         <div className="mt-3 flex justify-center">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={manualPayment.codiQrUrl ?? ""} alt={`QR CoDi para pagar plan ${planName} de Casero Cancún`} className="h-48 w-48 rounded-md border border-casero-dark/10 bg-white object-contain p-2" />
+                          {manualPayment.codiQrUrl ? (
+                            <CodiQrImage
+                              src={manualPayment.codiQrUrl}
+                              alt={`QR CoDi para pagar plan ${planName} de Casero Cancún`}
+                              className="h-48 w-48 rounded-md border border-casero-dark/10 bg-white object-contain p-2"
+                            />
+                          ) : null}
                         </div>
                         <p className="mt-3 text-sm font-bold text-casero-dark">{planName}{planAmount ? ` · ${planAmount}` : ""}</p>
                         <p className="mt-2 text-xs font-semibold text-casero-text/65">La activación no es automática. Tu pago será validado manualmente.</p>
@@ -1450,7 +1478,7 @@ export function RegisterBusinessForm({
           </fieldset>
         ) : null}
 
-        <fieldset className={sectionClass}>
+        <fieldset id="legal-section" className={`${sectionClass} ${validationTarget === "legal" ? "border-red-300 ring-2 ring-red-100" : ""}`}>
           <legend className="px-1 text-sm font-bold text-casero-dark">Revisión final y envío</legend>
           <div className="mt-3 grid gap-5">
         <label className="text-sm font-bold text-casero-dark">
@@ -1471,6 +1499,21 @@ export function RegisterBusinessForm({
             placeholder="Cuéntanos si atiendes urgencias, Airbnb, Zona Hotelera o si tienes alguna duda."
           />
         </label>
+
+            <div className="grid gap-3 rounded-md border border-casero-dark/10 bg-white p-4 text-sm leading-6 text-casero-text/75">
+              <label className="flex items-start gap-3">
+                <input name="acceptedLegal" type="checkbox" required className="mt-1 h-4 w-4 flex-none accent-casero-green" />
+                <span>
+                  Acepto el <a href="/aviso-de-privacidad" className="font-bold text-casero-green underline underline-offset-2">Aviso de Privacidad</a> y los <a href="/terminos-y-condiciones" className="font-bold text-casero-green underline underline-offset-2">Términos y Condiciones</a> de Casero Cancún.
+                </span>
+              </label>
+              <label className="flex items-start gap-3">
+                <input name="acceptedTruthReview" type="checkbox" required className="mt-1 h-4 w-4 flex-none accent-casero-green" />
+                <span>
+                  Declaro que la información proporcionada sobre mi negocio es verdadera y autorizo a Casero Cancún a revisarla, publicarla, pausarla, rechazarla o eliminarla si incumple las reglas de la plataforma.
+                </span>
+              </label>
+            </div>
 
             <Button type="submit" variant="secondary" className="w-full sm:w-auto" disabled={isLoading}>
               {isLoading ? "Enviando..." : "Enviar solicitud"}

@@ -12,6 +12,13 @@ const paymentLinks: Record<string, string | undefined> = {
   premium: process.env.NEXT_PUBLIC_MP_LINK_PREMIUM,
 };
 
+const defaultCodiQrLinks: Record<string, string> = {
+  basico: "/payments/codi-basic.jpg",
+  basic: "/payments/codi-basic.jpg",
+  pro: "/payments/codi-pro.jpg",
+  premium: "/payments/codi-premium.jpg",
+};
+
 const codiQrLinks: Record<string, string | undefined> = {
   basico: process.env.NEXT_PUBLIC_CODI_QR_BASIC,
   basic: process.env.NEXT_PUBLIC_CODI_QR_BASIC,
@@ -42,7 +49,10 @@ export function buildManualPaymentWhatsappUrl(message: string) {
 export function getManualPaymentLinks(plan?: ManualPaymentPlan | string | null, message?: string) {
   const normalizedSlug = normalizePlanSlug(plan);
   const paymentUrl = cleanPublicUrl(paymentLinks[normalizedSlug]);
-  const codiQrUrl = cleanPublicUrl(codiQrLinks[normalizedSlug]) ?? cleanPublicUrl(process.env.NEXT_PUBLIC_CODI_QR_GENERAL);
+  const codiQrUrl =
+    cleanPublicUrl(codiQrLinks[normalizedSlug]) ??
+    cleanPublicUrl(process.env.NEXT_PUBLIC_CODI_QR_GENERAL) ??
+    cleanPublicUrl(defaultCodiQrLinks[normalizedSlug]);
   const planName = typeof plan === "string" ? plan : (plan?.name ?? normalizedSlug) || "plan seleccionado";
   const defaultMessage = `Hola, quiero solicitar información para pagar por CoDi o transferencia el plan ${planName} de Casero Cancún.`;
   const hasCodiQr = Boolean(codiQrUrl);

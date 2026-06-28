@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { useState } from "react";
 import { CalendarDays, CarFront, Home, ImageIcon, MapPin, PawPrint, Store, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -169,6 +170,23 @@ function shouldShowPaymentActivation(business: ProviderBusiness) {
   return ["manual_review", "expired", "cancelled", "past_due"].includes(membershipStatus) || ["unpaid", "pending", "failed"].includes(paymentStatus);
 }
 
+function CodiQrImage({ src, alt, className }: { src: string; alt: string; className: string }) {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <p className="rounded-md bg-casero-background p-3 text-sm font-semibold leading-6 text-casero-text/70">
+        No se pudo cargar el QR. Solicita los datos de pago por WhatsApp.
+      </p>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} className={className} onError={() => setHasError(true)} />
+  );
+}
+
 function PaymentActivationBox({ business }: { business: ProviderBusiness }) {
   if (!shouldShowPaymentActivation(business)) {
     return null;
@@ -196,8 +214,13 @@ function PaymentActivationBox({ business }: { business: ProviderBusiness }) {
         <div className="mt-4 rounded-md bg-white p-4 text-center shadow-sm">
           <p className="font-heading text-base font-extrabold text-casero-dark">Pagar con CoDi</p>
           <div className="mt-3 flex justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={manualPayment.codiQrUrl ?? ""} alt={`QR CoDi para pagar plan ${planName} de Casero Cancún`} className="h-44 w-44 rounded-md border border-casero-dark/10 bg-white object-contain p-2" />
+            {manualPayment.codiQrUrl ? (
+              <CodiQrImage
+                src={manualPayment.codiQrUrl}
+                alt={`QR CoDi para pagar plan ${planName} de Casero Cancún`}
+                className="h-44 w-44 rounded-md border border-casero-dark/10 bg-white object-contain p-2"
+              />
+            ) : null}
           </div>
           <p className="mt-3 text-xs font-semibold text-casero-text/65">La activación no es automática. Tu pago será validado manualmente.</p>
         </div>
