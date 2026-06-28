@@ -1,12 +1,19 @@
-import { Check } from "lucide-react";
+﻿import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import type { DemoPlan } from "@/lib/demo-data";
+import { getManualPaymentLinks } from "@/lib/payments/manual-payment";
 
 type PlanCardProps = {
   plan: DemoPlan;
 };
 
+const externalButtonClass =
+  "inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
+
 export function PlanCard({ plan }: PlanCardProps) {
+  const paymentMessage = `Hola, quiero solicitar información para pagar por CoDi o transferencia el plan ${plan.name} de Casero Cancún.`;
+  const manualPayment = getManualPaymentLinks(plan, paymentMessage);
+
   return (
     <article
       className={
@@ -34,9 +41,35 @@ export function PlanCard({ plan }: PlanCardProps) {
           </li>
         ))}
       </ul>
-      <Button href="/registrar-mi-negocio" className="mt-7 w-full" variant={plan.highlighted ? "secondary" : "outline"}>
+      <p className="mt-6 text-sm leading-6 text-casero-text/65">
+        Después de realizar tu pago, envíanos el comprobante por WhatsApp para activar tu membresía.
+      </p>
+      {manualPayment.hasCodiQr ? (
+        <p className="mt-2 text-xs font-semibold text-casero-text/55">
+          También puedes pagar por CoDi después de registrar tu negocio.
+        </p>
+      ) : null}
+      <div className="mt-4 grid gap-2">
+        {manualPayment.paymentUrl ? (
+          <>
+            <a className={`${externalButtonClass} bg-casero-orange text-casero-dark shadow-soft hover:bg-amber-400`} href={manualPayment.paymentUrl} target="_blank" rel="noreferrer">
+              Pagar con Mercado Pago
+            </a>
+            <a className={`${externalButtonClass} border border-casero-dark/15 bg-white text-casero-dark hover:border-casero-green hover:text-casero-green`} href={manualPayment.whatsappUrl} target="_blank" rel="noreferrer">
+              Enviar comprobante por WhatsApp
+            </a>
+          </>
+        ) : (
+          <a className={`${externalButtonClass} bg-casero-green text-white shadow-soft hover:bg-emerald-700`} href={manualPayment.whatsappUrl} target="_blank" rel="noreferrer">
+            {manualPayment.paymentUrl ? manualPayment.label : "Solicitar datos por WhatsApp"}
+          </a>
+        )}
+      </div>
+      <Button href="/registrar-mi-negocio" className="mt-4 w-full" variant={plan.highlighted ? "secondary" : "outline"}>
         Elegir {plan.name}
       </Button>
     </article>
   );
 }
+
+

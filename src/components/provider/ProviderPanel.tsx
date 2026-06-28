@@ -4,6 +4,7 @@ import { CalendarDays, CarFront, Home, ImageIcon, MapPin, PawPrint, Store, Wrenc
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { getManualPaymentLinks } from "@/lib/payments/manual-payment";
 import type { UserProfile } from "@/lib/supabase/types";
 import type { ProviderBusiness } from "@/app/proveedor/panel/page";
 
@@ -45,6 +46,9 @@ const statusStyles: Record<string, string> = {
   paused: "bg-slate-100 text-slate-700 ring-slate-200",
   rejected: "bg-red-50 text-red-700 ring-red-200",
 };
+
+const externalPaymentButtonClass =
+  "inline-flex min-h-10 items-center justify-center rounded-md px-3 py-2 text-xs font-bold transition";
 
 const sectionLabels = {
   home_services: "Servicios del hogar",
@@ -158,6 +162,55 @@ function BusinessImage({ business }: { business: ProviderBusiness }) {
   );
 }
 
+function shouldShowPaymentActivation(business: ProviderBusiness) {
+  const membershipStatus = business.membership_status ?? "manual_review";
+  const paymentStatus = business.payment_status ?? "unpaid";
+
+  return ["manual_review", "expired", "cancelled", "past_due"].includes(membershipStatus) || ["unpaid", "pending", "failed"].includes(paymentStatus);
+}
+
+function PaymentActivationBox({ business }: { business: ProviderBusiness }) {
+  if (!shouldShowPaymentActivation(business)) {
+    return null;
+  }
+
+  const planName = business.plan?.name ?? "Sin plan asignado";
+  const message = `Hola, soy proveedor de Casero Cancún. Ya realicé el pago por CoDi o transferencia para el negocio ${business.business_name}, plan ${planName}. Quiero enviar mi comprobante para activar mi publicación.`;
+  const manualPayment = getManualPaymentLinks(business.plan, message);
+
+  return (
+    <div className="mt-5 rounded-md border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm">
+      <p className="font-heading text-lg font-extrabold text-casero-dark">Activa tu membresía</p>
+      <p className="mt-2 leading-6 text-casero-text/75">
+        {manualPayment.hasCodiQr
+          ? "Escanea el QR con la app de tu banco y envíanos el comprobante por WhatsApp."
+          : "Solicita los datos de pago por WhatsApp y envíanos tu comprobante para activar tu publicación."}
+      </p>
+      <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-casero-text/55">Plan: {planName}</p>
+      {manualPayment.paymentUrl ? (
+        <a className={`${externalPaymentButtonClass} mt-3 bg-casero-orange text-casero-dark shadow-sm hover:bg-amber-400`} href={manualPayment.paymentUrl} target="_blank" rel="noreferrer">
+          Pagar con Mercado Pago
+        </a>
+      ) : null}
+      {manualPayment.hasCodiQr ? (
+        <div className="mt-4 rounded-md bg-white p-4 text-center shadow-sm">
+          <p className="font-heading text-base font-extrabold text-casero-dark">Pagar con CoDi</p>
+          <div className="mt-3 flex justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={manualPayment.codiQrUrl ?? ""} alt={`QR CoDi para plan ${planName}`} className="h-44 w-44 rounded-md border border-casero-dark/10 bg-white object-contain p-2" />
+          </div>
+          <p className="mt-3 text-xs font-semibold text-casero-text/65">La activación no es automática. Tu pago será validado manualmente.</p>
+        </div>
+      ) : null}
+      <div className="mt-3 grid gap-2 sm:flex sm:flex-wrap">
+        <a className={`${externalPaymentButtonClass} bg-casero-green text-white shadow-sm hover:bg-emerald-700`} href={manualPayment.whatsappUrl} target="_blank" rel="noreferrer">
+          {manualPayment.hasCodiQr || manualPayment.paymentUrl ? "Enviar comprobante por WhatsApp" : "Solicitar datos de pago por WhatsApp"}
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function ViewStatsSummary({ stats }: { stats: ProviderBusiness["viewStats"] }) {
   const items = [
     ["Totales", stats.total],
@@ -236,6 +289,7 @@ function ProviderBusinessCard({ business }: { business: ProviderBusiness }) {
         </div>
 
         <ViewStatsSummary stats={business.viewStats} />
+        <PaymentActivationBox business={business} />
 
         <div className="mt-5 grid gap-4">
           <div>
@@ -342,6 +396,10 @@ export function ProviderPanel({ profile, businesses, updateMessage }: ProviderPa
     </section>
   );
 }
+
+
+
+
 
 
 

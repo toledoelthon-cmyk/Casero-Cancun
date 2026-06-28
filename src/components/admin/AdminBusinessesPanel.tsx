@@ -606,6 +606,24 @@ function DetailModal({
               <div><dt className="font-bold text-casero-dark">Coordenadas</dt><dd>{hasCoordinates(business.latitude, business.longitude) ? `${business.latitude}, ${business.longitude}` : "No capturadas"}</dd></div>
             </dl>
 
+            <div className="mt-5 rounded-md border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm text-casero-text/75">
+              <h4 className="font-heading text-lg font-extrabold text-casero-dark">Validación manual de pago</h4>
+              <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+                <div><dt className="font-bold text-casero-dark">Plan seleccionado</dt><dd>{business.planName ?? business.plan_id ?? "Sin plan"}</dd></div>
+                <div><dt className="font-bold text-casero-dark">Estado de membresía</dt><dd>{membershipLabels[business.membership_status ?? "manual_review"]}</dd></div>
+                <div><dt className="font-bold text-casero-dark">Estado de pago</dt><dd>{paymentLabels[business.payment_status ?? "unpaid"]}</dd></div>
+                <div><dt className="font-bold text-casero-dark">Último pago</dt><dd>{formatDate(business.last_payment_at)}</dd></div>
+                <div><dt className="font-bold text-casero-dark">Próximo pago</dt><dd>{formatDate(business.next_payment_due_at)}</dd></div>
+                <div><dt className="font-bold text-casero-dark">Vencimiento</dt><dd>{formatDate(business.membership_expires_at)}</dd></div>
+              </dl>
+              <p className="mt-3 font-semibold text-casero-dark">
+                Después de verificar el comprobante de CoDi, transferencia o Mercado Pago, usa “Activar manual 30 días” para activar o renovar la membresía.
+              </p>
+              <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-casero-text/60">
+                Verifica monto, fecha, referencia y cuenta destino antes de activar.
+              </p>
+            </div>
+
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div>
                 <p className="text-sm font-bold text-casero-dark">CategorÃ­as</p>
@@ -1102,6 +1120,9 @@ function EditBusinessModal({
               <h3 className="font-heading text-lg font-bold text-casero-dark">ImÃ¡genes del negocio</h3>
               <p className="mt-2 text-sm text-casero-text/65">
                 {business.media.length} de {limits.maxImages} imÃ¡genes permitidas por plan. TamaÃ±o mÃ¡ximo: {limits.maxImageSizeMb} MB por imagen.
+              </p>
+              <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-casero-text/60">
+                Verifica monto, fecha, referencia y cuenta destino antes de activar.
               </p>
             </div>
             <Badge tone={business.media.length >= limits.maxImages ? "orange" : "green"}>
@@ -2094,6 +2115,9 @@ export function AdminBusinessesPanel() {
     </section>
   );
 }
+
+
+
 
 
 
