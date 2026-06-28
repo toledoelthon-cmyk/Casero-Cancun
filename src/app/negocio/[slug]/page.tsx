@@ -17,6 +17,7 @@ import {
   Store,
   Wrench,
 } from "lucide-react";
+import { BusinessViewTracker } from "@/components/analytics/BusinessViewTracker";
 import { BusinessMap } from "@/components/maps/BusinessMap";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -150,6 +151,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
 
   return (
     <section className="bg-casero-background pb-24 md:pb-14">
+      <BusinessViewTracker businessId={business.id} />
       <div className="relative bg-white">
         <div className="aspect-[16/9] max-h-[34rem] w-full overflow-hidden bg-casero-beige md:aspect-[21/8]">
           <BusinessImage business={business} image={mainImage} priority />
@@ -380,3 +382,5 @@ export default async function BusinessProfilePage({ params }: PageProps) {
     </section>
   );
 }
+
+

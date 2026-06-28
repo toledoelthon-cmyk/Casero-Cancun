@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CalendarDays, CarFront, Home, ImageIcon, MapPin, PawPrint, Store, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -158,6 +158,24 @@ function BusinessImage({ business }: { business: ProviderBusiness }) {
   );
 }
 
+function ViewStatsSummary({ stats }: { stats: ProviderBusiness["viewStats"] }) {
+  const items = [
+    ["Totales", stats.total],
+    ["7 dias", stats.last7Days],
+    ["30 dias", stats.last30Days],
+  ] as const;
+
+  return (
+    <div className="mt-5 grid grid-cols-3 gap-2 rounded-md border border-casero-dark/10 bg-white p-3 text-center">
+      {items.map(([label, value]) => (
+        <div key={label}>
+          <p className="font-heading text-lg font-extrabold text-casero-dark">{value}</p>
+          <p className="mt-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-casero-text/50">{label}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 function ProviderBusinessCard({ business }: { business: ProviderBusiness }) {
   const status = business.status ?? "pending";
   const statusLabel = statusLabels[status as keyof typeof statusLabels] ?? "En revision";
@@ -216,6 +234,8 @@ function ProviderBusinessCard({ business }: { business: ProviderBusiness }) {
             <p className="mt-1 text-xs font-semibold text-casero-text/55">Proximo pago: {formatDate(business.next_payment_due_at)}</p>
           ) : null}
         </div>
+
+        <ViewStatsSummary stats={business.viewStats} />
 
         <div className="mt-5 grid gap-4">
           <div>
@@ -322,5 +342,7 @@ export function ProviderPanel({ profile, businesses, updateMessage }: ProviderPa
     </section>
   );
 }
+
+
 
 

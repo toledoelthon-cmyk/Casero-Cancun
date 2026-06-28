@@ -1,4 +1,4 @@
--- Production RLS proposal for Casero Cancun.
+﻿-- Production RLS proposal for Casero Cancun.
 --
 -- Review before running. This file intentionally drops known development
 -- policies and recreates production policies based on Supabase Auth plus
@@ -151,6 +151,10 @@ drop policy if exists "Providers update media for own businesses" on public.busi
 drop policy if exists "Providers delete media for own pending or paused businesses" on public.business_media;
 drop policy if exists "Providers delete media for own businesses" on public.business_media;
 drop policy if exists "Admins manage business media" on public.business_media;
+drop policy if exists "Public insert business profile views" on public.business_profile_views;
+drop policy if exists "Authenticated insert business profile views" on public.business_profile_views;
+drop policy if exists "Admins read all business profile views" on public.business_profile_views;
+drop policy if exists "Providers read own business profile views" on public.business_profile_views;
 
 -- user_profiles
 
@@ -582,3 +586,70 @@ create policy "Admins manage business media"
 -- next_payment_due_at, payment_exempt_reason, payment_exempt_until.
 -- Provider forms must never send these fields; admin screens are the only UI
 -- allowed to update them until payment automation is implemented.
+-- business_profile_views
+
+create table if not exists public.business_profile_views (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references public.business_profiles(id) on delete cascade,
+  visited_at timestamptz default now(),
+  visitor_key text,
+  referrer text,
+  user_agent text
+);
+
+create index if not exists business_profile_views_business_id_idx
+  on public.business_profile_views (business_id);
+
+create index if not exists business_profile_views_visited_at_idx
+  on public.business_profile_views (visited_at);
+
+create index if not exists business_profile_views_business_id_visited_at_idx
+  on public.business_profile_views (business_id, visited_at);
+
+alter table public.business_profile_views enable row level security;
+
+create policy "Public insert business profile views"
+  on public.business_profile_views
+  for insert
+  to anon
+  with check (
+    exists (
+      select 1
+      from public.business_profiles bp
+      where bp.id = business_profile_views.business_id
+        and bp.status = 'published'
+    )
+  );
+
+create policy "Authenticated insert business profile views"
+  on public.business_profile_views
+  for insert
+  to authenticated
+  with check (
+    exists (
+      select 1
+      from public.business_profiles bp
+      where bp.id = business_profile_views.business_id
+        and bp.status = 'published'
+    )
+  );
+
+create policy "Admins read all business profile views"
+  on public.business_profile_views
+  for select
+  to authenticated
+  using (public.is_admin());
+
+create policy "Providers read own business profile views"
+  on public.business_profile_views
+  for select
+  to authenticated
+  using (
+    exists (
+      select 1
+      from public.business_profiles bp
+      where bp.id = business_profile_views.business_id
+        and bp.owner_user_id = auth.uid()
+    )
+  );
+

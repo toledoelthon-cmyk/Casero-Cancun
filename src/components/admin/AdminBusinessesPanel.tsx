@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { getBusinessViewStatsForBusinesses, type BusinessViewStats } from "@/lib/data/business-view-stats";
 import type { BusinessProfileInsert, CategorySection, LocationMode, MembershipStatus, PaymentStatus, ProfileType, PublicationStatus } from "@/lib/supabase/types";
 
 type RelatedCategory = {
@@ -111,6 +112,7 @@ type AdminBusiness = {
   categories: RelatedCategory[];
   locations: RelatedLocation[];
   media: MediaItem[];
+  viewStats: BusinessViewStats;
 };
 
 type AdminBusinessRow = {
@@ -257,10 +259,10 @@ const profileTypeLabels: Record<ProfileType, string> = {
 };
 
 const locationModeLabels: Record<LocationMode, string> = {
-  physical: "Local físico",
+  physical: "Local fÃ­sico",
   home_service: "Servicio a domicilio",
-  both: "Local físico y servicio a domicilio",
-  zones_only: "Solo zonas de atención",
+  both: "Local fÃ­sico y servicio a domicilio",
+  zones_only: "Solo zonas de atenciÃ³n",
 };
 
 function mapBusiness(row: AdminBusinessRow): AdminBusiness {
@@ -333,6 +335,7 @@ function mapBusiness(row: AdminBusinessRow): AdminBusiness {
         ?.map((item) => item.locations)
         .filter((location): location is RelatedLocation => Boolean(location?.name)) ?? [],
     media,
+    viewStats: { total: 0, last7Days: 0, last30Days: 0 },
   };
 }
 
@@ -349,7 +352,7 @@ function formatDate(value: string | null) {
 
 function getSection(business: AdminBusiness) {
   const section = business.section ?? business.categories.find((category) => category.section)?.section;
-  return section ? sectionLabels[section] : "Sin sección";
+  return section ? sectionLabels[section] : "Sin secciÃ³n";
 }
 
 function getProfileTypeLabel(profileType: ProfileType) {
@@ -445,10 +448,12 @@ function AdminActions({
   business,
   disabled,
   onUpdate,
+  onRequestDelete,
 }: {
   business: AdminBusiness;
   disabled: boolean;
   onUpdate: (id: string, updates: AdminBusinessUpdate) => void;
+  onRequestDelete: (businessId: string) => void;
 }) {
   const buttonClass = "min-h-10 rounded-md px-3 py-2 text-xs font-bold disabled:opacity-50";
 
@@ -490,42 +495,65 @@ function AdminActions({
       <button className={`${buttonClass} border border-casero-dark/10 bg-white text-casero-dark`} disabled={disabled} type="button" onClick={() => onUpdate(business.id, { membership_status: "manual_review", payment_status: "unpaid", payment_exempt_reason: null, payment_exempt_until: null, membership_expires_at: null, trial_ends_at: null, next_payment_due_at: null, last_payment_at: null })}>
         Quitar exencion
       </button>
+      <button className={`${buttonClass} bg-red-700 text-white ring-2 ring-red-200`} disabled={disabled} type="button" onClick={() => onRequestDelete(business.id)}>
+        Eliminar
+      </button>
     </div>
   );
 }
 
+function AdminViewStatsSummary({ stats }: { stats: BusinessViewStats }) {
+  const items = [
+    ["Visitas totales", stats.total],
+    ["Ultimos 7 dias", stats.last7Days],
+    ["Ultimos 30 dias", stats.last30Days],
+  ] as const;
+
+  return (
+    <div className="mt-4 grid gap-2 sm:grid-cols-3">
+      {items.map(([label, value]) => (
+        <div key={label} className="rounded-md bg-casero-background p-3">
+          <p className="font-heading text-2xl font-extrabold text-casero-dark">{value}</p>
+          <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-casero-text/50">{label}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 function DetailModal({
   business,
   actionLoadingId,
   onClose,
   onUpdate,
+  onRequestDelete,
 }: {
   business: AdminBusiness;
   actionLoadingId: string | null;
   onClose: () => void;
   onUpdate: (id: string, updates: AdminBusinessUpdate) => void;
+  onRequestDelete: (businessId: string) => void;
 }) {
   const attributes = [
     ["Emite factura", business.invoices],
     ["Atiende urgencias", business.emergency_service],
     ["Atiende Airbnb", business.attends_airbnb],
-    ["Ofrece garantía", business.offers_warranty],
+    ["Ofrece garantÃ­a", business.offers_warranty],
     ["Acepta tarjeta", business.accepts_card],
     ["Acepta transferencia", business.accepts_transfer],
     ["Servicio a domicilio", business.service_at_home],
-    ["Atención 24/7", business.service_24_7],
+    ["AtenciÃ³n 24/7", business.service_24_7],
     ["Cita previa", business.by_appointment],
     ["Presupuesto sin costo", business.free_estimate],
-    ["Venta al público", business.retail_sales],
+    ["Venta al pÃºblico", business.retail_sales],
     ["Venta por mayoreo", business.wholesale_sales],
     ["Entrega a domicilio", business.delivery_available],
     ["Distribuidor autorizado", business.authorized_distributor],
-    ["Atención veterinaria", business.pet_veterinary_service],
-    ["Estética mascotas", business.pet_grooming],
-    ["Guardería mascotas", business.pet_daycare],
+    ["AtenciÃ³n veterinaria", business.pet_veterinary_service],
+    ["EstÃ©tica mascotas", business.pet_grooming],
+    ["GuarderÃ­a mascotas", business.pet_daycare],
     ["Alimentos/accesorios mascotas", business.pet_food_accessories],
-    ["Grúa disponible", business.auto_tow_service],
-    ["Diagnóstico automotriz", business.auto_diagnostics],
+    ["GrÃºa disponible", business.auto_tow_service],
+    ["DiagnÃ³stico automotriz", business.auto_diagnostics],
     ["Refacciones", business.auto_parts],
     ["Lavado / detallado", business.auto_wash_detailing],
   ];
@@ -552,14 +580,15 @@ function DetailModal({
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
           <Card>
-            <h3 className="font-heading text-lg font-bold text-casero-dark">Información principal</h3>
+            <h3 className="font-heading text-lg font-bold text-casero-dark">InformaciÃ³n principal</h3>
+            <AdminViewStatsSummary stats={business.viewStats} />
             <dl className="mt-4 grid gap-3 text-sm text-casero-text/75 sm:grid-cols-2">
               <div><dt className="font-bold text-casero-dark">Responsable</dt><dd>{business.responsible_name ?? "No capturado"}</dd></div>
               <div><dt className="font-bold text-casero-dark">WhatsApp</dt><dd>{business.whatsapp ?? "Sin WhatsApp"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Correo</dt><dd>{business.email ?? "Sin correo"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Teléfono</dt><dd>{business.phone ?? "Sin teléfono"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">TelÃ©fono</dt><dd>{business.phone ?? "Sin telÃ©fono"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Tipo</dt><dd>{getProfileTypeLabel(business.profile_type)}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Sección</dt><dd>{getSection(business)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">SecciÃ³n</dt><dd>{getSection(business)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Plan</dt><dd>{business.planName ?? business.plan_id ?? "Sin plan"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Fecha</dt><dd>{formatDate(business.created_at)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Estado de membresia</dt><dd>{membershipLabels[business.membership_status ?? "manual_review"]}</dd></div>
@@ -571,17 +600,17 @@ function DetailModal({
               <div><dt className="font-bold text-casero-dark">Ultimo pago</dt><dd>{formatDate(business.last_payment_at)}</dd></div>
               <div><dt className="font-bold text-casero-dark">Razon de exencion</dt><dd>{business.payment_exempt_reason ?? "Sin exencion"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Limite de exencion</dt><dd>{formatDate(business.payment_exempt_until)}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Modo de ubicación</dt><dd>{getLocationModeLabel(business.location_mode)}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "Sí" : "No"}</dd></div>
-              <div><dt className="font-bold text-casero-dark">Dirección</dt><dd>{business.address ?? "No capturada"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Modo de ubicaciÃ³n</dt><dd>{getLocationModeLabel(business.location_mode)}</dd></div>
+              <div><dt className="font-bold text-casero-dark">Mostrar mapa</dt><dd>{business.show_map ? "SÃ­" : "No"}</dd></div>
+              <div><dt className="font-bold text-casero-dark">DirecciÃ³n</dt><dd>{business.address ?? "No capturada"}</dd></div>
               <div><dt className="font-bold text-casero-dark">Coordenadas</dt><dd>{hasCoordinates(business.latitude, business.longitude) ? `${business.latitude}, ${business.longitude}` : "No capturadas"}</dd></div>
             </dl>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-sm font-bold text-casero-dark">Categorías</p>
+                <p className="text-sm font-bold text-casero-dark">CategorÃ­as</p>
                 <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                  {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}
+                  {business.categories.map((category) => category.name).join(", ") || "Sin categorÃ­as"}
                 </p>
               </div>
               <div>
@@ -604,11 +633,11 @@ function DetailModal({
                 />
               ) : business.show_map ? (
                 <p className="rounded-md bg-casero-orange/10 p-4 text-sm font-semibold text-casero-dark">
-                  Este negocio solicitó mostrar mapa, pero aún no capturó coordenadas.
+                  Este negocio solicitÃ³ mostrar mapa, pero aÃºn no capturÃ³ coordenadas.
                 </p>
               ) : (
                 <p className="rounded-md bg-white p-4 text-sm font-semibold text-casero-text/65">
-                  Este negocio no solicitó mostrar mapa.
+                  Este negocio no solicitÃ³ mostrar mapa.
                 </p>
               )}
             </div>
@@ -625,20 +654,20 @@ function DetailModal({
             </div>
             {business.status === "published" ? (
               <Link className="mt-5 inline-flex rounded-md bg-casero-green px-4 py-2 text-sm font-bold text-white" href={`/negocio/${business.slug}`}>
-                Ver perfil público
+                Ver perfil pÃºblico
               </Link>
             ) : null}
           </Card>
         </div>
 
         <Card className="mt-5">
-          <h3 className="font-heading text-lg font-bold text-casero-dark">Descripción</h3>
-          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.short_description ?? "Sin descripción breve."}</p>
-          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.long_description ?? "Sin descripción larga."}</p>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">DescripciÃ³n</h3>
+          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.short_description ?? "Sin descripciÃ³n breve."}</p>
+          <p className="mt-3 text-sm leading-6 text-casero-text/75">{business.long_description ?? "Sin descripciÃ³n larga."}</p>
         </Card>
 
         <Card className="mt-5">
-          <h3 className="font-heading text-lg font-bold text-casero-dark">Galería</h3>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">GalerÃ­a</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {business.media.length > 0 ? (
               business.media.map((item, index) => (
@@ -651,7 +680,7 @@ function DetailModal({
                 />
               ))
             ) : (
-              <p className="text-sm text-casero-text/70">Sin imágenes cargadas.</p>
+              <p className="text-sm text-casero-text/70">Sin imÃ¡genes cargadas.</p>
             )}
           </div>
         </Card>
@@ -659,7 +688,7 @@ function DetailModal({
         <Card className="mt-5">
           <h3 className="font-heading text-lg font-bold text-casero-dark">Acciones</h3>
           <div className="mt-4">
-            <AdminActions business={business} disabled={actionLoadingId === business.id} onUpdate={onUpdate} />
+            <AdminActions business={business} disabled={actionLoadingId === business.id} onUpdate={onUpdate} onRequestDelete={onRequestDelete} />
           </div>
         </Card>
       </div>
@@ -667,6 +696,65 @@ function DetailModal({
   );
 }
 
+function DeleteBusinessModal({
+  business,
+  confirmationText,
+  deleting,
+  onConfirmationChange,
+  onClose,
+  onConfirm,
+}: {
+  business: AdminBusiness;
+  confirmationText: string;
+  deleting: boolean;
+  onConfirmationChange: (value: string) => void;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  const canDelete = confirmationText === "ELIMINAR";
+
+  return (
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-casero-dark/70 p-3 sm:p-4">
+      <div className="mx-auto mt-10 max-w-lg rounded-lg bg-white p-5 shadow-soft sm:p-6">
+        <p className="text-sm font-bold uppercase tracking-[0.14em] text-red-700">Accion irreversible</p>
+        <h2 className="mt-2 font-heading text-2xl font-extrabold text-casero-dark">Eliminar publicacion</h2>
+        <p className="mt-3 text-sm leading-6 text-casero-text/75">
+          Esta accion eliminara definitivamente el negocio, sus imagenes y relaciones. No se puede deshacer.
+        </p>
+        <div className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-800">
+          Negocio: {business.business_name}
+        </div>
+        <label className="mt-5 block text-sm font-bold text-casero-dark">
+          Escribe ELIMINAR para continuar
+          <input
+            value={confirmationText}
+            onChange={(event) => onConfirmationChange(event.target.value)}
+            className="mt-2 w-full rounded-md border border-red-200 bg-white px-3 py-2.5 font-normal outline-red-600"
+            autoFocus
+          />
+        </label>
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            disabled={deleting}
+            onClick={onClose}
+            className="min-h-11 rounded-md border border-casero-dark/10 bg-white px-4 py-2 text-sm font-bold text-casero-dark disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            disabled={!canDelete || deleting}
+            onClick={onConfirm}
+            className="min-h-11 rounded-md bg-red-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-45"
+          >
+            {deleting ? "Eliminando..." : "Eliminar definitivamente"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 function getPlanLimits(plan?: AdminPlanOption) {
   if (plan?.slug === "premium") {
     return { maxCategories: 8, maxLocations: 10, maxImages: 15, maxImageSizeMb: 5 };
@@ -833,11 +921,11 @@ function EditBusinessModal({
               ["business_name", "Nombre del negocio", business.business_name, true],
               ["responsible_name", "Responsable", business.responsible_name ?? "", false],
               ["whatsapp", "WhatsApp", business.whatsapp ?? "", true],
-              ["phone", "Teléfono", business.phone ?? "", false],
+              ["phone", "TelÃ©fono", business.phone ?? "", false],
               ["email", "Correo", business.email ?? "", true],
               ["main_service", "Servicio principal", business.categories[0]?.name ?? "", false],
-              ["address", "Dirección", business.address ?? "", false],
-              ["postal_code", "Código postal", business.postal_code ?? "", false],
+              ["address", "DirecciÃ³n", business.address ?? "", false],
+              ["postal_code", "CÃ³digo postal", business.postal_code ?? "", false],
               ["latitude", "Latitud", business.latitude?.toString() ?? "", false],
               ["longitude", "Longitud", business.longitude?.toString() ?? "", false],
             ].map(([name, label, value, required]) => (
@@ -852,18 +940,18 @@ function EditBusinessModal({
               </label>
             ))}
             <label className="text-sm font-bold text-casero-dark md:col-span-2">
-              Descripción breve
+              DescripciÃ³n breve
               <textarea name="short_description" defaultValue={business.short_description ?? ""} className="mt-2 min-h-24 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green" />
             </label>
             <label className="text-sm font-bold text-casero-dark md:col-span-2">
-              Descripción larga
+              DescripciÃ³n larga
               <textarea name="long_description" defaultValue={business.long_description ?? ""} className="mt-2 min-h-28 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green" />
             </label>
           </div>
         </Card>
 
         <Card>
-          <h3 className="font-heading text-lg font-bold text-casero-dark">Clasificación y publicación</h3>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">ClasificaciÃ³n y publicaciÃ³n</h3>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             <label className="text-sm font-bold text-casero-dark">
               Plan
@@ -882,7 +970,7 @@ function EditBusinessModal({
               </select>
             </label>
             <label className="text-sm font-bold text-casero-dark">
-              Sección
+              SecciÃ³n
               <select
                 name="section"
                 value={section}
@@ -906,7 +994,7 @@ function EditBusinessModal({
               </select>
             </label>
             <label className="text-sm font-bold text-casero-dark">
-              Modo de ubicación
+              Modo de ubicaciÃ³n
               <select name="location_mode" defaultValue={business.location_mode ?? "zones_only"} className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green">
                 {Object.entries(locationModeLabels).map(([value, label]) => (
                   <option key={value} value={value}>{label}</option>
@@ -917,13 +1005,13 @@ function EditBusinessModal({
         </Card>
 
         <Card>
-          <h3 className="font-heading text-lg font-bold text-casero-dark">Categorías y zonas</h3>
+          <h3 className="font-heading text-lg font-bold text-casero-dark">CategorÃ­as y zonas</h3>
           <p className="mt-2 text-sm text-casero-text/65">
-            Límite del plan: {limits.maxCategories} categorías y {limits.maxLocations} zonas.
+            LÃ­mite del plan: {limits.maxCategories} categorÃ­as y {limits.maxLocations} zonas.
           </p>
           <div className="mt-4 grid gap-5 lg:grid-cols-2">
             <div>
-              <p className="text-sm font-bold text-casero-dark">Categorías seleccionadas: {categoryIds.length}</p>
+              <p className="text-sm font-bold text-casero-dark">CategorÃ­as seleccionadas: {categoryIds.length}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {filteredCategories.map((category) => {
                   const active = categoryIds.includes(category.id);
@@ -965,11 +1053,11 @@ function EditBusinessModal({
           <h3 className="font-heading text-lg font-bold text-casero-dark">Atributos</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              ["has_physical_location", "Tiene ubicación física", business.has_physical_location],
+              ["has_physical_location", "Tiene ubicaciÃ³n fÃ­sica", business.has_physical_location],
               ["show_map", "Mostrar mapa", business.show_map],
               ["service_at_home", "Servicio a domicilio", business.service_at_home],
               ["emergency_service", "Atiende urgencias", business.emergency_service],
-              ["service_24_7", "Atención 24/7", business.service_24_7],
+              ["service_24_7", "AtenciÃ³n 24/7", business.service_24_7],
               ["by_appointment", "Con cita previa", business.by_appointment],
               ["free_estimate", "Presupuesto sin costo", business.free_estimate],
               ["invoices", "Emite factura", business.invoices],
@@ -977,17 +1065,17 @@ function EditBusinessModal({
               ["accepts_transfer", "Acepta transferencia", business.accepts_transfer],
               ["attends_airbnb", "Atiende Airbnb", business.attends_airbnb],
               ["attends_condos", "Atiende condominios", business.attends_condos],
-              ["offers_warranty", "Ofrece garantía", business.offers_warranty],
-              ["retail_sales", "Venta al público", business.retail_sales],
+              ["offers_warranty", "Ofrece garantÃ­a", business.offers_warranty],
+              ["retail_sales", "Venta al pÃºblico", business.retail_sales],
               ["wholesale_sales", "Venta por mayoreo", business.wholesale_sales],
               ["delivery_available", "Entrega a domicilio", business.delivery_available],
               ["authorized_distributor", "Distribuidor autorizado", business.authorized_distributor],
-              ["pet_veterinary_service", "Atención veterinaria", business.pet_veterinary_service],
-              ["pet_grooming", "Estética mascotas", business.pet_grooming],
-              ["pet_daycare", "Guardería mascotas", business.pet_daycare],
+              ["pet_veterinary_service", "AtenciÃ³n veterinaria", business.pet_veterinary_service],
+              ["pet_grooming", "EstÃ©tica mascotas", business.pet_grooming],
+              ["pet_daycare", "GuarderÃ­a mascotas", business.pet_daycare],
               ["pet_food_accessories", "Alimentos/accesorios mascotas", business.pet_food_accessories],
-              ["auto_tow_service", "Grúa disponible", business.auto_tow_service],
-              ["auto_diagnostics", "Diagnóstico automotriz", business.auto_diagnostics],
+              ["auto_tow_service", "GrÃºa disponible", business.auto_tow_service],
+              ["auto_diagnostics", "DiagnÃ³stico automotriz", business.auto_diagnostics],
               ["auto_parts", "Refacciones", business.auto_parts],
               ["auto_wash_detailing", "Lavado / detallado", business.auto_wash_detailing],
               ["is_verified", "Verificado", business.is_verified],
@@ -1011,13 +1099,13 @@ function EditBusinessModal({
         <Card>
           <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
             <div>
-              <h3 className="font-heading text-lg font-bold text-casero-dark">Imágenes del negocio</h3>
+              <h3 className="font-heading text-lg font-bold text-casero-dark">ImÃ¡genes del negocio</h3>
               <p className="mt-2 text-sm text-casero-text/65">
-                {business.media.length} de {limits.maxImages} imágenes permitidas por plan. Tamaño máximo: {limits.maxImageSizeMb} MB por imagen.
+                {business.media.length} de {limits.maxImages} imÃ¡genes permitidas por plan. TamaÃ±o mÃ¡ximo: {limits.maxImageSizeMb} MB por imagen.
               </p>
             </div>
             <Badge tone={business.media.length >= limits.maxImages ? "orange" : "green"}>
-              {business.media.length >= limits.maxImages ? "Límite alcanzado" : "Puede agregar imágenes"}
+              {business.media.length >= limits.maxImages ? "LÃ­mite alcanzado" : "Puede agregar imÃ¡genes"}
             </Badge>
           </div>
 
@@ -1086,13 +1174,13 @@ function EditBusinessModal({
               })
             ) : (
               <div className="rounded-lg border border-dashed border-casero-dark/15 bg-white p-5 text-sm text-casero-text/65 md:col-span-2">
-                Este negocio todavía no tiene imágenes.
+                Este negocio todavÃ­a no tiene imÃ¡genes.
               </div>
             )}
           </div>
 
           <div className="mt-5 rounded-lg bg-casero-background p-4">
-            <h4 className="text-sm font-bold text-casero-dark">Agregar nuevas imágenes</h4>
+            <h4 className="text-sm font-bold text-casero-dark">Agregar nuevas imÃ¡genes</h4>
             <div className="mt-3 grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
               <label className="text-sm font-bold text-casero-dark">
                 Archivos
@@ -1105,11 +1193,11 @@ function EditBusinessModal({
                 />
               </label>
               <label className="text-sm font-bold text-casero-dark">
-                Alt para estas imágenes
+                Alt para estas imÃ¡genes
                 <input
                   value={uploadAlt}
                   onChange={(event) => setUploadAlt(event.target.value)}
-                  placeholder="Ej. Trabajo realizado en Cancún"
+                  placeholder="Ej. Trabajo realizado en CancÃºn"
                   className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 font-normal outline-casero-green"
                 />
               </label>
@@ -1119,7 +1207,7 @@ function EditBusinessModal({
                 onClick={() => onUploadImages(business, uploadFiles, uploadAlt, selectedPlan)}
                 className="rounded-md bg-casero-orange px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50"
               >
-                Subir imágenes
+                Subir imÃ¡genes
               </button>
             </div>
           </div>
@@ -1146,6 +1234,9 @@ export function AdminBusinessesPanel() {
   const [filter, setFilter] = useState<StatusFilter>("pending");
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   const [editingBusinessId, setEditingBusinessId] = useState<string | null>(null);
+  const [deletingBusinessId, setDeletingBusinessId] = useState<string | null>(null);
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [mediaActionLoadingId, setMediaActionLoadingId] = useState<string | null>(null);
@@ -1234,7 +1325,7 @@ export function AdminBusinessesPanel() {
 
     if (loadError) {
       console.error("admin businesses load error", loadError);
-      setError("No pudimos cargar los negocios. Revisa la consola y las políticas de Supabase.");
+      setError("No pudimos cargar los negocios. Revisa la consola y las polÃ­ticas de Supabase.");
       setLoading(false);
       return false;
     }
@@ -1251,14 +1342,25 @@ export function AdminBusinessesPanel() {
         categoriesError: categoriesResult.error,
         locationsError: locationsResult.error,
       });
-      setError("No pudimos cargar planes, categorías o ubicaciones para edición.");
+      setError("No pudimos cargar planes, categorÃ­as o ubicaciones para ediciÃ³n.");
     } else {
       setPlans((plansResult.data ?? []) as AdminPlanOption[]);
       setCategories((categoriesResult.data ?? []) as AdminCategoryOption[]);
       setLocations((locationsResult.data ?? []) as AdminLocationOption[]);
     }
 
-    setBusinesses(((data ?? []) as unknown as AdminBusinessRow[]).map(mapBusiness));
+    const businessRows = (data ?? []) as unknown as AdminBusinessRow[];
+    const viewStatsByBusinessId = await getBusinessViewStatsForBusinesses(
+      supabase,
+      businessRows.map((business) => business.id),
+    );
+
+    setBusinesses(
+      businessRows.map((business) => ({
+        ...mapBusiness(business),
+        viewStats: viewStatsByBusinessId[business.id] ?? { total: 0, last7Days: 0, last30Days: 0 },
+      })),
+    );
     setLoading(false);
     return true;
   }, []);
@@ -1290,6 +1392,7 @@ export function AdminBusinessesPanel() {
 
   const selectedBusiness = businesses.find((business) => business.id === selectedBusinessId) ?? null;
   const editingBusiness = businesses.find((business) => business.id === editingBusinessId) ?? null;
+  const deletingBusiness = businesses.find((business) => business.id === deletingBusinessId) ?? null;
 
   async function logout() {
     const supabase = createSupabaseBrowserClient();
@@ -1301,6 +1404,8 @@ export function AdminBusinessesPanel() {
     setBusinesses([]);
     setSelectedBusinessId(null);
     setEditingBusinessId(null);
+    setDeletingBusinessId(null);
+    setDeleteConfirmationText("");
     setEditError(null);
     setMediaActionLoadingId(null);
     window.location.assign("/admin/login");
@@ -1322,7 +1427,7 @@ export function AdminBusinessesPanel() {
 
     if (updateError) {
       console.error("admin business update error", { id, updates, error: updateError });
-      setError("No pudimos actualizar el negocio. Revisa la consola y las políticas temporales.");
+      setError("No pudimos actualizar el negocio. Revisa la consola y las polÃ­ticas temporales.");
       setActionLoadingId(null);
       return;
     }
@@ -1338,6 +1443,122 @@ export function AdminBusinessesPanel() {
     setActionLoadingId(null);
   }
 
+  function requestDeleteBusiness(businessId: string) {
+    setError(null);
+    setNotice(null);
+    setDeleteConfirmationText("");
+    setDeletingBusinessId(businessId);
+  }
+
+  function closeDeleteBusinessModal() {
+    if (deleteLoading) {
+      return;
+    }
+
+    setDeletingBusinessId(null);
+    setDeleteConfirmationText("");
+  }
+
+  async function deleteBusiness() {
+    const supabase = createSupabaseBrowserClient();
+
+    if (!supabase || !deletingBusiness) {
+      setError("Supabase no esta configurado.");
+      return;
+    }
+
+    if (deleteConfirmationText !== "ELIMINAR") {
+      setError("Escribe ELIMINAR para confirmar la eliminacion definitiva.");
+      return;
+    }
+
+    setDeleteLoading(true);
+    setActionLoadingId(deletingBusiness.id);
+    setError(null);
+    setNotice(null);
+
+    const mediaResult = await supabase.from("business_media").select("id,url").eq("business_id", deletingBusiness.id);
+
+    if (mediaResult.error) {
+      console.error("admin business delete media load error", { businessId: deletingBusiness.id, error: mediaResult.error });
+      setError("No pudimos obtener las imagenes del negocio para eliminarlo.");
+      setDeleteLoading(false);
+      setActionLoadingId(null);
+      return;
+    }
+
+    const storagePaths = Array.from(
+      new Set(
+        (mediaResult.data ?? [])
+          .map((media) => getStoragePathFromPublicUrl(media.url))
+          .filter((path): path is string => Boolean(path)),
+      ),
+    );
+
+    if (storagePaths.length > 0) {
+      const { error: storageError } = await supabase.storage.from(mediaStorageBucket).remove(storagePaths);
+
+      if (storageError) {
+        console.warn("admin business delete storage warning", { businessId: deletingBusiness.id, storagePaths, error: storageError });
+      }
+    }
+
+    const deleteMedia = await supabase.from("business_media").delete().eq("business_id", deletingBusiness.id);
+
+    if (deleteMedia.error) {
+      console.error("admin business delete media records error", { businessId: deletingBusiness.id, error: deleteMedia.error });
+      setError("No pudimos eliminar los registros de imagenes.");
+      setDeleteLoading(false);
+      setActionLoadingId(null);
+      return;
+    }
+
+    const deleteCategories = await supabase.from("business_categories").delete().eq("business_id", deletingBusiness.id);
+
+    if (deleteCategories.error) {
+      console.error("admin business delete categories error", { businessId: deletingBusiness.id, error: deleteCategories.error });
+      setError("No pudimos eliminar las categorias asociadas.");
+      setDeleteLoading(false);
+      setActionLoadingId(null);
+      return;
+    }
+
+    const deleteLocations = await supabase.from("business_locations").delete().eq("business_id", deletingBusiness.id);
+
+    if (deleteLocations.error) {
+      console.error("admin business delete locations error", { businessId: deletingBusiness.id, error: deleteLocations.error });
+      setError("No pudimos eliminar las ubicaciones asociadas.");
+      setDeleteLoading(false);
+      setActionLoadingId(null);
+      return;
+    }
+
+    const deleteProfile = await supabase.from("business_profiles").delete().eq("id", deletingBusiness.id);
+
+    if (deleteProfile.error) {
+      console.error("admin business delete profile error", { businessId: deletingBusiness.id, error: deleteProfile.error });
+      setError("No pudimos eliminar la publicacion.");
+      setDeleteLoading(false);
+      setActionLoadingId(null);
+      return;
+    }
+
+    setSelectedBusinessId(null);
+    setEditingBusinessId(null);
+    setDeletingBusinessId(null);
+    setDeleteConfirmationText("");
+
+    const refreshed = await loadBusinesses();
+
+    if (refreshed) {
+      setNotice("Publicación eliminada correctamente.");
+    } else {
+      setError("La publicacion se elimino, pero no pudimos refrescar la lista.");
+    }
+
+    setDeleteLoading(false);
+    setActionLoadingId(null);
+  }
   async function saveBusinessEdit(business: AdminBusiness, formData: FormData, categoryIds: string[], locationIds: string[]) {
     const supabase = createSupabaseBrowserClient();
 
@@ -1359,12 +1580,12 @@ export function AdminBusinessesPanel() {
     }
 
     if (categoryIds.length === 0 || locationIds.length === 0) {
-      setEditError("Selecciona al menos una categoría y una ubicación.");
+      setEditError("Selecciona al menos una categorÃ­a y una ubicaciÃ³n.");
       return;
     }
 
     if (categoryIds.length > limits.maxCategories) {
-      setEditError(`El plan seleccionado permite hasta ${limits.maxCategories} categorías.`);
+      setEditError(`El plan seleccionado permite hasta ${limits.maxCategories} categorÃ­as.`);
       return;
     }
 
@@ -1446,7 +1667,7 @@ export function AdminBusinessesPanel() {
         categoriesError: deleteCategories.error,
         locationsError: deleteLocations.error,
       });
-      setEditError("No pudimos reemplazar categorías o ubicaciones.");
+      setEditError("No pudimos reemplazar categorÃ­as o ubicaciones.");
       setEditSaving(false);
       return;
     }
@@ -1463,7 +1684,7 @@ export function AdminBusinessesPanel() {
         categoriesError: insertCategories.error,
         locationsError: insertLocations.error,
       });
-      setEditError("No pudimos guardar categorías o ubicaciones.");
+      setEditError("No pudimos guardar categorÃ­as o ubicaciones.");
       setEditSaving(false);
       return;
     }
@@ -1495,13 +1716,13 @@ export function AdminBusinessesPanel() {
 
     if (updateError) {
       console.error("admin business media order error", { businessId: business.id, orderedMedia, error: updateError });
-      setEditError("No pudimos reordenar las imágenes. Revisa la consola.");
+      setEditError("No pudimos reordenar las imÃ¡genes. Revisa la consola.");
       setMediaActionLoadingId(null);
       return;
     }
 
     await loadBusinesses();
-    setNotice("Imágenes actualizadas correctamente.");
+    setNotice("ImÃ¡genes actualizadas correctamente.");
     setMediaActionLoadingId(null);
   }
 
@@ -1611,7 +1832,7 @@ export function AdminBusinessesPanel() {
     }
 
     if (availableSlots <= 0 || files.length > availableSlots) {
-      setEditError(`Este plan permite hasta ${limits.maxImages} imágenes.`);
+      setEditError(`Este plan permite hasta ${limits.maxImages} imÃ¡genes.`);
       return;
     }
 
@@ -1663,14 +1884,14 @@ export function AdminBusinessesPanel() {
 
       if (mediaError) {
         console.error("admin business media insert error", { businessId: business.id, publicUrl, error: mediaError });
-        setEditError("La imagen subió, pero no pudimos guardar el registro. Revisa la consola.");
+        setEditError("La imagen subiÃ³, pero no pudimos guardar el registro. Revisa la consola.");
         setMediaActionLoadingId(null);
         return;
       }
     }
 
     await loadBusinesses();
-    setNotice("Imágenes subidas correctamente.");
+    setNotice("ImÃ¡genes subidas correctamente.");
     setMediaActionLoadingId(null);
   }
 
@@ -1683,7 +1904,7 @@ export function AdminBusinessesPanel() {
             Solicitudes de negocios
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-casero-text/70">
-            Revisa categorías, zonas, imágenes y atributos antes de publicar negocios en Casero Cancún.
+            Revisa categorÃ­as, zonas, imÃ¡genes y atributos antes de publicar negocios en Casero CancÃºn.
           </p>
         </div>
         <div className="grid gap-2 sm:flex sm:flex-wrap">
@@ -1691,7 +1912,7 @@ export function AdminBusinessesPanel() {
             Refrescar
           </Button>
           <Button type="button" variant="ghost" className="w-full sm:w-auto" onClick={logout}>
-            Cerrar sesión admin
+            Cerrar sesiÃ³n admin
           </Button>
         </div>
       </div>
@@ -1722,7 +1943,7 @@ export function AdminBusinessesPanel() {
           <thead className="bg-casero-beige/70 text-xs uppercase tracking-[0.12em] text-casero-dark">
             <tr>
               <th className="px-4 py-3">Negocio</th>
-              <th className="px-4 py-3">Sección</th>
+              <th className="px-4 py-3">SecciÃ³n</th>
               <th className="px-4 py-3">Plan</th>
               <th className="px-4 py-3">Contacto</th>
               <th className="px-4 py-3">Estado</th>
@@ -1739,7 +1960,7 @@ export function AdminBusinessesPanel() {
                       <p className="font-heading font-bold text-casero-dark">{business.business_name}</p>
                       <p className="mt-1 text-xs text-casero-text/55">{formatDate(business.created_at)}</p>
                       <p className="mt-2 text-xs text-casero-text/65">
-                        {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}
+                        {business.categories.map((category) => category.name).join(", ") || "Sin categorÃ­as"}
                       </p>
                       <p className="mt-1 text-xs text-casero-text/65">
                         {business.locations.map((location) => location.name).join(", ") || "Sin ubicaciones"}
@@ -1775,7 +1996,7 @@ export function AdminBusinessesPanel() {
                   }}>
                     Editar
                   </button>
-                  <AdminActions business={business} disabled={actionLoadingId === business.id} onUpdate={updateBusiness} />
+                  <AdminActions business={business} disabled={actionLoadingId === business.id} onUpdate={updateBusiness} onRequestDelete={requestDeleteBusiness} />
                 </td>
               </tr>
             ))}
@@ -1796,12 +2017,12 @@ export function AdminBusinessesPanel() {
             <p className="mt-1 text-xs font-semibold text-casero-text/50">/{business.slug}</p>
             <div className="mt-4 grid gap-2 text-sm text-casero-text/70">
               <p><strong>Tipo:</strong> {getProfileTypeLabel(business.profile_type)}</p>
-              <p><strong>Sección:</strong> {getSection(business)}</p>
+              <p><strong>SecciÃ³n:</strong> {getSection(business)}</p>
               <p><strong>Plan:</strong> {business.planName ?? business.plan_id ?? "Sin plan"}</p>
               <p><strong>WhatsApp:</strong> {business.whatsapp ?? "Sin WhatsApp"}</p>
               <p><strong>Email:</strong> {business.email ?? "Sin correo"}</p>
               <p><strong>Fecha:</strong> {formatDate(business.created_at)}</p>
-              <p><strong>Categorías:</strong> {business.categories.map((category) => category.name).join(", ") || "Sin categorías"}</p>
+              <p><strong>CategorÃ­as:</strong> {business.categories.map((category) => category.name).join(", ") || "Sin categorÃ­as"}</p>
               <p><strong>Ubicaciones:</strong> {business.locations.map((location) => location.name).join(", ") || "Sin ubicaciones"}</p>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
@@ -1816,7 +2037,7 @@ export function AdminBusinessesPanel() {
               </button>
             </div>
             <div className="mt-4">
-              <AdminActions business={business} disabled={actionLoadingId === business.id} onUpdate={updateBusiness} />
+              <AdminActions business={business} disabled={actionLoadingId === business.id} onUpdate={updateBusiness} onRequestDelete={requestDeleteBusiness} />
             </div>
           </Card>
         ))}
@@ -1834,6 +2055,18 @@ export function AdminBusinessesPanel() {
           actionLoadingId={actionLoadingId}
           onClose={() => setSelectedBusinessId(null)}
           onUpdate={updateBusiness}
+          onRequestDelete={requestDeleteBusiness}
+        />
+      ) : null}
+
+      {deletingBusiness ? (
+        <DeleteBusinessModal
+          business={deletingBusiness}
+          confirmationText={deleteConfirmationText}
+          deleting={deleteLoading}
+          onConfirmationChange={setDeleteConfirmationText}
+          onClose={closeDeleteBusinessModal}
+          onConfirm={() => void deleteBusiness()}
         />
       ) : null}
 
@@ -1861,6 +2094,12 @@ export function AdminBusinessesPanel() {
     </section>
   );
 }
+
+
+
+
+
+
 
 
 

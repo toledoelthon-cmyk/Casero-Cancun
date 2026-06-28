@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { ProviderPanel } from "@/components/provider/ProviderPanel";
+import { getBusinessViewStatsForBusinesses, type BusinessViewStats } from "@/lib/data/business-view-stats";
 import { createSupabaseAuthServerClient } from "@/lib/auth/admin";
 import { getProviderAccess } from "@/lib/auth/provider";
 import type { BusinessMedia, BusinessProfile, Category, Location, Plan } from "@/lib/supabase/types";
@@ -22,6 +23,7 @@ export type ProviderBusiness = Pick<
   categories: Pick<Category, "id" | "name" | "slug">[];
   locations: Pick<Location, "id" | "name" | "slug">[];
   primaryMedia?: Pick<BusinessMedia, "id" | "url" | "alt" | "sort_order"> | null;
+  viewStats: BusinessViewStats;
 };
 
 type ProviderBusinessRow = Pick<
@@ -62,7 +64,7 @@ function getProviderUpdateMessage(code: string | undefined) {
 
   return null;
 }
-function mapProviderBusiness(row: ProviderBusinessRow): ProviderBusiness {
+function mapProviderBusiness(row: ProviderBusinessRow, viewStats: BusinessViewStats): ProviderBusiness {
   const categories =
     row.business_categories
       ?.map((item) => item.categories)
@@ -97,6 +99,7 @@ function mapProviderBusiness(row: ProviderBusinessRow): ProviderBusiness {
     categories,
     locations,
     primaryMedia,
+    viewStats,
   };
 }
 
@@ -169,13 +172,25 @@ export default async function ProviderPanelPage({ searchParams }: ProviderPanelP
     });
   }
 
+  const businessRows = (businesses as ProviderBusinessRow[] | null | undefined) ?? [];
+  const viewStatsByBusinessId = supabase
+    ? await getBusinessViewStatsForBusinesses(
+        supabase,
+        businessRows.map((business) => business.id),
+      )
+    : {};
+
   return (
     <ProviderPanel
       profile={providerAccess.session.profile}
-      businesses={(businesses as ProviderBusinessRow[] | null | undefined)?.map(mapProviderBusiness) ?? []}
+      businesses={businessRows.map((business) => mapProviderBusiness(business, viewStatsByBusinessId[business.id] ?? { total: 0, last7Days: 0, last30Days: 0 }))}
       updateMessage={updateMessage}
     />
   );
 }
+
+
+
+
 
 

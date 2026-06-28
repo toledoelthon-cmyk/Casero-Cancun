@@ -1,4 +1,4 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+﻿export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type ProfileType = "service_provider" | "material_store";
 export type CategoryType = "service" | "store";
@@ -202,6 +202,15 @@ export type BusinessMedia = {
   created_at: string | null;
 };
 
+
+export type BusinessProfileView = {
+  id: string;
+  business_id: string;
+  visited_at: string | null;
+  visitor_key: string | null;
+  referrer: string | null;
+  user_agent: string | null;
+};
 export type Database = {
   public: {
     Tables: {
@@ -288,7 +297,20 @@ export type Database = {
           },
         ];
       };
-      business_media: {
+      business_profile_views: {
+        Row: BusinessProfileView;
+        Insert: Omit<BusinessProfileView, "id" | "visited_at"> & { id?: string; visited_at?: string | null };
+        Update: Partial<BusinessProfileView>;
+        Relationships: [
+          {
+            foreignKeyName: "business_profile_views_business_id_fkey";
+            columns: ["business_id"];
+            isOneToOne: false;
+            referencedRelation: "business_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };      business_media: {
         Row: BusinessMedia;
         Insert: Omit<BusinessMedia, "id" | "created_at"> & { id?: string; created_at?: string | null };
         Update: Partial<BusinessMedia>;
@@ -309,4 +331,5 @@ export type Database = {
     CompositeTypes: Record<string, never>;
   };
 };
+
 
