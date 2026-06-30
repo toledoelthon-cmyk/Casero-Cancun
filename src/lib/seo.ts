@@ -38,6 +38,15 @@ export function createPublicMetadata({
   return {
     title,
     description,
+    applicationName: siteName,
+    appleWebApp: {
+      capable: true,
+      title: siteName,
+      statusBarStyle: "default",
+    },
+    formatDetection: {
+      telephone: false,
+    },
     icons: {
       icon: [
         {

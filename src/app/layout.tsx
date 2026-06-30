@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { WhatsAppFloatingButton } from "@/components/layout/WhatsAppFloatingButton";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { createPublicMetadata } from "@/lib/seo";
 
 const inter = Inter({
@@ -25,6 +26,12 @@ export const metadata: Metadata = createPublicMetadata({
     "Encuentra servicios del hogar, proveedores locales, tiendas de materiales, mascotas y servicios automotrices en Cancún con contacto directo por WhatsApp.",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#1F8A5B",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,6 +44,7 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <WhatsAppFloatingButton />
+        <InstallPrompt />
       </body>
     </html>
   );
