@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
+import { brandAssets } from "@/lib/brand";
 
 const links = [
   { href: "/", label: "Inicio" },
@@ -29,10 +31,14 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-casero-dark/10 bg-white/92 backdrop-blur">
       <Container className="flex min-h-16 items-center justify-between gap-4">
         <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="Casero Cancún" onClick={closeMenu}>
-          <span className="grid h-10 w-10 place-items-center rounded-md bg-casero-green font-heading text-lg font-extrabold text-white">
-            C
-          </span>
-          <span className="truncate font-heading text-lg font-extrabold text-casero-dark">Casero Cancún</span>
+          <Image
+            src={brandAssets.logoHorizontal}
+            alt="Casero Cancún"
+            width={220}
+            height={64}
+            priority
+            className="h-11 w-auto max-w-[min(58vw,220px)] object-contain"
+          />
         </Link>
 
         <nav className="hidden items-center gap-4 text-sm font-semibold text-casero-text/75 2xl:flex">
@@ -62,24 +68,24 @@ export function Header() {
           {isOpen ? (
             <div className="absolute left-0 right-0 top-16 max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-casero-dark/10 bg-white shadow-soft">
               <Container className="grid gap-1 py-3">
-              {links.map((link) => (
+                {links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-md px-3 py-3.5 text-base font-semibold text-casero-text hover:bg-casero-background"
+                    onClick={closeMenu}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className="rounded-md px-3 py-3.5 text-base font-semibold text-casero-text hover:bg-casero-background"
+                  href="/registrar-mi-negocio"
+                  className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-md bg-casero-orange px-5 py-2.5 text-sm font-semibold text-casero-dark shadow-soft"
                   onClick={closeMenu}
                 >
-                  {link.label}
+                  Registrar negocio
                 </Link>
-              ))}
-              <Link
-                href="/registrar-mi-negocio"
-                className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-md bg-casero-orange px-5 py-2.5 text-sm font-semibold text-casero-dark shadow-soft"
-                onClick={closeMenu}
-              >
-                Registrar negocio
-              </Link>
-            </Container>
+              </Container>
             </div>
           ) : null}
         </div>
@@ -87,4 +93,3 @@ export function Header() {
     </header>
   );
 }
-

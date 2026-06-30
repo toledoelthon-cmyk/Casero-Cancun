@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, MessageCircle } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { contact, whatsappUrl } from "@/lib/contact";
+import { brandAssets } from "@/lib/brand";
 
 const footerLinks = [
   { href: "/", label: "Inicio" },
@@ -23,7 +25,13 @@ export function Footer() {
     <footer className="border-t border-casero-dark/10 bg-casero-dark text-white">
       <Container className="grid gap-8 py-10 lg:grid-cols-[1.1fr_0.9fr_1fr]">
         <div>
-          <p className="font-heading text-xl font-extrabold">{contact.brand}</p>
+          <Image
+            src={brandAssets.logoWhite}
+            alt={contact.brand}
+            width={220}
+            height={64}
+            className="h-12 w-auto max-w-[220px] object-contain"
+          />
           <p className="mt-3 max-w-xl text-sm leading-6 text-white/70">
             Servicios, tiendas, mascotas y soluciones para tu auto en Cancún.
           </p>
@@ -66,4 +74,3 @@ export function Footer() {
     </footer>
   );
 }
-

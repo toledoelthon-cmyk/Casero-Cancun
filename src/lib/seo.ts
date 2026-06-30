@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { brandAssets } from "@/lib/brand";
 
 export const siteName = "Casero Cancún";
 export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://caserocancun.com").replace(/\/$/, "");
@@ -11,7 +12,7 @@ export function absoluteUrl(path = "/") {
   return `${siteUrl}${normalizedPath}`;
 }
 
-export const defaultOgImagePath = "/og/casero-cancun-og.png";
+export const defaultOgImagePath = brandAssets.ogImage;
 export const defaultOgImage = {
   url: absoluteUrl(defaultOgImagePath),
   width: 1200,
@@ -37,6 +38,21 @@ export function createPublicMetadata({
   return {
     title,
     description,
+    icons: {
+      icon: [
+        {
+          url: brandAssets.favicon,
+          type: "image/png",
+        },
+      ],
+      shortcut: [brandAssets.favicon],
+      apple: [
+        {
+          url: brandAssets.appleIcon,
+          type: "image/png",
+        },
+      ],
+    },
     alternates: {
       canonical: url,
     },
