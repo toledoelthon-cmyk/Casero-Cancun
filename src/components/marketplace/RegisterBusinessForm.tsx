@@ -1,20 +1,15 @@
-﻿"use client";
+"use client";
 
 import { FormEvent, useMemo, useState } from "react";
 import { MapPicker } from "@/components/maps/MapPicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { RegistrationCategory, RegistrationLocation, RegistrationPlan } from "@/lib/data/registration";
-import { getManualPaymentLinks } from "@/lib/payments/manual-payment";
+import { whatsappUrl } from "@/lib/contact";
 import { createSupabaseBrowserClient, missingSupabaseMessage } from "@/lib/supabase/client";
 import type { BusinessProfileInsert, CategorySection, LocationMode, ProfileType } from "@/lib/supabase/types";
 import { slugify } from "@/lib/utils/slugify";
 import { normalizeWhatsapp } from "@/lib/utils/whatsapp";
-
-type RegistrationAuthContext =
-  | { status: "public" }
-  | { status: "provider"; userId: string; email: string | null; fullName: string | null }
-  | { status: "admin"; userId: string; email: string | null; fullName: string | null };
 
 type RegisterBusinessFormProps = {
   plans: RegistrationPlan[];
@@ -22,18 +17,13 @@ type RegisterBusinessFormProps = {
   locations: RegistrationLocation[];
   supabaseConfigured: boolean;
   source: "supabase" | "demo";
-  authContext: RegistrationAuthContext;
 };
 
 const successMessage =
   "Tu solicitud fue enviada correctamente. Revisaremos la información de tu negocio y te contactaremos por WhatsApp.";
-const providerSuccessMessage =
-  "Tu negocio fue enviado a revision. Puedes consultar el estado desde tu panel de proveedor.";
 const errorMessage = "No pudimos enviar tu solicitud. Intenta de nuevo o contáctanos por WhatsApp.";
 const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
 const storageBucket = "business-media";
-const externalPaymentButtonClass =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
 
 const businessSectionLabels: Record<CategorySection, string> = {
   home_services: "Servicios del hogar",
@@ -60,23 +50,6 @@ function getPlanFileSizeLimit(slug?: string) {
   }
 
   return 2;
-}
-
-function CodiQrImage({ src, alt, className }: { src: string; alt: string; className: string }) {
-  const [hasError, setHasError] = useState(false);
-
-  if (hasError) {
-    return (
-      <p className="rounded-md bg-casero-background p-3 text-sm font-semibold leading-6 text-casero-text/70">
-        No se pudo cargar el QR. Solicita los datos de pago por WhatsApp.
-      </p>
-    );
-  }
-
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className={className} onError={() => setHasError(true)} />
-  );
 }
 
 function getPlanBenefits(slug: string) {
@@ -138,15 +111,12 @@ export function RegisterBusinessForm({
   locations,
   supabaseConfigured,
   source,
-  authContext,
 }: RegisterBusinessFormProps) {
   const [businessSection, setBusinessSection] = useState<CategorySection | "">("");
   const [locationMode, setLocationMode] = useState<LocationMode>("zones_only");
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [locationIds, setLocationIds] = useState<string[]>([]);
   const [planId, setPlanId] = useState("");
-  const [submittedPaymentPlan, setSubmittedPaymentPlan] = useState<RegistrationPlan | null>(null);
-  const [submittedBusinessName, setSubmittedBusinessName] = useState("");
   const [mapPosition, setMapPosition] = useState<{ latitude: number | null; longitude: number | null }>({
     latitude: null,
     longitude: null,
@@ -155,7 +125,7 @@ export function RegisterBusinessForm({
   const [businessFiles, setBusinessFiles] = useState<ImagePreview[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [formMessage, setFormMessage] = useState<string | null>(null);
-  const [validationTarget, setValidationTarget] = useState<"plan" | "section" | "categories" | "locations" | "images" | "legal" | "main" | null>(null);
+  const [validationTarget, setValidationTarget] = useState<"plan" | "section" | "categories" | "locations" | "images" | "main" | null>(null);
 
   const filteredCategories = useMemo(() => {
     if (!businessSection) {
@@ -440,8 +410,6 @@ export function RegisterBusinessForm({
     });
     setStatus("loading");
     setFormMessage(null);
-    setSubmittedPaymentPlan(null);
-    setSubmittedBusinessName("");
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -457,8 +425,6 @@ export function RegisterBusinessForm({
     const longitudeInput = shouldShowAddressFields ? String(formData.get("longitude") ?? "").trim() : "";
     const latitude = latitudeInput ? Number(latitudeInput) : null;
     const longitude = longitudeInput ? Number(longitudeInput) : null;
-    const acceptedLegal = formData.get("acceptedLegal") === "on";
-    const acceptedTruthReview = formData.get("acceptedTruthReview") === "on";
 
     const normalizedWhatsapp = normalizeWhatsapp(whatsappInput);
     const normalizedPhone = phoneInput ? normalizeWhatsapp(phoneInput) : null;
@@ -467,11 +433,11 @@ export function RegisterBusinessForm({
     const categoriesMatchSelectedSection = selectedCategories.every((category) => category.section === businessSection);
     const imageValidationError = validateFiles(logoFile, businessFiles);
     const selectionValidationError = exceedsCategoryLimit
-      ? `Tu plan permite seleccionar hasta ${maxCategories} categorías.`
+      ? `Tu plan permite seleccionar hasta ${maxCategories} categorias.`
       : exceedsLocationLimit
         ? `Tu plan permite seleccionar hasta ${maxLocations} ubicaciones.`
         : selectedCategories.length > 0 && !categoriesMatchSelectedSection
-          ? "Las categorías seleccionadas no corresponden a la sección elegida."
+          ? "Las categorias seleccionadas no corresponden a la seccion elegida."
         : null;
 
     if (
@@ -487,9 +453,7 @@ export function RegisterBusinessForm({
       locationIds.length === 0 ||
       !shortDescription ||
       imageValidationError ||
-      selectionValidationError ||
-      !acceptedLegal ||
-      !acceptedTruthReview
+      selectionValidationError
     ) {
       const nextValidationTarget = imageValidationError
         ? "images"
@@ -501,9 +465,7 @@ export function RegisterBusinessForm({
               ? "categories"
               : locationIds.length === 0 || selectionValidationError?.includes("ubic")
                 ? "locations"
-                : !acceptedLegal || !acceptedTruthReview
-                  ? "legal"
-                  : "main";
+                : "main";
 
       setStatus("error");
       setValidationTarget(nextValidationTarget);
@@ -540,17 +502,7 @@ export function RegisterBusinessForm({
       latitude: shouldShowAddressFields && Number.isFinite(latitude) ? latitude : null,
       longitude: shouldShowAddressFields && Number.isFinite(longitude) ? longitude : null,
       status: "pending",
-      membership_status: "manual_review",
-      payment_status: "unpaid",
-      membership_started_at: null,
-      membership_expires_at: null,
-      trial_ends_at: null,
-      last_payment_at: null,
-      next_payment_due_at: null,
-      payment_exempt_reason: null,
-      payment_exempt_until: null,
       plan_id: submittedPlanId || null,
-      ...(authContext.status === "provider" ? { owner_user_id: authContext.userId } : {}),
       main_service: selectedCategories[0].name,
       invoices: formData.get("invoices") === "on",
       emergency_service: formData.get("emergencyService") === "on",
@@ -581,7 +533,7 @@ export function RegisterBusinessForm({
       selectedSection: businessSection,
       "profile_type enviado": profileType,
       "section enviada": businessSection,
-      "categorías seleccionadas": selectedCategories.map((category) => ({
+      "categorias seleccionadas": selectedCategories.map((category) => ({
         id: category.id,
         name: category.name,
         section: category.section,
@@ -613,10 +565,8 @@ export function RegisterBusinessForm({
         }
       }
 
-      setSubmittedPaymentPlan(plans.find((plan) => plan.id === submittedPlanId) ?? null);
-      setSubmittedBusinessName(businessName);
       setStatus("success");
-      setFormMessage(authContext.status === "provider" ? providerSuccessMessage : successMessage);
+      setFormMessage(successMessage);
       form.reset();
       setBusinessSection("");
       setCategoryIds([]);
@@ -643,16 +593,6 @@ export function RegisterBusinessForm({
 
   return (
     <Card className="p-4 sm:p-6">
-      {authContext.status === "provider" ? (
-        <div className="mb-5 rounded-md border border-casero-green/20 bg-casero-green/10 p-4 text-sm font-semibold text-casero-green">
-          Estas registrando este negocio desde tu cuenta de proveedor.
-        </div>
-      ) : null}
-      {authContext.status === "admin" ? (
-        <div className="mb-5 rounded-md border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm font-semibold text-casero-dark">
-          Estas usando una cuenta admin. Este negocio no se asignara automaticamente a un proveedor.
-        </div>
-      ) : null}
       {formMessage ? (
         <div
           className={
@@ -661,65 +601,14 @@ export function RegisterBusinessForm({
               : "mb-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700"
           }
         >
+          {formMessage}
           {status === "success" ? (
-            <div>
-              <p className="font-heading text-lg font-extrabold text-casero-dark">Registro enviado a revisión</p>
-              <p className="mt-2 leading-6 text-casero-text/75">
-                Tu negocio fue enviado correctamente. Para activar tu membresía, realiza el pago del plan seleccionado y envíanos tu comprobante por WhatsApp.
-              </p>
-              {(() => {
-                const planName = submittedPaymentPlan?.name ?? "plan seleccionado";
-                const planAmount = submittedPaymentPlan ? `$${submittedPaymentPlan.priceMxn} MXN` : null;
-                const manualPayment = getManualPaymentLinks(
-                  submittedPaymentPlan,
-                  `Hola, soy proveedor de Casero Cancún. Ya realicé el pago por CoDi o transferencia para el negocio ${submittedBusinessName || "registrado"}, plan ${planName}. Quiero enviar mi comprobante para activar mi publicación.`,
-                );
-
-                return (
-                  <div className="mt-4 grid gap-3">
-                    {manualPayment.paymentUrl ? (
-                      <a className={`${externalPaymentButtonClass} bg-casero-orange text-casero-dark shadow-soft hover:bg-amber-400`} href={manualPayment.paymentUrl} target="_blank" rel="noreferrer">
-                        Pagar con Mercado Pago
-                      </a>
-                    ) : null}
-                    {manualPayment.hasCodiQr ? (
-                      <div className="rounded-md bg-white p-4 text-center shadow-sm">
-                        <p className="font-heading text-lg font-extrabold text-casero-dark">Paga tu membresía por CoDi</p>
-                        <p className="mt-2 text-sm leading-6 text-casero-text/75">{manualPayment.codiInstructions}</p>
-                        <div className="mt-3 flex justify-center">
-                          {manualPayment.codiQrUrl ? (
-                            <CodiQrImage
-                              src={manualPayment.codiQrUrl}
-                              alt={`QR CoDi para pagar plan ${planName} de Casero Cancún`}
-                              className="h-48 w-48 rounded-md border border-casero-dark/10 bg-white object-contain p-2"
-                            />
-                          ) : null}
-                        </div>
-                        <p className="mt-3 text-sm font-bold text-casero-dark">{planName}{planAmount ? ` · ${planAmount}` : ""}</p>
-                        <p className="mt-2 text-xs font-semibold text-casero-text/65">La activación no es automática. Tu pago será validado manualmente.</p>
-                      </div>
-                    ) : (
-                      <p className="rounded-md bg-white p-3 text-sm leading-6 text-casero-text/75">
-                        Solicita los datos de pago por WhatsApp y envíanos tu comprobante para activar tu publicación.
-                      </p>
-                    )}
-                    <div className="grid gap-2 sm:flex sm:flex-wrap">
-                      <a className={`${externalPaymentButtonClass} bg-casero-green text-white shadow-soft hover:bg-emerald-700`} href={manualPayment.whatsappUrl} target="_blank" rel="noreferrer">
-                        {manualPayment.hasCodiQr || manualPayment.paymentUrl ? "Enviar comprobante por WhatsApp" : "Solicitar datos por WhatsApp"}
-                      </a>
-                      {authContext.status === "provider" ? (
-                        <Button href="/proveedor/panel" variant="outline">
-                          Ir a mi panel
-                        </Button>
-                      ) : null}
-                    </div>
-                  </div>
-                );
-              })()}
+            <div className="mt-3">
+              <Button href={whatsappUrl} variant="secondary">
+                Avisar por WhatsApp
+              </Button>
             </div>
-          ) : (
-            formMessage
-          )}
+          ) : null}
         </div>
       ) : null}
 
@@ -863,7 +752,7 @@ export function RegisterBusinessForm({
               }}
               className={fieldClass}
             >
-              <option value="">Selecciona una sección</option>
+              <option value="">Selecciona una seccion</option>
               {Object.entries(businessSectionLabels).map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
@@ -931,7 +820,7 @@ export function RegisterBusinessForm({
           </fieldset>
 
           <label className="hidden">
-            Categorías
+            Categorias
             <select
               name="categoryIds"
               aria-label={categoryLabel}
@@ -942,7 +831,7 @@ export function RegisterBusinessForm({
                 const nextCategoryIds = Array.from(event.target.selectedOptions).map((option) => option.value);
                 if (nextCategoryIds.length > maxCategories) {
                   setStatus("error");
-                  setFormMessage(`Tu plan permite seleccionar hasta ${maxCategories} categorías.`);
+                  setFormMessage(`Tu plan permite seleccionar hasta ${maxCategories} categorias.`);
                   return;
                 }
 
@@ -1063,7 +952,7 @@ export function RegisterBusinessForm({
                 if (categoryIds.length > nextMaxCategories) {
                   setStatus("error");
                   setFormMessage(
-                    `Tu plan permite seleccionar hasta ${nextMaxCategories} categorías. Elimina categorías sobrantes para continuar.`,
+                    `Tu plan permite seleccionar hasta ${nextMaxCategories} categorias. Elimina categorias sobrantes para continuar.`,
                   );
                 } else if (locationIds.length > nextMaxLocations) {
                   setStatus("error");
@@ -1478,7 +1367,7 @@ export function RegisterBusinessForm({
           </fieldset>
         ) : null}
 
-        <fieldset id="legal-section" className={`${sectionClass} ${validationTarget === "legal" ? "border-red-300 ring-2 ring-red-100" : ""}`}>
+        <fieldset className={sectionClass}>
           <legend className="px-1 text-sm font-bold text-casero-dark">Revisión final y envío</legend>
           <div className="mt-3 grid gap-5">
         <label className="text-sm font-bold text-casero-dark">
@@ -1500,21 +1389,6 @@ export function RegisterBusinessForm({
           />
         </label>
 
-            <div className="grid gap-3 rounded-md border border-casero-dark/10 bg-white p-4 text-sm leading-6 text-casero-text/75">
-              <label className="flex items-start gap-3">
-                <input name="acceptedLegal" type="checkbox" required className="mt-1 h-4 w-4 flex-none accent-casero-green" />
-                <span>
-                  Acepto el <a href="/aviso-de-privacidad" className="font-bold text-casero-green underline underline-offset-2">Aviso de Privacidad</a> y los <a href="/terminos-y-condiciones" className="font-bold text-casero-green underline underline-offset-2">Términos y Condiciones</a> de Casero Cancún.
-                </span>
-              </label>
-              <label className="flex items-start gap-3">
-                <input name="acceptedTruthReview" type="checkbox" required className="mt-1 h-4 w-4 flex-none accent-casero-green" />
-                <span>
-                  Declaro que la información proporcionada sobre mi negocio es verdadera y autorizo a Casero Cancún a revisarla, publicarla, pausarla, rechazarla o eliminarla si incumple las reglas de la plataforma.
-                </span>
-              </label>
-            </div>
-
             <Button type="submit" variant="secondary" className="w-full sm:w-auto" disabled={isLoading}>
               {isLoading ? "Enviando..." : "Enviar solicitud"}
             </Button>
@@ -1524,11 +1398,3 @@ export function RegisterBusinessForm({
     </Card>
   );
 }
-
-
-
-
-
-
-
-

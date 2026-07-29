@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { BadgeCheck, CarFront, Home, MapPin, PawPrint, Star, Store, Wrench } from "lucide-react";
+import { CaseroServiceCaptureModal } from "@/components/marketplace/CaseroServiceCaptureModal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import type { DemoBusiness } from "@/lib/demo-data";
 
 type LegacyBusiness = {
@@ -110,6 +110,8 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const description = isDemoBusiness(business) ? business.shortDescription : business.description;
   const badges = isDemoBusiness(business) ? business.badges : business.tags;
   const whatsapp = isDemoBusiness(business) ? business.whatsapp : undefined;
+  const providerId = isDemoBusiness(business) ? business.id : undefined;
+  const service = isDemoBusiness(business) ? business.mainService ?? business.category : business.category;
   const rating = isDemoBusiness(business) ? business.rating : undefined;
   const reviewCount = isDemoBusiness(business) ? business.reviewCount : undefined;
   const section = isDemoBusiness(business) && business.section ? sectionLabels[business.section] : undefined;
@@ -175,17 +177,13 @@ export function BusinessCard({ business }: BusinessCardProps) {
         </div>
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          <WhatsAppButton
-            phone={whatsapp}
-            label="Pedir cotización"
+          <CaseroServiceCaptureModal
+            businessName={business.name}
+            service={service}
+            zone={locations[0]}
+            providerId={providerId}
+            providerWhatsapp={whatsapp}
             className="w-full"
-            captureLead
-            leadContext={{
-              category: categories[0],
-              providerName: business.name,
-              service: isDemoBusiness(business) ? business.mainService ?? categories[0] : categories[0],
-              serviceUrl: `/negocio/${business.slug}`,
-            }}
           />
           <Button href={`/negocio/${business.slug}`} variant="outline">
             Ver perfil

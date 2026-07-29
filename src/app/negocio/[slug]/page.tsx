@@ -1,4 +1,3 @@
-import { createPublicMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -18,11 +17,10 @@ import {
   Store,
   Wrench,
 } from "lucide-react";
-import { BusinessViewTracker } from "@/components/analytics/BusinessViewTracker";
 import { BusinessMap } from "@/components/maps/BusinessMap";
+import { CaseroServiceCaptureModal } from "@/components/marketplace/CaseroServiceCaptureModal";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { getBusinessBySlug } from "@/lib/data/businesses";
 import type { DemoBusiness } from "@/lib/demo-data";
 
@@ -114,19 +112,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const business = await getBusinessBySlug(slug);
 
   if (!business) {
-    return createPublicMetadata({
+    return {
       title: "Negocio no encontrado | Casero Cancún",
-      description: "El perfil solicitado no está disponible en Casero Cancún.",
-      path: `/negocio/${slug}`,
-    });
+    };
   }
 
-  return createPublicMetadata({
+  return {
     title: `${business.name} | Casero Cancún`,
     description: business.shortDescription,
-    path: `/negocio/${business.slug}`,
-    type: "article",
-  });
+  };
 }
 
 export default async function BusinessProfilePage({ params }: PageProps) {
@@ -137,7 +131,6 @@ export default async function BusinessProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const whatsappMessage = "Hola, vi tu perfil en Casero Cancún y quiero información.";
   const images = (business.media ?? [])
     .filter((image) => isUsableImageUrl(image.url))
     .slice()
@@ -152,10 +145,18 @@ export default async function BusinessProfilePage({ params }: PageProps) {
   const description =
     business.longDescription ??
     `${business.shortDescription} Este perfil está preparado para mostrar información clara, contacto directo y señales de confianza dentro de Casero Cancún.`;
-
+  const renderQuoteButton = () => (
+    <CaseroServiceCaptureModal
+      businessName={business.name}
+      service={business.mainService ?? business.category}
+      zone={locations[0]}
+      providerId={business.id}
+      providerWhatsapp={business.whatsapp}
+      className="w-full"
+    />
+  );
   return (
     <section className="bg-casero-background pb-24 md:pb-14">
-      <BusinessViewTracker businessId={business.id} />
       <div className="relative bg-white">
         <div className="aspect-[16/9] max-h-[34rem] w-full overflow-hidden bg-casero-beige md:aspect-[21/8]">
           <BusinessImage business={business} image={mainImage} priority />
@@ -213,19 +214,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                 </div>
               </div>
               <div className="w-full md:w-auto">
-                <WhatsAppButton
-                  phone={business.whatsapp}
-                  label="Pedir cotización"
-                  message={whatsappMessage}
-                  className="w-full"
-                  captureLead
-                  leadContext={{
-                    category: business.category,
-                    providerName: business.name,
-                    service: business.mainService ?? business.category,
-                    serviceUrl: `/negocio/${business.slug}`,
-                  }}
-                />
+                {renderQuoteButton()}
               </div>
             </div>
           </div>
@@ -323,19 +312,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
               ) : null}
             </div>
             <div className="mt-5">
-              <WhatsAppButton
-                phone={business.whatsapp}
-                label="Pedir cotización"
-                message={whatsappMessage}
-                className="w-full"
-                captureLead
-                leadContext={{
-                  category: business.category,
-                  providerName: business.name,
-                  service: business.mainService ?? business.category,
-                  serviceUrl: `/negocio/${business.slug}`,
-                }}
-              />
+              {renderQuoteButton()}
             </div>
           </Card>
 
@@ -393,39 +370,14 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             </div>
           </Card>
 
-          <WhatsAppButton
-            phone={business.whatsapp}
-            label="Pedir cotización"
-            message={whatsappMessage}
-            className="w-full"
-            captureLead
-            leadContext={{
-              category: business.category,
-              providerName: business.name,
-              service: business.mainService ?? business.category,
-              serviceUrl: `/negocio/${business.slug}`,
-            }}
-          />
+          {renderQuoteButton()}
         </aside>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-casero-dark/10 bg-white/95 p-3 shadow-soft backdrop-blur md:hidden">
         <div className="container-page px-0">
-          <WhatsAppButton
-            phone={business.whatsapp}
-            label="Pedir cotización"
-            message={whatsappMessage}
-            className="w-full"
-            captureLead
-            leadContext={{
-              category: business.category,
-              providerName: business.name,
-              service: business.mainService ?? business.category,
-              serviceUrl: `/negocio/${business.slug}`,
-            }}
-          />
+          {renderQuoteButton()}
         </div>
       </div>
     </section>
   );
 }
-
