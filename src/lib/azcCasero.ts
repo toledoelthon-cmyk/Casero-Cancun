@@ -37,15 +37,26 @@ export type CaseroAZCResult = {
   ok: boolean;
   status?: number;
   requestId?: string;
+  duplicated?: boolean;
   error?: string;
   message?: string;
-  details?: string;
+  azcResponse?: unknown;
 };
 
 function getStringField(body: unknown, key: string) {
   return typeof body === "object" && body !== null && key in body && typeof body[key as keyof typeof body] === "string"
     ? (body[key as keyof typeof body] as string)
     : undefined;
+}
+
+function getBooleanField(body: unknown, key: string) {
+  return typeof body === "object" && body !== null && key in body && typeof body[key as keyof typeof body] === "boolean"
+    ? (body[key as keyof typeof body] as boolean)
+    : undefined;
+}
+
+function getUnknownField(body: unknown, key: string) {
+  return typeof body === "object" && body !== null && key in body ? body[key as keyof typeof body] : undefined;
 }
 
 export async function sendCaseroRequestToAZC(payload: CaseroAZCRequestPayload): Promise<CaseroAZCResult> {
@@ -58,21 +69,31 @@ export async function sendCaseroRequestToAZC(payload: CaseroAZCRequestPayload): 
       body: JSON.stringify(payload),
     });
 
-    let body: unknown = null;
+    let body: unknown;
 
     try {
       body = await response.json();
     } catch {
-      body = null;
+      return {
+        ok: false,
+        status: response.status,
+        error: "invalid_proxy_response",
+        message: "El proxy interno de AZC no devolvió JSON válido.",
+      };
     }
 
+    const proxyOk = getBooleanField(body, "ok");
+    const error = getStringField(body, "error");
+    const status = getUnknownField(body, "status");
+
     return {
-      ok: response.ok && getStringField(body, "error") === undefined,
-      status: response.status,
+      ok: response.ok && proxyOk !== false && error === undefined,
+      status: typeof status === "number" ? status : response.status,
       requestId: getStringField(body, "requestId"),
-      error: getStringField(body, "error"),
+      duplicated: getBooleanField(body, "duplicated"),
+      error,
       message: getStringField(body, "message"),
-      details: getStringField(body, "details"),
+      azcResponse: getUnknownField(body, "azcResponse"),
     };
   } catch {
     return {

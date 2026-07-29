@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { MessageCircle, X } from "lucide-react";
 import { sendCaseroRequestToAZC } from "@/lib/azcCasero";
 import { buildCaseroWhatsappMessage, buildCaseroWhatsappUrl, getCaseroWhatsappTarget } from "@/lib/casero-leads";
@@ -38,11 +39,16 @@ export function CaseroServiceCaptureModal({
   const [message, setMessage] = useState("");
   const [fieldError, setFieldError] = useState("");
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [azcStatusMessage, setAzcStatusMessage] = useState("");
   const isSubmittingRef = useRef(false);
 
   const statusMessage = useMemo(() => {
+    if (azcStatusMessage) {
+      return azcStatusMessage;
+    }
+
     if (submitState === "loading") {
-      return "Registrando solicitud...";
+      return "Registrando solicitud en AZC...";
     }
 
     if (submitState === "success") {
@@ -50,15 +56,44 @@ export function CaseroServiceCaptureModal({
     }
 
     if (submitState === "fallback") {
-      return "No se pudo registrar en AZC, pero continuaremos a WhatsApp.";
+      return "No se pudo registrar en AZC, continuaremos por WhatsApp.";
     }
 
     return "";
-  }, [submitState]);
+  }, [azcStatusMessage, submitState]);
+
+  useEffect(() => {
+    if (!isOpen || typeof window === "undefined") {
+      return;
+    }
+
+    const { body, documentElement } = document;
+    const originalBodyOverflow = body.style.overflow;
+    const originalBodyPaddingRight = body.style.paddingRight;
+    const originalDocumentOverflow = documentElement.style.overflow;
+    const scrollbarWidth = window.innerWidth - documentElement.clientWidth;
+
+    body.style.overflow = "hidden";
+    documentElement.style.overflow = "hidden";
+
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    body.classList.add("casero-modal-open");
+
+    return () => {
+      body.style.overflow = originalBodyOverflow;
+      body.style.paddingRight = originalBodyPaddingRight;
+      documentElement.style.overflow = originalDocumentOverflow;
+      body.classList.remove("casero-modal-open");
+    };
+  }, [isOpen]);
 
   function resetModalState() {
     setFieldError("");
     setSubmitState("idle");
+    setAzcStatusMessage("");
     isSubmittingRef.current = false;
   }
 
@@ -83,6 +118,7 @@ export function CaseroServiceCaptureModal({
     }
 
     setFieldError("");
+    setAzcStatusMessage("");
 
     const cleanPhone = customerPhone.trim();
     const cleanService = requestedService.trim();
@@ -155,40 +191,146 @@ export function CaseroServiceCaptureModal({
       },
     };
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log("Casero AZC payload", {
-        hasClientName: Boolean(azcPayload.clientName),
-        hasWhatsapp: Boolean(azcPayload.clientWhatsapp || azcPayload.clientPhone),
-        requestedService: azcPayload.requestedService,
-        category: azcPayload.category,
-        providerName: azcPayload.metadata.providerName,
-      });
-    }
-
     try {
       const result = await sendCaseroRequestToAZC(azcPayload);
 
-      if (!result.ok && process.env.NODE_ENV !== "production") {
-        console.warn("Casero AZC result", {
-          status: result.status,
-          error: result.error,
-          message: result.message,
-          details: result.details,
-        });
-      }
+      console.log("Casero AZC result", {
+        ok: result.ok,
+        status: result.status,
+        requestId: result.requestId,
+        duplicated: result.duplicated,
+        error: result.error,
+        message: result.message,
+      });
 
-      setSubmitState(result.ok ? "success" : "fallback");
-    } catch {
+      if (result.ok) {
+        setSubmitState("success");
+        setAzcStatusMessage("Solicitud registrada en AZC.");
+      } else {
+        setSubmitState("fallback");
+        setAzcStatusMessage(`No se pudo registrar en AZC: ${result.error ?? result.message ?? "error_desconocido"}`);
+      }
+    } catch (error) {
       setSubmitState("fallback");
+      setAzcStatusMessage("No se pudo registrar en AZC: proxy_unavailable");
+      console.log("Casero AZC result", {
+        ok: false,
+        error: "proxy_unavailable",
+        message: error instanceof Error ? error.message : "No se pudo contactar el proxy interno de AZC.",
+      });
     } finally {
       window.setTimeout(() => {
         window.location.assign(whatsappUrl);
         isSubmittingRef.current = false;
         setIsOpen(false);
         setSubmitState("idle");
-      }, 700);
+        setAzcStatusMessage("");
+      }, 900);
     }
   }
+
+  const modal = isOpen ? (
+    <div className="fixed inset-0 z-[1000] flex items-end justify-center overscroll-contain bg-slate-950/60 p-0 backdrop-blur-sm pointer-events-auto sm:items-center sm:p-4">
+      <div className="relative flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-lg bg-white shadow-soft pointer-events-auto sm:max-w-lg sm:rounded-lg">
+        <div className="flex items-start justify-between gap-4 border-b border-casero-dark/10 px-4 py-3 sm:px-5">
+          <div>
+            <h2 className="font-heading text-lg font-extrabold text-casero-dark">Pedir cotización</h2>
+            <p className="mt-0.5 text-xs font-semibold text-casero-text/60">{businessName}</p>
+          </div>
+          <button
+            type="button"
+            aria-label="Cerrar"
+            onClick={closeModal}
+            className="grid h-9 w-9 flex-none place-items-center rounded-md text-casero-text/65 transition hover:bg-casero-background hover:text-casero-dark"
+          >
+            <X className="h-5 w-5" aria-hidden />
+          </button>
+        </div>
+
+        <form className="grid gap-3 overflow-y-auto px-4 py-4 sm:px-5" onSubmit={handleSubmit}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="grid gap-1 text-xs font-bold text-casero-dark">
+              Nombre
+              <input
+                value={customerName}
+                onChange={(event) => setCustomerName(event.target.value)}
+                className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
+                placeholder="Tu nombre"
+              />
+            </label>
+
+            <label className="grid gap-1 text-xs font-bold text-casero-dark">
+              WhatsApp o teléfono
+              <input
+                value={customerPhone}
+                onChange={(event) => setCustomerPhone(event.target.value)}
+                className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
+                inputMode="tel"
+                placeholder="Ej. 998 123 4567"
+              />
+            </label>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="grid gap-1 text-xs font-bold text-casero-dark">
+              Servicio
+              <input
+                value={requestedService}
+                onChange={(event) => setRequestedService(event.target.value)}
+                className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
+                placeholder="Servicio requerido"
+              />
+            </label>
+
+            <label className="grid gap-1 text-xs font-bold text-casero-dark">
+              Zona
+              <input
+                value={requestedZone}
+                onChange={(event) => setRequestedZone(event.target.value)}
+                className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
+                placeholder="Zona de Cancún"
+              />
+            </label>
+          </div>
+
+          <label className="grid gap-1 text-xs font-bold text-casero-dark">
+            Email opcional
+            <input
+              value={customerEmail}
+              onChange={(event) => setCustomerEmail(event.target.value)}
+              className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
+              inputMode="email"
+              placeholder="correo@ejemplo.com"
+            />
+          </label>
+
+          <label className="grid gap-1 text-xs font-bold text-casero-dark">
+            Mensaje
+            <textarea
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              className="min-h-20 rounded-md border border-casero-dark/15 px-3 py-2 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
+              placeholder="Cuéntanos qué necesitas cotizar"
+            />
+          </label>
+
+          {fieldError ? <p className="rounded-md bg-red-50 p-2.5 text-sm font-semibold text-red-700">{fieldError}</p> : null}
+          {statusMessage ? (
+            <p className="rounded-md bg-casero-background p-2.5 text-sm font-semibold text-casero-text/75">{statusMessage}</p>
+          ) : null}
+
+          <div className="sticky bottom-0 -mx-4 -mb-4 flex flex-col-reverse gap-2 border-t border-casero-dark/10 bg-white px-4 py-3 sm:-mx-5 sm:-mb-4 sm:flex-row sm:justify-end sm:px-5">
+            <Button type="button" variant="outline" onClick={closeModal} disabled={isSubmittingRef.current}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isSubmittingRef.current}>
+              {submitState === "loading" ? "Registrando..." : "Continuar a WhatsApp"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  ) : null;
 
   return (
     <>
@@ -197,108 +339,7 @@ export function CaseroServiceCaptureModal({
         Pedir cotización
       </Button>
 
-      {isOpen ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-casero-dark/50 p-0 sm:items-center sm:p-4">
-          <div className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-lg bg-white shadow-soft sm:max-w-lg sm:rounded-lg">
-            <div className="flex items-start justify-between gap-4 border-b border-casero-dark/10 px-4 py-3 sm:px-5">
-              <div>
-                <h2 className="font-heading text-lg font-extrabold text-casero-dark">Pedir cotización</h2>
-                <p className="mt-0.5 text-xs font-semibold text-casero-text/60">{businessName}</p>
-              </div>
-              <button
-                type="button"
-                aria-label="Cerrar"
-                onClick={closeModal}
-                className="grid h-9 w-9 flex-none place-items-center rounded-md text-casero-text/65 transition hover:bg-casero-background hover:text-casero-dark"
-              >
-                <X className="h-5 w-5" aria-hidden />
-              </button>
-            </div>
-
-            <form className="grid gap-3 overflow-y-auto px-4 py-4 sm:px-5" onSubmit={handleSubmit}>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="grid gap-1 text-xs font-bold text-casero-dark">
-                  Nombre
-                  <input
-                    value={customerName}
-                    onChange={(event) => setCustomerName(event.target.value)}
-                    className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
-                    placeholder="Tu nombre"
-                  />
-                </label>
-
-                <label className="grid gap-1 text-xs font-bold text-casero-dark">
-                  WhatsApp o teléfono
-                  <input
-                    value={customerPhone}
-                    onChange={(event) => setCustomerPhone(event.target.value)}
-                    className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
-                    inputMode="tel"
-                    placeholder="Ej. 998 123 4567"
-                  />
-                </label>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="grid gap-1 text-xs font-bold text-casero-dark">
-                  Servicio
-                  <input
-                    value={requestedService}
-                    onChange={(event) => setRequestedService(event.target.value)}
-                    className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
-                    placeholder="Servicio requerido"
-                  />
-                </label>
-
-                <label className="grid gap-1 text-xs font-bold text-casero-dark">
-                  Zona
-                  <input
-                    value={requestedZone}
-                    onChange={(event) => setRequestedZone(event.target.value)}
-                    className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
-                    placeholder="Zona de Cancún"
-                  />
-                </label>
-              </div>
-
-              <label className="grid gap-1 text-xs font-bold text-casero-dark">
-                Email opcional
-                <input
-                  value={customerEmail}
-                  onChange={(event) => setCustomerEmail(event.target.value)}
-                  className="min-h-10 rounded-md border border-casero-dark/15 px-3 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
-                  inputMode="email"
-                  placeholder="correo@ejemplo.com"
-                />
-              </label>
-
-              <label className="grid gap-1 text-xs font-bold text-casero-dark">
-                Mensaje
-                <textarea
-                  value={message}
-                  onChange={(event) => setMessage(event.target.value)}
-                  className="min-h-20 rounded-md border border-casero-dark/15 px-3 py-2 text-sm font-normal outline-none focus:border-casero-green focus:ring-2 focus:ring-casero-green/20"
-                  placeholder="Cuéntanos qué necesitas cotizar"
-                />
-              </label>
-
-              {fieldError ? <p className="rounded-md bg-red-50 p-2.5 text-sm font-semibold text-red-700">{fieldError}</p> : null}
-              {statusMessage ? (
-                <p className="rounded-md bg-casero-background p-2.5 text-sm font-semibold text-casero-text/75">{statusMessage}</p>
-              ) : null}
-
-              <div className="sticky bottom-0 -mx-4 -mb-4 flex flex-col-reverse gap-2 border-t border-casero-dark/10 bg-white px-4 py-3 sm:-mx-5 sm:-mb-4 sm:flex-row sm:justify-end sm:px-5">
-                <Button type="button" variant="outline" onClick={closeModal} disabled={isSubmittingRef.current}>
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={isSubmittingRef.current}>
-                  {submitState === "loading" ? "Enviando..." : "Continuar a WhatsApp"}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      ) : null}
+      {typeof document !== "undefined" && modal ? createPortal(modal, document.body) : null}
     </>
   );
 }

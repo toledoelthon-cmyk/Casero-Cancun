@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+const SENSITIVE_KEYS = new Set(["apikey", "api_key", "authorization", "token", "secret", "password", "x-azc-api-key"]);
+
 function getRequestId(body: unknown) {
   if (typeof body !== "object" || body === null) {
     return undefined;
@@ -12,6 +14,45 @@ function getRequestId(body: unknown) {
   }
 
   return undefined;
+}
+
+function getBoolean(body: unknown, key: string) {
+  return typeof body === "object" && body !== null && key in body && typeof body[key as keyof typeof body] === "boolean"
+    ? (body[key as keyof typeof body] as boolean)
+    : undefined;
+}
+
+function getString(body: unknown, key: string) {
+  return typeof body === "object" && body !== null && key in body && typeof body[key as keyof typeof body] === "string"
+    ? (body[key as keyof typeof body] as string)
+    : undefined;
+}
+
+function getField(body: unknown, key: string) {
+  return typeof body === "object" && body !== null && key in body ? body[key as keyof typeof body] : undefined;
+}
+
+function getWarnings(body: unknown) {
+  const warnings = getField(body, "warnings");
+
+  return Array.isArray(warnings) ? warnings : [];
+}
+
+function redactSensitive(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(redactSensitive);
+  }
+
+  if (typeof value !== "object" || value === null) {
+    return value;
+  }
+
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
+      key,
+      SENSITIVE_KEYS.has(key.toLowerCase()) ? "[redacted]" : redactSensitive(entry),
+    ]),
+  );
 }
 
 function getSafeErrorMessage(body: unknown) {
@@ -42,7 +83,7 @@ function safeParseJson(text: string) {
   }
 }
 
-function getString(payload: Record<string, unknown>, keys: string[]) {
+function getPayloadString(payload: Record<string, unknown>, keys: string[]) {
   for (const key of keys) {
     const value = payload[key];
 
@@ -60,8 +101,8 @@ function validatePayload(payload: unknown) {
   }
 
   const record = payload as Record<string, unknown>;
-  const hasContact = Boolean(getString(record, ["clientWhatsapp", "clientPhone", "clientEmail", "whatsapp", "telefono", "email"]));
-  const hasNeed = Boolean(getString(record, ["requestedService", "category", "message", "service", "servicio", "categoria", "mensaje"]));
+  const hasContact = Boolean(getPayloadString(record, ["clientWhatsapp", "clientPhone", "clientEmail", "whatsapp", "telefono", "email"]));
+  const hasNeed = Boolean(getPayloadString(record, ["requestedService", "category", "message", "service", "servicio", "categoria", "mensaje"]));
 
   return hasContact && hasNeed;
 }
@@ -155,12 +196,13 @@ export async function POST(request: Request) {
     });
 
     const responseText = await response.text();
-    const azcResponse = safeParseJson(responseText);
+    const azcJson = safeParseJson(responseText);
+    const safeAzcResponse = redactSensitive(azcJson);
 
     if (!response.ok) {
       console.error("AZC Casero request failed", {
         status: response.status,
-        error: getSafeErrorMessage(azcResponse),
+        error: getSafeErrorMessage(azcJson),
         hasUrl: Boolean(AZC_URL),
         hasKey: Boolean(AZC_KEY),
       });
@@ -168,16 +210,24 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error: "azc_rejected_request",
           status: response.status,
-          message: "AZC rechazó la solicitud.",
-          azcResponse,
+          error: "azc_rejected_request",
+          message: getString(azcJson, "message") || "AZC rechazó la solicitud.",
+          azcResponse: safeAzcResponse,
         },
         { status: response.status },
       );
     }
 
-    return NextResponse.json({ ok: true, status: response.status, requestId: getRequestId(azcResponse), azcResponse });
+    return NextResponse.json({
+      ok: true,
+      status: response.status,
+      requestId: getRequestId(azcJson),
+      duplicated: getBoolean(azcJson, "duplicated") || false,
+      azcStatus: getField(azcJson, "status"),
+      priority: getField(azcJson, "priority"),
+      warnings: getWarnings(azcJson),
+    });
   } catch (error) {
     console.error("AZC Casero request failed", {
       status: 502,
