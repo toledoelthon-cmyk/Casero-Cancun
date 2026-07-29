@@ -46,11 +46,11 @@ export function CaseroServiceCaptureModal({
     }
 
     if (submitState === "success") {
-      return "Solicitud registrada. Te llevaremos a WhatsApp.";
+      return "Solicitud registrada en AZC.";
     }
 
     if (submitState === "fallback") {
-      return "No pudimos registrar la solicitud en AZC, pero puedes continuar por WhatsApp.";
+      return "No se pudo registrar en AZC, pero continuaremos a WhatsApp.";
     }
 
     return "";
@@ -118,29 +118,64 @@ export function CaseroServiceCaptureModal({
     isSubmittingRef.current = true;
     setSubmitState("loading");
 
-    try {
-      const result = await sendCaseroRequestToAZC({
-        clientName: customerName.trim() || undefined,
-        clientWhatsapp: cleanPhone,
-        clientPhone: cleanPhone,
-        clientEmail: customerEmail.trim() || undefined,
-        requestedService: selectedService,
-        category: category ?? service,
-        zone: cleanZone || undefined,
-        city: "Cancún",
-        message: cleanMessage || whatsappMessage,
-        isUrgent: false,
-        requiresInvoice: false,
-        source: "casero-frontend",
-        campaignCode: "pedir_cotizacion",
-        providerId,
-        metadata: {
-          providerName: businessName,
-          providerWhatsapp: targetWhatsapp,
-          pageUrl: window.location.href,
-          cta: "pedir_cotizacion",
-        },
+    const clientName = customerName.trim() || undefined;
+    const clientEmail = customerEmail.trim() || undefined;
+    const azcPayload = {
+      clientName,
+      clientWhatsapp: cleanPhone,
+      clientPhone: cleanPhone,
+      clientEmail,
+      requestedService: selectedService,
+      category: category ?? service ?? selectedService,
+      zona: cleanZone || undefined,
+      zone: cleanZone || undefined,
+      city: "Cancún",
+      message: cleanMessage || whatsappMessage,
+      isUrgent: false,
+      requiresInvoice: false,
+      source: "casero-frontend" as const,
+      campaignCode: "pedir_cotizacion" as const,
+      providerId,
+      name: clientName,
+      whatsapp: cleanPhone,
+      telefono: cleanPhone,
+      email: clientEmail,
+      service: selectedService,
+      servicio: selectedService,
+      categoria: category ?? service ?? selectedService,
+      mensaje: cleanMessage || whatsappMessage,
+      urgente: false,
+      factura: false,
+      origen: "casero-frontend",
+      metadata: {
+        providerName: businessName,
+        providerWhatsapp: targetWhatsapp,
+        pageUrl: window.location.href,
+        cta: "pedir_cotizacion" as const,
+      },
+    };
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Casero AZC payload", {
+        hasClientName: Boolean(azcPayload.clientName),
+        hasWhatsapp: Boolean(azcPayload.clientWhatsapp || azcPayload.clientPhone),
+        requestedService: azcPayload.requestedService,
+        category: azcPayload.category,
+        providerName: azcPayload.metadata.providerName,
       });
+    }
+
+    try {
+      const result = await sendCaseroRequestToAZC(azcPayload);
+
+      if (!result.ok && process.env.NODE_ENV !== "production") {
+        console.warn("Casero AZC result", {
+          status: result.status,
+          error: result.error,
+          message: result.message,
+          details: result.details,
+        });
+      }
 
       setSubmitState(result.ok ? "success" : "fallback");
     } catch {
