@@ -17,6 +17,14 @@ type RegisterBusinessFormProps = {
   locations: RegistrationLocation[];
   supabaseConfigured: boolean;
   source: "supabase" | "demo";
+  authContext?: RegisterBusinessAuthContext;
+};
+
+type RegisterBusinessAuthContext = {
+  status: "public" | "provider" | "admin";
+  userId?: string;
+  email?: string | null;
+  fullName?: string | null;
 };
 
 const successMessage =
@@ -111,6 +119,7 @@ export function RegisterBusinessForm({
   locations,
   supabaseConfigured,
   source,
+  authContext,
 }: RegisterBusinessFormProps) {
   const [businessSection, setBusinessSection] = useState<CategorySection | "">("");
   const [locationMode, setLocationMode] = useState<LocationMode>("zones_only");
@@ -484,6 +493,7 @@ export function RegisterBusinessForm({
 
     const baseSlug = slugify(businessName);
     const payload: BusinessProfileInsert = {
+      owner_user_id: authContext?.userId ?? null,
       business_name: businessName,
       responsible_name: responsibleName,
       slug: baseSlug,
