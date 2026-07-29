@@ -152,6 +152,8 @@ export default async function BusinessProfilePage({ params }: PageProps) {
       zone={locations[0]}
       providerId={business.id}
       providerWhatsapp={business.whatsapp}
+      providerPhone={business.phone}
+      category={business.category}
       className="w-full"
     />
   );

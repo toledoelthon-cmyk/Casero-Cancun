@@ -110,6 +110,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const description = isDemoBusiness(business) ? business.shortDescription : business.description;
   const badges = isDemoBusiness(business) ? business.badges : business.tags;
   const whatsapp = isDemoBusiness(business) ? business.whatsapp : undefined;
+  const phone = isDemoBusiness(business) ? business.phone : undefined;
   const providerId = isDemoBusiness(business) ? business.id : undefined;
   const service = isDemoBusiness(business) ? business.mainService ?? business.category : business.category;
   const rating = isDemoBusiness(business) ? business.rating : undefined;
@@ -183,6 +184,8 @@ export function BusinessCard({ business }: BusinessCardProps) {
             zone={locations[0]}
             providerId={providerId}
             providerWhatsapp={whatsapp}
+            providerPhone={phone}
+            category={business.category}
             className="w-full"
           />
           <Button href={`/negocio/${business.slug}`} variant="outline">

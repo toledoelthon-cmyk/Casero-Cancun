@@ -1,14 +1,24 @@
 export type CaseroAZCRequestPayload = {
-  customerName?: string;
-  customerPhone: string;
-  customerEmail?: string;
-  message: string;
-  service: string;
+  clientName?: string;
+  clientWhatsapp: string;
+  clientPhone?: string;
+  clientEmail?: string;
+  requestedService: string;
+  category?: string;
   zone?: string;
+  city?: string;
+  message: string;
+  isUrgent?: boolean;
+  requiresInvoice?: boolean;
+  source: "casero-frontend";
+  campaignCode: "pedir_cotizacion";
   providerId?: string;
-  providerName?: string;
-  providerWhatsapp?: string;
-  source?: string;
+  metadata?: {
+    providerName?: string;
+    providerWhatsapp?: string;
+    pageUrl?: string;
+    cta?: "pedir_cotizacion";
+  };
 };
 
 export type CaseroAZCResult =
