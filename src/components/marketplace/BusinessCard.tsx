@@ -175,7 +175,18 @@ export function BusinessCard({ business }: BusinessCardProps) {
         </div>
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          <WhatsAppButton phone={whatsapp} label="WhatsApp" className="w-full" />
+          <WhatsAppButton
+            phone={whatsapp}
+            label="Pedir cotización"
+            className="w-full"
+            captureLead
+            leadContext={{
+              category: categories[0],
+              providerName: business.name,
+              service: isDemoBusiness(business) ? business.mainService ?? categories[0] : categories[0],
+              serviceUrl: `/negocio/${business.slug}`,
+            }}
+          />
           <Button href={`/negocio/${business.slug}`} variant="outline">
             Ver perfil
           </Button>

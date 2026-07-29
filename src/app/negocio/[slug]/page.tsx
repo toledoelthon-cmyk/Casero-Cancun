@@ -21,7 +21,6 @@ import {
 import { BusinessViewTracker } from "@/components/analytics/BusinessViewTracker";
 import { BusinessMap } from "@/components/maps/BusinessMap";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { getBusinessBySlug } from "@/lib/data/businesses";
@@ -214,7 +213,19 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                 </div>
               </div>
               <div className="w-full md:w-auto">
-                <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} className="w-full" />
+                <WhatsAppButton
+                  phone={business.whatsapp}
+                  label="Pedir cotización"
+                  message={whatsappMessage}
+                  className="w-full"
+                  captureLead
+                  leadContext={{
+                    category: business.category,
+                    providerName: business.name,
+                    service: business.mainService ?? business.category,
+                    serviceUrl: `/negocio/${business.slug}`,
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -312,7 +323,19 @@ export default async function BusinessProfilePage({ params }: PageProps) {
               ) : null}
             </div>
             <div className="mt-5">
-              <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} className="w-full" />
+              <WhatsAppButton
+                phone={business.whatsapp}
+                label="Pedir cotización"
+                message={whatsappMessage}
+                className="w-full"
+                captureLead
+                leadContext={{
+                  category: business.category,
+                  providerName: business.name,
+                  service: business.mainService ?? business.category,
+                  serviceUrl: `/negocio/${business.slug}`,
+                }}
+              />
             </div>
           </Card>
 
@@ -370,22 +393,39 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             </div>
           </Card>
 
-          <Button
-            href={`https://wa.me/${business.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`}
+          <WhatsAppButton
+            phone={business.whatsapp}
+            label="Pedir cotización"
+            message={whatsappMessage}
             className="w-full"
-            variant="secondary"
-          >
-            Contactar por WhatsApp
-          </Button>
+            captureLead
+            leadContext={{
+              category: business.category,
+              providerName: business.name,
+              service: business.mainService ?? business.category,
+              serviceUrl: `/negocio/${business.slug}`,
+            }}
+          />
         </aside>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-casero-dark/10 bg-white/95 p-3 shadow-soft backdrop-blur md:hidden">
         <div className="container-page px-0">
-          <WhatsAppButton phone={business.whatsapp} label="Contactar por WhatsApp" message={whatsappMessage} className="w-full" />
+          <WhatsAppButton
+            phone={business.whatsapp}
+            label="Pedir cotización"
+            message={whatsappMessage}
+            className="w-full"
+            captureLead
+            leadContext={{
+              category: business.category,
+              providerName: business.name,
+              service: business.mainService ?? business.category,
+              serviceUrl: `/negocio/${business.slug}`,
+            }}
+          />
         </div>
       </div>
     </section>
   );
 }
-
 
