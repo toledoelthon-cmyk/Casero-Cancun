@@ -28,9 +28,9 @@ El navegador llama a /api/azc/casero/solicitudes. El route handler valida datos 
 Variables server-side requeridas en Casero:
 
 - AZC_CASERO_REQUESTS_URL=https://azc-crm.marketinmobiliario.mx/api/public/casero/solicitudes
-- AZC_PUBLIC_LEADS_API_KEY=valor_real_en_vercel_o_entorno_seguro
+- AZC_CASERO_REQUESTS_API_KEY=valor_real_en_vercel_o_entorno_seguro
 
-La API key no debe iniciar con NEXT_PUBLIC_. No modificar .env real; cargar el valor real en Vercel o entorno seguro.
+La API key oficial para Casero es AZC_CASERO_REQUESTS_API_KEY y no debe iniciar con NEXT_PUBLIC_. No modificar .env real; cargar el mismo valor real en Vercel Casero y Vercel AZC, y redeployar ambos proyectos. AZC_PUBLIC_LEADS_API_KEY queda asociado a Market y no debe usarse para Casero salvo fallback temporal documentado.
 
 ## Helper frontend
 
@@ -76,3 +76,7 @@ No se implemento email marketing Casero, no se creo Brevo Casero, no se enviaron
 ## Siguiente fase
 
 C9.1 puede conectar formularios generales adicionales si se agregan al sitio. C10 puede preparar email marketing Casero separado con dominio, usuario Brevo, footer y limites propios.
+
+## C9.5 Separacion de keys
+
+Casero usa AZC_CASERO_REQUESTS_API_KEY para el proxy /api/azc/casero/solicitudes. Market conserva AZC_PUBLIC_LEADS_API_KEY para sus leads inmobiliarios. No usar NEXT_PUBLIC_AZC_CASERO_REQUESTS_API_KEY ni exponer la key en navegador, logs o respuestas. Despues de cambiar variables en Vercel, redeployar Casero y AZC.

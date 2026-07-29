@@ -11,8 +11,8 @@ Documentación completa: [Integración piloto Casero Cancún -> AZC](docs/INTEGR
 Variables requeridas para el proxy server-side de Casero:
 
 ```env
-AZC_LEADS_ENDPOINT=http://localhost:3000/api/public/leads
-AZC_PUBLIC_LEADS_API_KEY=change-me-local-key
+AZC_CASERO_REQUESTS_URL=https://azc-crm.marketinmobiliario.mx/api/public/casero/solicitudes
+AZC_CASERO_REQUESTS_API_KEY=valor_real_en_vercel_o_entorno_seguro
 ```
 
 Para pruebas locales, corre AZC en `http://localhost:3000` y Casero en otro puerto, por ejemplo:
@@ -21,4 +21,4 @@ Para pruebas locales, corre AZC en `http://localhost:3000` y Casero en otro puer
 npx.cmd next dev --hostname 127.0.0.1 --port 3001
 ```
 
-Después de cambiar variables de entorno, reinicia el servidor de Casero.
+AZC_PUBLIC_LEADS_API_KEY queda reservado para Market y no debe usarse para Casero. No uses NEXT_PUBLIC_AZC_CASERO_REQUESTS_API_KEY; la key vive solo server-side. Despues de cambiar variables en Vercel, redeploya Casero y AZC.

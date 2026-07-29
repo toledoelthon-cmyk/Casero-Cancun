@@ -12,7 +12,7 @@ El flujo está diseñado para que Casero registre la intención del usuario en A
 2. Casero abre el modal de captura.
 3. El usuario llena sus datos.
 4. El botón verde registra la solicitud.
-5. Casero envía `POST /api/azc/leads`.
+5. Casero envía `POST /api/azc/casero/solicitudes`.
 6. El proxy interno de Casero reenvía el payload a AZC.
 7. AZC crea el lead.
 8. AZC ejecuta eventos y automatizaciones.
@@ -32,7 +32,7 @@ El flujo está diseñado para que Casero registre la intención del usuario en A
 ### Proxy Casero
 
 - Recibe el payload desde el frontend.
-- Lee `AZC_LEADS_ENDPOINT` y `AZC_PUBLIC_LEADS_API_KEY` desde variables de entorno del servidor.
+- Lee `AZC_CASERO_REQUESTS_URL` y `AZC_CASERO_REQUESTS_API_KEY` desde variables de entorno del servidor.
 - Reenvía el payload a AZC.
 - Evita exponer la API key al navegador.
 - Devuelve respuestas controladas para éxito, errores de configuración y errores de AZC.
@@ -52,7 +52,7 @@ El flujo está diseñado para que Casero registre la intención del usuario en A
 Endpoint:
 
 ```http
-POST /api/azc/leads
+POST /api/azc/casero/solicitudes
 ```
 
 Payload esperado:
@@ -81,13 +81,13 @@ Payload esperado:
 Variables server-side recomendadas para Casero:
 
 ```env
-AZC_LEADS_ENDPOINT=http://localhost:3000/api/public/leads
-AZC_PUBLIC_LEADS_API_KEY=change-me-local-key
+AZC_CASERO_REQUESTS_URL=https://azc-crm.marketinmobiliario.mx/api/public/casero/solicitudes
+AZC_CASERO_REQUESTS_API_KEY=change-me-local-key
 ```
 
 Notas:
 
-- `AZC_PUBLIC_LEADS_API_KEY` no debe exponerse al navegador en producción.
+- `AZC_CASERO_REQUESTS_API_KEY` no debe exponerse al navegador en produccion. `AZC_PUBLIC_LEADS_API_KEY` pertenece a Market y no debe usarse para Casero.
 - En Next.js debe usarse desde un route handler o código de servidor.
 - Después de modificar variables de entorno, reinicia el servidor de Casero.
 - Las variables de Supabase existentes pueden mantenerse aparte.
@@ -210,3 +210,7 @@ Eventos esperados:
 - Agregar rate limiting.
 - Validar origen de las solicitudes.
 - Reforzar seguridad del panel AZC.
+
+## C9.5 Separacion de API key
+
+Casero debe usar AZC_CASERO_REQUESTS_API_KEY y AZC_CASERO_REQUESTS_URL. AZC_PUBLIC_LEADS_API_KEY queda reservado para Market. La key de Casero debe existir igual en Vercel Casero y Vercel AZC, nunca con prefijo NEXT_PUBLIC_, y requiere redeploy despues de cambiar variables.

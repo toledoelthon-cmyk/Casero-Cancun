@@ -108,21 +108,30 @@ function validatePayload(payload: unknown) {
 }
 
 function getEnv() {
+  const caseroKey = process.env.AZC_CASERO_REQUESTS_API_KEY?.trim() || "";
+  const legacyPublicKey = process.env.AZC_PUBLIC_LEADS_API_KEY?.trim() || "";
+
   return {
     AZC_URL: process.env.AZC_CASERO_REQUESTS_URL?.trim() || "",
-    AZC_KEY: process.env.AZC_PUBLIC_LEADS_API_KEY?.trim() || "",
+    // Casero debe usar AZC_CASERO_REQUESTS_API_KEY. Market conserva AZC_PUBLIC_LEADS_API_KEY;
+    // este fallback queda solo para estabilizacion temporal de despliegue.
+    AZC_KEY: caseroKey || legacyPublicKey,
+    HAS_CASERO_KEY: Boolean(caseroKey),
+    LEGACY_FALLBACK_AVAILABLE: Boolean(legacyPublicKey),
   };
 }
 
 export async function GET() {
-  const { AZC_URL, AZC_KEY } = getEnv();
+  const { AZC_URL, HAS_CASERO_KEY, LEGACY_FALLBACK_AVAILABLE } = getEnv();
 
   return NextResponse.json({
     ok: true,
     proxy: "casero-azc",
     hasAzcUrl: Boolean(AZC_URL),
-    hasAzcApiKey: Boolean(AZC_KEY),
+    hasAzcApiKey: HAS_CASERO_KEY,
     targetUrlConfigured: Boolean(AZC_URL),
+    keyMode: "casero_separated",
+    legacyFallbackAvailable: LEGACY_FALLBACK_AVAILABLE,
   });
 }
 
@@ -150,7 +159,7 @@ export async function POST(request: Request) {
   if (!AZC_KEY) {
     console.error("AZC Casero request failed", {
       status: 500,
-      error: "missing_azc_api_key",
+      error: "missing_azc_casero_api_key",
       hasUrl: Boolean(AZC_URL),
       hasKey: false,
     });
@@ -158,8 +167,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "missing_azc_api_key",
-        message: "Falta AZC_PUBLIC_LEADS_API_KEY en el servidor.",
+        error: "missing_azc_casero_api_key",
+        message: "Falta AZC_CASERO_REQUESTS_API_KEY en el servidor.",
       },
       { status: 500 },
     );
