@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/Button";
@@ -152,7 +153,11 @@ export function ProviderLoginForm() {
     const authUser = signUpData.user ?? signUpData.session?.user ?? null;
 
     if (!authUser || !signUpData.session) {
-      setMessage("Cuenta creada. Revisa tu correo para confirmar el acceso y despues inicia sesion.");
+      setMode("login");
+      setPassword("");
+      setMessage(
+        "Cuenta creada. Ya puedes iniciar sesion con tu correo y contrasena. Si tu cuenta requiere confirmacion, revisa tu correo antes de iniciar sesion.",
+      );
       setLoading(false);
       return;
     }
@@ -251,6 +256,15 @@ export function ProviderLoginForm() {
           />
         </label>
 
+        {mode === "login" ? (
+          <Link
+            href="/proveedor/recuperar-password"
+            className="justify-self-start text-sm font-bold text-casero-green underline-offset-4 hover:underline"
+          >
+            ¿Olvidaste tu contraseña?
+          </Link>
+        ) : null}
+
         {error ? <p className="rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p> : null}
         {message ? <p className="rounded-md bg-emerald-50 p-3 text-sm font-semibold text-emerald-800">{message}</p> : null}
 
@@ -261,3 +275,4 @@ export function ProviderLoginForm() {
     </Card>
   );
 }
+
