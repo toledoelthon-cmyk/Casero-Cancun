@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BadgeCheck, CarFront, Home, MapPin, PawPrint, Star, Store, Wrench } from "lucide-react";
+import { BadgeCheck, CarFront, Home, MapPin, MessageCircle, PawPrint, Star, Store, Wrench } from "lucide-react";
 import { CaseroServiceCaptureModal } from "@/components/marketplace/CaseroServiceCaptureModal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -66,11 +66,11 @@ function BusinessPlaceholder({ business }: { business: DemoBusiness | LegacyBusi
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-casero-turquoise/18 via-casero-beige to-casero-orange/20 p-6 text-center">
-      <span className="grid h-14 w-14 place-items-center rounded-md bg-white/80 text-casero-green shadow-sm">
+      <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/90 text-casero-green shadow-sm">
         <Icon className="h-7 w-7" aria-hidden />
       </span>
-      <p className="mt-4 font-heading text-xl font-extrabold text-casero-dark">{business.name.charAt(0)}</p>
-      <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-casero-text/55">{label}</p>
+      <p className="mt-4 font-heading text-2xl font-extrabold text-casero-dark">{business.name.charAt(0)}</p>
+      <p className="mt-1 text-xs font-extrabold uppercase tracking-[0.14em] text-casero-text/55">{label}</p>
     </div>
   );
 }
@@ -101,7 +101,7 @@ function BusinessImage({ business }: { business: DemoBusiness | LegacyBusiness }
     <img
       src={imageUrl}
       alt={image?.alt ?? business.name}
-      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+      className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
     />
   );
 }
@@ -121,76 +121,86 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const visibleBadges = badges.slice(0, 4);
 
   return (
-    <article className="group overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft">
-      <Link href={`/negocio/${business.slug}`} className="block aspect-video overflow-hidden bg-casero-background">
-        <BusinessImage business={business} />
-      </Link>
-
-      <div className="p-4 sm:p-5">
-        <div className="flex flex-wrap items-center gap-2">
-          {business.featured ? (
-            <Badge tone="orange" className="gap-1">
-              <Star className="h-3.5 w-3.5 fill-casero-orange text-casero-orange" aria-hidden />
-              Recomendado
-            </Badge>
-          ) : null}
-          {business.verified ? (
-            <Badge tone="green" className="gap-1">
-              <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
-              Verificado
-            </Badge>
-          ) : null}
-        </div>
-
-        <Link href={`/negocio/${business.slug}`}>
-          <h3 className="mt-3 font-heading text-lg font-extrabold leading-snug text-casero-dark hover:text-casero-green sm:text-xl">
-            {business.name}
-          </h3>
+    <article className="group overflow-hidden rounded-[1.15rem] border border-casero-dark/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft">
+      <div className="grid lg:grid-cols-[17.5rem_1fr]">
+        <Link href={`/negocio/${business.slug}`} className="relative block min-h-[220px] overflow-hidden bg-casero-background lg:min-h-full">
+          <BusinessImage business={business} />
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/82 via-black/35 to-transparent p-3 text-white" aria-hidden />
+          <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+            {business.featured ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
+                <Star className="h-3.5 w-3.5 fill-casero-orange text-casero-orange" aria-hidden />
+                Recomendado
+              </span>
+            ) : null}
+            {business.verified ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-700 px-3 py-1 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
+                <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
+                Verificado
+              </span>
+            ) : null}
+          </div>
         </Link>
-        {section ? <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-casero-green">{section}</p> : null}
-        <div className="mt-2 flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Badge key={category} tone="turquoise">
-              {category}
-            </Badge>
-          ))}
-        </div>
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-casero-text/70 sm:line-clamp-3">{description}</p>
-        <p className="mt-3 flex items-start gap-2 text-sm text-casero-text/60">
-          <MapPin className="h-4 w-4" aria-hidden />
-          <span>{locations.join(", ")}</span>
-        </p>
 
-        {rating ? (
-          <p className="mt-3 text-sm font-semibold text-casero-dark">
-            {rating.toFixed(1)} <span className="text-casero-orange">★</span>{" "}
-            <span className="font-normal text-casero-text/55">({reviewCount} reseñas)</span>
+        <div className="flex min-w-0 flex-col p-4 sm:p-5 lg:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              {section ? <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-casero-green">{section}</p> : null}
+              <Link href={`/negocio/${business.slug}`}>
+                <h3 className="mt-1 font-heading text-xl font-extrabold leading-snug text-casero-dark transition hover:text-casero-green sm:text-2xl">
+                  {business.name}
+                </h3>
+              </Link>
+            </div>
+            {rating ? (
+              <p className="inline-flex flex-none items-center gap-1 rounded-full bg-casero-orange/18 px-3 py-1.5 text-sm font-extrabold text-casero-dark">
+                <Star className="h-4 w-4 fill-casero-orange text-casero-orange" aria-hidden />
+                {rating.toFixed(1)}
+                <span className="font-semibold text-casero-text/58">({reviewCount})</span>
+              </p>
+            ) : null}
+          </div>
+
+          <p className="mt-3 line-clamp-2 text-sm font-semibold leading-6 text-casero-text/70 sm:line-clamp-3">{description}</p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <Badge key={category} tone="turquoise" className="font-bold">
+                {category}
+              </Badge>
+            ))}
+          </div>
+
+          <p className="mt-4 flex items-start gap-2 rounded-xl bg-casero-background px-3 py-2 text-sm font-bold text-casero-text/72">
+            <MapPin className="mt-0.5 h-4 w-4 flex-none text-casero-green" aria-hidden />
+            <span>{locations.join(", ")}</span>
           </p>
-        ) : null}
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {visibleBadges.map((tag) => (
-            <Badge key={tag} tone={tag === "Verificado" ? "green" : tag === "Urgencias" ? "orange" : "neutral"}>
-              {tag}
-            </Badge>
-          ))}
-          {badges.length > visibleBadges.length ? <Badge>+{badges.length - visibleBadges.length}</Badge> : null}
-        </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {visibleBadges.map((tag) => (
+              <Badge key={tag} tone={tag === "Verificado" ? "green" : tag === "Urgencias" ? "orange" : "neutral"} className="font-bold">
+                {tag}
+              </Badge>
+            ))}
+            {badges.length > visibleBadges.length ? <Badge className="font-bold">+{badges.length - visibleBadges.length}</Badge> : null}
+          </div>
 
-        <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          <CaseroServiceCaptureModal
-            businessName={business.name}
-            service={service}
-            zone={locations[0]}
-            providerId={providerId}
-            providerWhatsapp={whatsapp}
-            providerPhone={phone}
-            category={business.category}
-            className="w-full"
-          />
-          <Button href={`/negocio/${business.slug}`} variant="outline">
-            Ver perfil
-          </Button>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:mt-auto lg:pt-5">
+            <CaseroServiceCaptureModal
+              businessName={business.name}
+              service={service}
+              zone={locations[0]}
+              providerId={providerId}
+              providerWhatsapp={whatsapp}
+              providerPhone={phone}
+              category={business.category}
+              className="w-full"
+            />
+            <Button href={`/negocio/${business.slug}`} variant="outline" className="w-full font-extrabold">
+              <MessageCircle className="h-4 w-4" aria-hidden />
+              Ver perfil
+            </Button>
+          </div>
         </div>
       </div>
     </article>

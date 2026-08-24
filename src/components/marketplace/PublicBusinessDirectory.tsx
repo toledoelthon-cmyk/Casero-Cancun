@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, SlidersHorizontal } from "lucide-react";
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
-import { Button } from "@/components/ui/Button";
+import { EmptyResultsState } from "@/components/public/EmptyResultsState";
 import { Card } from "@/components/ui/Card";
 import type { CategorySection, DemoBusiness, DemoCategory, DemoLocation } from "@/lib/demo-data";
 
@@ -142,21 +142,21 @@ export function PublicBusinessDirectory({
 
   const filtersContent = (
     <>
-      <div className="flex items-center gap-2 text-sm font-bold text-casero-dark">
-        <Filter className="h-4 w-4" aria-hidden />
-        Filtros
+      <div className="flex items-center gap-2 text-sm font-extrabold text-casero-dark">
+        <SlidersHorizontal className="h-4 w-4 text-casero-green" aria-hidden />
+        Filtros para afinar resultados
       </div>
 
       <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-query">
         Buscar por texto
       </label>
-      <div className="mt-2 flex items-center gap-2 rounded-md border border-casero-dark/10 bg-casero-background px-3 py-2.5">
-        <Search className="h-4 w-4 text-casero-text/45" aria-hidden />
+      <div className="mt-2 flex min-h-12 items-center gap-2 rounded-xl border border-casero-dark/10 bg-casero-background px-3">
+        <Search className="h-4 w-4 text-casero-green" aria-hidden />
         <input
           id="directory-query"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          className="w-full bg-transparent text-base outline-none placeholder:text-casero-text/40 lg:text-sm"
+          className="w-full bg-transparent text-base font-semibold outline-none placeholder:text-casero-text/42 lg:text-sm"
           placeholder="Plomería, ferretería, veterinaria..."
         />
       </div>
@@ -171,7 +171,7 @@ export function PublicBusinessDirectory({
           setSection(event.target.value as CategorySection | "all");
           setCategorySlug("all");
         }}
-        className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-base outline-casero-green lg:text-sm"
+        className="mt-2 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-3 text-base font-semibold outline-casero-green lg:text-sm"
       >
         <option value="all">Todas las áreas</option>
         {sectionOptions.map((item) => (
@@ -188,7 +188,7 @@ export function PublicBusinessDirectory({
         id="directory-category"
         value={categorySlug}
         onChange={(event) => setCategorySlug(event.target.value)}
-        className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-base outline-casero-green lg:text-sm"
+        className="mt-2 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-3 text-base font-semibold outline-casero-green lg:text-sm"
       >
         <option value="all">Todas las categorías</option>
         {visibleCategories.map((category) => (
@@ -205,7 +205,7 @@ export function PublicBusinessDirectory({
         id="directory-location"
         value={locationSlug}
         onChange={(event) => setLocationSlug(event.target.value)}
-        className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-base outline-casero-green lg:text-sm"
+        className="mt-2 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-3 text-base font-semibold outline-casero-green lg:text-sm"
       >
         <option value="all">Todas las zonas</option>
         {locations.map((location) => (
@@ -226,8 +226,8 @@ export function PublicBusinessDirectory({
                 key={attribute.value}
                 className={
                   active
-                    ? "rounded-md bg-casero-green px-3 py-2.5 text-xs font-bold text-white"
-                    : "rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-xs font-semibold text-casero-text/70"
+                    ? "rounded-full bg-casero-green px-3 py-2 text-xs font-extrabold text-white shadow-sm"
+                    : "rounded-full border border-casero-dark/10 bg-white px-3 py-2 text-xs font-bold text-casero-text/70 transition hover:border-casero-green/35 hover:text-casero-dark"
                 }
                 type="button"
                 onClick={() => toggleAttribute(attribute.value)}
@@ -240,7 +240,7 @@ export function PublicBusinessDirectory({
       </div>
 
       <button
-        className="mt-5 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-sm font-bold text-casero-dark"
+        className="mt-5 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-3 text-sm font-extrabold text-casero-dark transition hover:border-casero-green hover:text-casero-green"
         type="button"
         onClick={clearFilters}
       >
@@ -250,32 +250,35 @@ export function PublicBusinessDirectory({
   );
 
   return (
-    <div className="mt-6 grid gap-5 lg:mt-8 lg:grid-cols-[19rem_1fr] lg:gap-6">
+    <div className="mt-6 grid gap-5 lg:mt-8 lg:grid-cols-[19.5rem_1fr] lg:gap-6">
       <aside>
         <button
-          className="flex w-full items-center justify-between rounded-lg border border-casero-dark/10 bg-white px-4 py-3 text-sm font-bold text-casero-dark shadow-sm lg:hidden"
+          className="flex w-full items-center justify-between rounded-[1rem] border border-casero-dark/10 bg-white px-4 py-3 text-sm font-extrabold text-casero-dark shadow-sm lg:hidden"
           type="button"
           onClick={() => setFiltersOpen((current) => !current)}
           aria-expanded={filtersOpen}
         >
           <span className="inline-flex items-center gap-2">
-            <Filter className="h-4 w-4" aria-hidden />
+            <Filter className="h-4 w-4 text-casero-green" aria-hidden />
             Filtrar
           </span>
-          <span className="text-xs text-casero-text/55">{activeFilterCount ? activeFilterCount + " activos" : "Sin filtros"}</span>
+          <span className="rounded-full bg-casero-background px-2.5 py-1 text-xs text-casero-text/65">{activeFilterCount ? activeFilterCount + " activos" : "Sin filtros"}</span>
         </button>
-        <Card className={filtersOpen ? "mt-3 p-4 lg:mt-0 lg:block lg:p-6" : "hidden lg:block"}>
+        <Card className={filtersOpen ? "mt-3 p-4 lg:sticky lg:top-24 lg:mt-0 lg:block lg:p-5" : "hidden lg:sticky lg:top-24 lg:block lg:p-5"}>
           {filtersContent}
         </Card>
       </aside>
 
       <div className="space-y-5">
-        <div className="flex flex-col justify-between gap-3 rounded-lg border border-casero-dark/10 bg-white p-4 sm:flex-row sm:items-center">
-          <p className="text-sm text-casero-text/65">
-            {title}: <strong className="text-casero-dark">{filteredBusinesses.length} negocios publicados</strong>
-          </p>
+        <div className="flex flex-col justify-between gap-3 rounded-[1rem] border border-casero-dark/10 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-casero-text/50">Resultados publicados</p>
+            <p className="mt-1 text-sm font-semibold text-casero-text/68">
+              {title}: <strong className="text-casero-dark">{filteredBusinesses.length} negocios publicados</strong>
+            </p>
+          </div>
           <button
-            className="rounded-md border border-casero-dark/10 bg-white px-3 py-2.5 text-sm font-bold text-casero-dark"
+            className="rounded-xl border border-casero-dark/10 bg-casero-background px-3 py-2.5 text-sm font-extrabold text-casero-dark transition hover:border-casero-green hover:bg-white hover:text-casero-green"
             type="button"
             onClick={clearFilters}
           >
@@ -287,23 +290,12 @@ export function PublicBusinessDirectory({
           {filteredBusinesses.length > 0 ? (
             filteredBusinesses.map((business) => <BusinessCard key={business.id} business={business} />)
           ) : (
-            <Card className="p-5 sm:p-6">
-              <p className="text-sm leading-7 text-casero-text/70">
-                No encontramos negocios publicados con esos filtros. Prueba con otra categoría, zona o texto de búsqueda.
-              </p>
-              <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-                <button
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-casero-dark/10 bg-white px-5 py-2.5 text-sm font-bold text-casero-dark"
-                  type="button"
-                  onClick={clearFilters}
-                >
-                  Limpiar filtros
-                </button>
-                <Button href="/registrar-mi-negocio" variant="primary" className="w-full sm:w-auto">
-                  Registrar mi negocio
-                </Button>
-              </div>
-            </Card>
+            <EmptyResultsState
+              title="No encontramos proveedores con esos filtros"
+              description="Puedes intentar otra búsqueda, cambiar la zona o registrar tu negocio para aparecer aquí cuando sea aprobado."
+              resetLabel="Limpiar filtros"
+              onReset={clearFilters}
+            />
           )}
         </div>
       </div>

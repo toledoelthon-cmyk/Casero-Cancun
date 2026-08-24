@@ -70,15 +70,13 @@ function BusinessVisualPlaceholder({ business, compact = false }: { business: De
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-casero-turquoise/20 via-casero-beige to-casero-orange/25 p-8 text-center">
-      <span className={compact ? "grid h-12 w-12 place-items-center rounded-md bg-white/85 text-casero-green" : "grid h-20 w-20 place-items-center rounded-lg bg-white/85 text-casero-green shadow-sm"}>
+      <span className={compact ? "grid h-12 w-12 place-items-center rounded-2xl bg-white/90 text-casero-green shadow-sm" : "grid h-20 w-20 place-items-center rounded-2xl bg-white/90 text-casero-green shadow-sm"}>
         <Icon className={compact ? "h-6 w-6" : "h-10 w-10"} aria-hidden />
       </span>
       {!compact ? (
         <>
-          <p className="mt-5 font-heading text-2xl font-extrabold text-casero-dark">
-            {label}
-          </p>
-          <p className="mt-2 max-w-md text-sm text-casero-text/65">Imagen pendiente de carga para este perfil.</p>
+          <p className="mt-5 font-heading text-2xl font-extrabold text-casero-dark">{label}</p>
+          <p className="mt-2 max-w-md text-sm font-semibold text-casero-text/65">Imagen pendiente de carga para este perfil.</p>
         </>
       ) : null}
     </div>
@@ -163,6 +161,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
       className="w-full"
     />
   );
+
   return (
     <section className="bg-casero-background pb-24 md:pb-14">
       <JsonLd
@@ -175,103 +174,122 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           ]),
         ]}
       />
-      <div className="relative bg-white">
-        <div className="aspect-[16/9] max-h-[34rem] w-full overflow-hidden bg-casero-beige md:aspect-[21/8]">
+
+      <div className="relative isolate overflow-hidden bg-casero-dark">
+        <div className="absolute inset-0 opacity-35" aria-hidden>
           <BusinessImage business={business} image={mainImage} priority />
         </div>
-        <div className="container-page">
-          <div className="-mt-10 rounded-lg border border-casero-dark/10 bg-white p-4 shadow-soft sm:-mt-16 md:p-7">
-            <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/72 to-black/38" aria-hidden />
+        <div className="absolute inset-0 bg-gradient-to-t from-casero-background via-transparent to-black/18" aria-hidden />
+
+        <div className="container-page relative z-10 py-6 sm:py-8 lg:py-10">
+          <nav className="mb-5 text-sm font-semibold text-white/68" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-white">Inicio</Link>
+            <span className="mx-2">&gt;</span>
+            <Link href="/buscar-servicios" className="hover:text-white">Negocios</Link>
+            <span className="mx-2">&gt;</span>
+            <span className="text-white">{business.name}</span>
+          </nav>
+
+          <div className="grid gap-6 lg:grid-cols-[1fr_25rem] lg:items-end">
+            <div className="min-w-0 text-white">
+              <div className="mb-4 flex flex-wrap gap-2">
+                {business.verified ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-700 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm">
+                    <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
+                    Verificado
+                  </span>
+                ) : null}
+                {business.featured ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-casero-orange px-3 py-1.5 text-xs font-extrabold text-casero-dark shadow-sm">
+                    <Sparkles className="h-3.5 w-3.5" aria-hidden />
+                    Destacado
+                  </span>
+                ) : null}
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
+                  <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+                  WhatsApp directo
+                </span>
+              </div>
+
               <div className="flex gap-4">
-                <div className="grid h-16 w-16 flex-none place-items-center overflow-hidden rounded-lg border border-casero-dark/10 bg-white shadow-sm sm:h-20 sm:w-20">
+                <div className="grid h-16 w-16 flex-none place-items-center overflow-hidden rounded-2xl border border-white/20 bg-white shadow-sm sm:h-20 sm:w-20">
                   {isUsableImageUrl(business.logoUrl) ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={business.logoUrl} alt={`Logo de ${business.name}`} className="h-full w-full object-cover" />
                   ) : (
-                    <span className="font-heading text-3xl font-extrabold text-casero-green">
-                      {business.name.charAt(0)}
-                    </span>
+                    <span className="font-heading text-3xl font-extrabold text-casero-green">{business.name.charAt(0)}</span>
                   )}
                 </div>
                 <div className="min-w-0">
-                  <div className="flex flex-wrap gap-2">
-                    {business.verified ? (
-                      <Badge tone="green" className="gap-1">
-                        <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
-                        Verificado
-                      </Badge>
-                    ) : null}
-                    {business.featured ? (
-                      <Badge tone="orange" className="gap-1">
-                        <Sparkles className="h-3.5 w-3.5" aria-hidden />
-                        Destacado
-                      </Badge>
-                    ) : null}
-                    {business.badges.map((badge) => (
-                      <Badge key={badge} tone={badge === "Urgencias" ? "orange" : "neutral"}>
-                        {badge}
-                      </Badge>
-                    ))}
-                  </div>
-                  <h1 className="mt-3 font-heading text-2xl font-extrabold leading-tight text-casero-dark sm:text-3xl md:text-5xl">
+                  <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-white/70">{business.category}</p>
+                  <h1 className="mt-2 max-w-4xl font-heading text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-6xl">
                     {business.name}
                   </h1>
-                  <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold text-casero-text/65">
-                    <span className="text-casero-turquoise">{business.category}</span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" aria-hidden />
-                      {business.location}
-                    </span>
-                    {business.rating ? (
-                      <span className="flex items-center gap-1 text-casero-dark">
-                        <Star className="h-4 w-4 fill-casero-orange text-casero-orange" aria-hidden />
-                        {business.rating.toFixed(1)} ({business.reviewCount} reseñas)
-                      </span>
-                    ) : null}
-                  </div>
                 </div>
               </div>
-              <div className="w-full md:w-auto">
-                {renderQuoteButton()}
+
+              <p className="mt-5 max-w-3xl text-base font-semibold leading-8 text-white/86 sm:text-lg">{business.shortDescription}</p>
+              <div className="mt-5 flex flex-wrap gap-3 text-sm font-bold text-white/86">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-black/42 px-3 py-1.5 backdrop-blur-sm">
+                  <MapPin className="h-4 w-4" aria-hidden />
+                  {business.location}
+                </span>
+                {business.rating ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-black/42 px-3 py-1.5 backdrop-blur-sm">
+                    <Star className="h-4 w-4 fill-casero-orange text-casero-orange" aria-hidden />
+                    {business.rating.toFixed(1)} ({business.reviewCount} reseñas)
+                  </span>
+                ) : null}
               </div>
             </div>
+
+            <Card className="border-white/20 bg-white/95 p-4 shadow-soft backdrop-blur-sm sm:p-5">
+              <p className="font-heading text-xl font-extrabold text-casero-dark">Contacta a este negocio</p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-casero-text/68">
+                Solicita información y continúa por WhatsApp con los datos publicados del proveedor.
+              </p>
+              <div className="mt-4">{renderQuoteButton()}</div>
+              <div className="mt-4 grid gap-2 text-sm font-semibold text-casero-text/72">
+                <p className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4 text-casero-green" aria-hidden />
+                  {business.whatsapp || "WhatsApp no disponible"}
+                </p>
+                {business.phone ? (
+                  <p className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-casero-green" aria-hidden />
+                    {business.phone}
+                  </p>
+                ) : null}
+              </div>
+            </Card>
           </div>
         </div>
       </div>
 
-      <div className="container-page mt-6">
-        <nav className="mb-5 text-sm font-semibold text-casero-text/55" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-casero-green">Inicio</Link>
-          <span className="mx-2">&gt;</span>
-          <Link href="/buscar-servicios" className="hover:text-casero-green">Negocios</Link>
-          <span className="mx-2">&gt;</span>
-          <span className="text-casero-dark">{business.name}</span>
-        </nav>
-      </div>
-
-      <div className="container-page grid gap-6 lg:grid-cols-[1fr_22rem] lg:gap-8">
+      <div className="container-page mt-6 grid gap-6 lg:grid-cols-[1fr_22rem] lg:gap-8">
         <div className="space-y-6">
           <Card className="p-5 sm:p-6">
-            <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Sobre el negocio</h2>
-            <p className="mt-4 text-base leading-8 text-casero-text/75">{description}</p>
+            <h2 className="font-heading text-xl font-extrabold text-casero-dark sm:text-2xl">Sobre el negocio</h2>
+            <p className="mt-4 text-base font-medium leading-8 text-casero-text/75">{description}</p>
           </Card>
 
           <Card className="p-5 sm:p-6">
-            <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Servicios o productos principales</h2>
+            <h2 className="font-heading text-xl font-extrabold text-casero-dark sm:text-2xl">Servicios o productos principales</h2>
             <div className="mt-4 flex flex-wrap gap-2">
-              <Badge tone="turquoise">{business.mainService ?? business.category}</Badge>
+              <Badge tone="turquoise" className="font-bold">{business.mainService ?? business.category}</Badge>
               {categories.map((category) => (
-                <Badge key={category}>{category}</Badge>
+                <Badge key={category} className="font-bold">{category}</Badge>
               ))}
             </div>
           </Card>
 
           {features.length > 0 ? (
             <Card className="p-5 sm:p-6">
-              <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Características</h2>
+              <h2 className="font-heading text-xl font-extrabold text-casero-dark sm:text-2xl">Características</h2>
               <div className="mt-4 flex flex-wrap gap-2">
                 {features.map((feature) => (
-                  <Badge key={feature} tone="green">
+                  <Badge key={feature} tone="green" className="font-bold">
                     {feature}
                   </Badge>
                 ))}
@@ -280,16 +298,16 @@ export default async function BusinessProfilePage({ params }: PageProps) {
           ) : null}
 
           <Card className="p-5 sm:p-6">
-            <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Galería de imágenes</h2>
+            <h2 className="font-heading text-xl font-extrabold text-casero-dark sm:text-2xl">Galería de imágenes</h2>
             {images.length > 0 ? (
               <div className="mt-5 grid gap-4">
-                <div className="aspect-video overflow-hidden rounded-lg bg-casero-background">
+                <div className="aspect-video overflow-hidden rounded-[1rem] bg-casero-background shadow-sm">
                   <BusinessImage business={business} image={mainImage} />
                 </div>
                 {gallery.length > 0 ? (
                   <div className="grid gap-4 sm:grid-cols-2">
                     {gallery.map((image) => (
-                      <div key={image.id} className="aspect-video overflow-hidden rounded-lg bg-casero-background">
+                      <div key={image.id} className="aspect-video overflow-hidden rounded-[1rem] bg-casero-background shadow-sm">
                         <BusinessImage business={business} image={image} />
                       </div>
                     ))}
@@ -298,14 +316,12 @@ export default async function BusinessProfilePage({ params }: PageProps) {
               </div>
             ) : (
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                <div className="aspect-video overflow-hidden rounded-lg bg-casero-background">
+                <div className="aspect-video overflow-hidden rounded-[1rem] bg-casero-background">
                   <BusinessVisualPlaceholder business={business} compact />
                 </div>
-                <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-casero-dark/15 bg-white p-6 text-center">
+                <div className="flex aspect-video flex-col items-center justify-center rounded-[1rem] border border-dashed border-casero-dark/15 bg-white p-6 text-center">
                   <ImageIcon className="h-8 w-8 text-casero-turquoise" aria-hidden />
-                  <p className="mt-3 text-sm font-semibold text-casero-text/65">
-                    Este negocio aún no ha subido galería.
-                  </p>
+                  <p className="mt-3 text-sm font-semibold text-casero-text/65">Este negocio aún no ha subido galería.</p>
                 </div>
               </div>
             )}
@@ -313,100 +329,93 @@ export default async function BusinessProfilePage({ params }: PageProps) {
         </div>
 
         <aside className="space-y-5">
-          <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">Información de contacto</h2>
-            <div className="mt-4 grid gap-3 text-sm text-casero-text/70">
-              <p className="flex items-center gap-2">
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-heading text-xl font-extrabold text-casero-dark">Información de contacto</h2>
+            <div className="mt-4 grid gap-3 text-sm font-semibold text-casero-text/72">
+              <p className="flex items-center gap-2 rounded-xl bg-casero-background px-3 py-2">
                 <MessageCircle className="h-4 w-4 text-casero-green" aria-hidden />
                 WhatsApp: {business.whatsapp || "No disponible"}
               </p>
               {business.phone ? (
-                <p className="flex items-center gap-2">
+                <p className="flex items-center gap-2 rounded-xl bg-casero-background px-3 py-2">
                   <Phone className="h-4 w-4 text-casero-green" aria-hidden />
                   Teléfono: {business.phone}
                 </p>
               ) : null}
               {business.email ? (
-                <p className="flex items-center gap-2">
+                <p className="flex items-center gap-2 rounded-xl bg-casero-background px-3 py-2">
                   <Mail className="h-4 w-4 text-casero-green" aria-hidden />
                   {business.email}
                 </p>
               ) : null}
               {business.website ? (
-                <p className="flex items-center gap-2">
+                <a className="flex items-center gap-2 rounded-xl bg-casero-background px-3 py-2 transition hover:text-casero-green" href={business.website} target="_blank" rel="noreferrer">
                   <Globe className="h-4 w-4 text-casero-green" aria-hidden />
-                  {business.website}
-                </p>
+                  Sitio web
+                </a>
               ) : null}
             </div>
-            <div className="mt-5">
-              {renderQuoteButton()}
-            </div>
+            <div className="mt-5">{renderQuoteButton()}</div>
           </Card>
 
-          <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">Zonas de atención</h2>
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-heading text-xl font-extrabold text-casero-dark">Zonas de atención</h2>
             {!business.showMap ? (
-              <p className="mt-3 rounded-md bg-casero-background p-3 text-sm font-semibold text-casero-text/70">
-                Atiende por zonas
-              </p>
+              <p className="mt-3 rounded-xl bg-casero-background p-3 text-sm font-semibold text-casero-text/70">Atiende por zonas</p>
             ) : null}
             <div className="mt-4 flex flex-wrap gap-2">
               {locations.map((location) => (
                 <Link key={location} href={"/ubicacion/" + slugify(location)}>
-                  <Badge>{location}</Badge>
+                  <Badge className="font-bold">{location}</Badge>
                 </Link>
               ))}
             </div>
           </Card>
 
           {shouldShowLocation ? (
-            <Card>
-              <h2 className="font-heading text-xl font-bold text-casero-dark">Ubicación</h2>
+            <Card className="p-5 sm:p-6">
+              <h2 className="font-heading text-xl font-extrabold text-casero-dark">Ubicación</h2>
               {business.address ? (
-                <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-casero-text/70">
+                <p className="mt-3 flex items-start gap-2 text-sm font-semibold leading-6 text-casero-text/70">
                   <MapPin className="mt-1 h-4 w-4 text-casero-green" aria-hidden />
                   {business.address}
                 </p>
               ) : null}
               {shouldShowMap ? (
-                <div className="mt-4">
+                <div className="mt-4 overflow-hidden rounded-[1rem]">
                   <BusinessMap latitude={business.latitude} longitude={business.longitude} markerLabel={business.name} />
                 </div>
               ) : null}
             </Card>
           ) : null}
 
-          <Card>
-            <h2 className="font-heading text-xl font-bold text-casero-dark">Categorías</h2>
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-heading text-xl font-extrabold text-casero-dark">Categorías</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Link key={category} href={"/categoria/" + slugify(category)}>
-                  <Badge tone="turquoise">{category}</Badge>
+                  <Badge tone="turquoise" className="font-bold">{category}</Badge>
                 </Link>
               ))}
             </div>
           </Card>
 
-          <Card>
-            <p className="flex items-center gap-2 font-heading text-lg font-bold text-casero-dark">
+          <Card className="border-casero-green/18 bg-white p-5 sm:p-6">
+            <p className="flex items-center gap-2 font-heading text-lg font-extrabold text-casero-dark">
               <ShieldCheck className="h-5 w-5 text-casero-green" aria-hidden />
               Señales de confianza
             </p>
-            <div className="mt-4 grid gap-2 text-sm text-casero-text/70">
+            <div className="mt-4 grid gap-2 text-sm font-semibold text-casero-text/70">
               <p>{business.verified ? "Perfil verificado" : "Perfil pendiente de verificación"}</p>
-              <p>{business.featured ? "Negocio destacado" : "Aparición normal"}</p>
+              <p>{business.featured ? "Negocio destacado" : "Publicación revisada"}</p>
               <p>Contacto directo por WhatsApp</p>
             </div>
           </Card>
-
-          {renderQuoteButton()}
         </aside>
       </div>
+
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-casero-dark/10 bg-white/95 p-3 shadow-soft backdrop-blur md:hidden">
-        <div className="container-page px-0">
-          {renderQuoteButton()}
-        </div>
+        <div className="container-page px-0">{renderQuoteButton()}</div>
       </div>
     </section>
   );
