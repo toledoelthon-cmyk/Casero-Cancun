@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, MessageCircle, Search, Send, Star } from "lucide-react";
+import { BadgeCheck, MapPin, MessageCircle, Search, Send, Star, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 const quickSearchLinks = [
@@ -10,6 +10,12 @@ const quickSearchLinks = [
   { label: "Ferretería", href: "/buscar-servicios?q=ferreteria", icon: "/icons/services/icon-ferreteria.svg" },
   { label: "Veterinaria", href: "/buscar-servicios?q=veterinaria", icon: "/icons/services/icon-veterinaria.svg" },
   { label: "Mecánico", href: "/buscar-servicios?q=mecanico", icon: "/icons/services/icon-mecanico.svg" },
+];
+
+const heroBenefits = [
+  { label: "Contacto directo por WhatsApp", icon: MessageCircle },
+  { label: "Proveedores locales", icon: UsersRound },
+  { label: "Publicaciones revisadas", icon: BadgeCheck },
 ];
 
 const marketplaceCards = [
@@ -141,6 +147,24 @@ function QuickSearchButtons() {
   );
 }
 
+function HeroBenefits() {
+  return (
+    <div className="mt-5 grid gap-3 rounded-[1.25rem] border border-white/70 bg-white/92 p-3 shadow-sm backdrop-blur sm:grid-cols-3">
+      {heroBenefits.map((benefit) => {
+        const Icon = benefit.icon;
+        return (
+          <div key={benefit.label} className="flex min-h-16 items-center gap-3 rounded-xl bg-casero-background px-3 py-2.5 text-sm font-extrabold leading-tight text-casero-dark">
+            <span className="grid h-10 w-10 flex-none place-items-center rounded-lg bg-casero-green/10 text-casero-green">
+              <Icon className="h-5 w-5" aria-hidden />
+            </span>
+            <span>{benefit.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 type MarketplaceCard = (typeof marketplaceCards)[number];
 
 function MarketplaceCard({ card }: { card: MarketplaceCard }) {
@@ -178,22 +202,22 @@ function MarketplaceCard({ card }: { card: MarketplaceCard }) {
               className={"object-cover " + card.position}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/94 via-casero-dark/34 to-casero-dark/8" />
-          <span className="absolute left-3 top-3 rounded-full bg-casero-dark/82 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/96 via-casero-dark/42 to-casero-dark/12" />
+          <span className="absolute left-3 top-3 rounded-full bg-casero-dark/88 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
             {card.badge}
           </span>
           <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-4">
-            <div className="rounded-xl bg-casero-dark/62 p-3 backdrop-blur-sm">
+            <div className="rounded-xl bg-casero-dark/72 p-3 backdrop-blur-sm">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h2 className="font-heading text-xl font-extrabold leading-tight text-white sm:text-2xl">{card.title}</h2>
-                  <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-white/90">{card.text}</p>
+                  <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-white/94">{card.text}</p>
                 </div>
                 <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-casero-green text-white shadow-sm">
                   <MessageCircle className="h-5 w-5" aria-hidden />
                 </span>
               </div>
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/16 px-2.5 py-1 text-xs font-bold text-white">
+              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/18 px-2.5 py-1 text-xs font-bold text-white">
                 <MapPin className="h-3.5 w-3.5" aria-hidden />
                 {card.zone}
               </p>
@@ -232,13 +256,13 @@ function MarketplacePreview() {
 
 function ZoneTiles() {
   return (
-    <div className="rounded-[1.4rem] border border-white/60 bg-white/88 p-4 shadow-soft backdrop-blur sm:p-5 lg:p-6">
+    <div className="rounded-[1.4rem] border border-casero-dark/10 bg-white/96 p-4 shadow-soft backdrop-blur sm:p-5 lg:p-6">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 px-1">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-casero-text/55">Cobertura local</p>
           <p className="font-heading text-2xl font-extrabold text-casero-dark sm:text-3xl">Zonas de cobertura</p>
         </div>
-        <p className="max-w-md text-sm font-semibold leading-6 text-casero-text/62">Encuentra proveedores locales en Cancún, Puerto Morelos, Playa del Carmen y Tulum.</p>
+        <p className="max-w-md text-sm font-semibold leading-6 text-casero-text/68">Encuentra proveedores locales en Cancún, Puerto Morelos, Playa del Carmen y Tulum.</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {zoneTiles.map((zone) => (
@@ -249,11 +273,11 @@ function ZoneTiles() {
           >
             <div className="relative aspect-[16/10] min-h-[170px] bg-casero-beige lg:min-h-[190px]">
               <Image src={zone.image} alt={zone.alt} fill sizes="(min-width: 1024px) 23vw, 50vw" className={"object-cover " + zone.position} />
-              <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/92 via-casero-dark/38 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/96 via-casero-dark/48 to-casero-dark/10" />
               <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-4">
-                <div className="rounded-xl bg-casero-dark/62 p-3 backdrop-blur-sm">
+                <div className="rounded-xl bg-casero-dark/74 p-3 backdrop-blur-sm">
                   <p className="font-heading text-2xl font-extrabold leading-tight text-white">{zone.label}</p>
-                  <p className="mt-1 text-sm font-bold text-white/92">Ver proveedores</p>
+                  <p className="mt-1 text-sm font-bold text-white/94">Ver proveedores</p>
                 </div>
               </div>
             </div>
@@ -266,9 +290,9 @@ function ZoneTiles() {
 
 function TrustSeals() {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 rounded-[1.4rem] border border-casero-dark/10 bg-white/97 p-3 shadow-soft sm:grid-cols-2 sm:p-4 lg:grid-cols-4">
       {trustSeals.map((seal) => (
-        <div key={seal.label} className="flex min-h-[86px] items-center gap-4 rounded-[1.1rem] border border-white/65 bg-white/92 px-4 py-3 shadow-sm backdrop-blur">
+        <div key={seal.label} className="flex min-h-[86px] items-center gap-4 rounded-[1.1rem] border border-casero-dark/10 bg-white px-4 py-3 shadow-sm">
           <span className="relative h-14 w-14 flex-none overflow-hidden rounded-full bg-white shadow-sm">
             <Image src={seal.image} alt={seal.alt} fill sizes="56px" className="object-contain p-1" />
           </span>
@@ -282,27 +306,27 @@ function TrustSeals() {
 export function HomeHero() {
   return (
     <section className="relative isolate overflow-hidden border-b border-casero-dark/10 bg-casero-background lg:min-h-[760px]">
-      <Image
-        src="/images/hero/hero-bg-riviera-desktop.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="hidden object-cover object-center opacity-68 md:block"
-        aria-hidden
-      />
-      <Image
-        src="/images/hero/hero-bg-riviera-mobile.webp"
-        alt=""
-        fill
-        sizes="100vw"
-        className="object-cover object-center opacity-52 md:hidden"
-        aria-hidden
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-casero-background via-casero-background/90 to-casero-background/36" aria-hidden />
-      <div className="absolute inset-0 bg-gradient-to-b from-white/14 via-transparent to-casero-background/88" aria-hidden />
+      <div className="absolute inset-x-0 top-0 h-[760px] overflow-hidden sm:h-[820px] lg:h-[860px] xl:h-[900px]" aria-hidden>
+        <Image
+          src="/images/hero/hero-bg-riviera-desktop.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="hidden object-cover object-center opacity-58 md:block"
+        />
+        <Image
+          src="/images/hero/hero-bg-riviera-mobile.webp"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-center opacity-42 md:hidden"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-casero-background via-casero-background/92 to-casero-background/48" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/18 via-casero-background/20 to-casero-background" />
+      </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-[1760px] px-[clamp(1rem,3.4vw,4.5rem)] py-8 sm:py-10 lg:py-16 2xl:py-20">
+      <div className="relative z-10 mx-auto w-full max-w-[1760px] px-[clamp(1rem,3.4vw,4.5rem)] py-8 sm:py-10 lg:py-14 2xl:py-16">
         <div className="grid gap-8 lg:grid-cols-[minmax(500px,0.88fr)_minmax(720px,1.35fr)] lg:items-center xl:gap-12 2xl:gap-16">
           <div className="max-w-[840px]">
             <span className="inline-flex items-center gap-2 rounded-full bg-casero-green px-4 py-2 text-sm font-extrabold text-white shadow-soft">
@@ -352,12 +376,13 @@ export function HomeHero() {
             </div>
 
             <QuickSearchButtons />
+            <HeroBenefits />
           </div>
 
           <MarketplacePreview />
         </div>
 
-        <div className="mt-8 grid gap-5 lg:mt-12">
+        <div className="mt-7 grid gap-4 lg:mt-9">
           <ZoneTiles />
           <TrustSeals />
         </div>
