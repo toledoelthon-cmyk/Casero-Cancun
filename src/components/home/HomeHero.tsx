@@ -21,8 +21,8 @@ const marketplaceCards = [
     href: "/buscar-servicios?q=plomero",
     image: "/images/hero/hero-main-service-card.webp",
     alt: "Servicio local de plomería atendiendo una reparación en casa",
-    featured: true,
     position: "object-[42%_center]",
+    safeFrame: true,
   },
   {
     title: "Aire y electricidad",
@@ -44,11 +44,11 @@ const marketplaceCards = [
     alt: "Ferretería local con materiales y atención a clientes",
     position: "object-[40%_center]",
   },
-];
-
-const miniMarketplaceCards = [
   {
     title: "Veterinaria",
+    text: "Consulta, cuidado y atención para mascotas.",
+    zone: "Riviera Maya",
+    badge: "Mascotas",
     href: "/buscar-servicios?q=veterinaria",
     image: "/images/hero/hero-card-mascotas.webp",
     alt: "Servicio local de mascotas y veterinaria",
@@ -56,6 +56,9 @@ const miniMarketplaceCards = [
   },
   {
     title: "Mecánico",
+    text: "Revisión, reparación y servicios para tu auto.",
+    zone: "Playa del Carmen",
+    badge: "Auto",
     href: "/buscar-servicios?q=mecanico",
     image: "/images/hero/hero-card-auto.webp",
     alt: "Servicio mecánico local para auto",
@@ -125,7 +128,7 @@ function QuickSearchButtons() {
               {item.shortLabel ? (
                 <>
                   <span className="sm:hidden">{item.shortLabel}</span>
-                  <span className="hidden sm:inline whitespace-nowrap">{item.label}</span>
+                  <span className="hidden whitespace-nowrap sm:inline">{item.label}</span>
                 </>
               ) : (
                 item.label
@@ -138,11 +141,73 @@ function QuickSearchButtons() {
   );
 }
 
-function MarketplacePreview() {
-  const featured = marketplaceCards[0];
+type MarketplaceCard = (typeof marketplaceCards)[number];
 
+function MarketplaceCard({ card }: { card: MarketplaceCard }) {
   return (
-    <div className="grid gap-4">
+    <Link
+      href={card.href}
+      className="group overflow-hidden rounded-[1.2rem] border border-white/70 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
+    >
+      <article className="grid h-full overflow-hidden rounded-[1.2rem] bg-white">
+        <div className="relative aspect-[16/10] min-h-[210px] overflow-hidden bg-casero-dark xl:min-h-[240px] 2xl:min-h-[260px]">
+          {card.safeFrame ? (
+            <>
+              <Image
+                src={card.image}
+                alt=""
+                fill
+                sizes="(min-width: 1536px) 25vw, (min-width: 1024px) 32vw, 100vw"
+                className={"scale-110 object-cover opacity-55 blur-md " + card.position}
+                aria-hidden
+              />
+              <Image
+                src={card.image}
+                alt={card.alt}
+                fill
+                sizes="(min-width: 1536px) 25vw, (min-width: 1024px) 32vw, 100vw"
+                className="object-contain p-2.5"
+              />
+            </>
+          ) : (
+            <Image
+              src={card.image}
+              alt={card.alt}
+              fill
+              sizes="(min-width: 1536px) 25vw, (min-width: 1024px) 32vw, 100vw"
+              className={"object-cover " + card.position}
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/94 via-casero-dark/34 to-casero-dark/8" />
+          <span className="absolute left-3 top-3 rounded-full bg-casero-dark/82 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
+            {card.badge}
+          </span>
+          <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-4">
+            <div className="rounded-xl bg-casero-dark/62 p-3 backdrop-blur-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="font-heading text-xl font-extrabold leading-tight text-white sm:text-2xl">{card.title}</h2>
+                  <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-white/90">{card.text}</p>
+                </div>
+                <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-casero-green text-white shadow-sm">
+                  <MessageCircle className="h-5 w-5" aria-hidden />
+                </span>
+              </div>
+              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/16 px-2.5 py-1 text-xs font-bold text-white">
+                <MapPin className="h-3.5 w-3.5" aria-hidden />
+                {card.zone}
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}
+
+function MarketplacePreview() {
+  return (
+    <div className="grid min-w-0 gap-4 xl:gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3 px-1">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-casero-text/55">Vista previa del directorio</p>
@@ -154,107 +219,12 @@ function MarketplacePreview() {
         </span>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.02fr_0.98fr] xl:items-stretch">
-        <Link
-          href={featured.href}
-          className="group overflow-hidden rounded-[1.35rem] border border-white/70 bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
-        >
-          <div className="relative aspect-[4/3] min-h-[330px] overflow-hidden bg-casero-dark sm:aspect-[16/10] lg:aspect-[4/3] xl:h-full xl:min-h-[520px]">
-            <Image
-              src={featured.image}
-              alt=""
-              fill
-              sizes="(min-width: 1280px) 42vw, (min-width: 1024px) 48vw, 100vw"
-              className={"scale-110 object-cover opacity-58 blur-md " + featured.position}
-              aria-hidden
-            />
-            <Image
-              src={featured.image}
-              alt={featured.alt}
-              fill
-              priority
-              sizes="(min-width: 1280px) 42vw, (min-width: 1024px) 48vw, 100vw"
-              className="object-contain p-2 sm:p-3"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/96 via-casero-dark/44 to-casero-dark/12" />
-            <div className="absolute inset-x-0 bottom-0 p-4 text-white sm:p-5">
-              <div className="rounded-[1.1rem] border border-white/18 bg-casero-dark/72 p-4 shadow-soft backdrop-blur-sm sm:p-5">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="rounded-full bg-casero-green px-3 py-1.5 text-xs font-extrabold text-white shadow-sm">{featured.badge}</span>
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-casero-green text-white shadow-soft">
-                    <MessageCircle className="h-5 w-5" aria-hidden />
-                  </span>
-                </div>
-                <h2 className="font-heading text-3xl font-extrabold leading-tight text-white sm:text-4xl">{featured.title}</h2>
-                <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-white/92 sm:text-base">{featured.text}</p>
-                <p className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/16 px-3 py-1.5 text-sm font-bold text-white">
-                  <MapPin className="h-4 w-4" aria-hidden />
-                  {featured.zone}
-                </p>
-              </div>
-            </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:gap-5">
+        {marketplaceCards.map((card, index) => (
+          <div key={card.href} className={index === 4 ? "sm:col-span-2 xl:col-span-1" : undefined}>
+            <MarketplaceCard card={card} />
           </div>
-        </Link>
-
-        <div className="grid gap-4">
-          {marketplaceCards.slice(1).map((card) => (
-            <Link
-              key={card.href}
-              href={card.href}
-              className="group grid overflow-hidden rounded-[1.2rem] border border-white/70 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green sm:grid-cols-[220px_1fr] xl:grid-cols-1"
-            >
-              <div className="relative aspect-[16/10] min-h-[190px] bg-casero-beige sm:aspect-auto sm:min-h-full xl:aspect-[16/9] xl:min-h-[210px]">
-                <Image
-                  src={card.image}
-                  alt={card.alt}
-                  fill
-                  sizes="(min-width: 1280px) 28vw, (min-width: 640px) 220px, 100vw"
-                  className={"object-cover " + card.position}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/42 via-transparent to-casero-dark/14" />
-                <span className="absolute left-3 top-3 rounded-full bg-casero-dark/82 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
-                  {card.badge}
-                </span>
-              </div>
-              <div className="flex min-h-[170px] flex-col justify-between p-4 sm:p-5">
-                <div>
-                  <h2 className="font-heading text-2xl font-extrabold leading-tight text-casero-dark xl:text-[1.6rem]">{card.title}</h2>
-                  <p className="mt-2 text-sm font-medium leading-6 text-casero-text/72">{card.text}</p>
-                </div>
-                <div className="mt-4 flex items-center justify-between gap-3">
-                  <span className="inline-flex items-center gap-1.5 text-sm font-bold text-casero-text/62">
-                    <MapPin className="h-4 w-4 text-casero-orange" aria-hidden />
-                    {card.zone}
-                  </span>
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-casero-green/10 text-casero-green">
-                    <MessageCircle className="h-5 w-5" aria-hidden />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {miniMarketplaceCards.map((card) => (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="group overflow-hidden rounded-[1.1rem] border border-white/70 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
-              >
-                <div className="relative aspect-[16/9] min-h-[135px] bg-casero-beige">
-                  <Image src={card.image} alt={card.alt} fill sizes="(min-width: 1280px) 14vw, 50vw" className={"object-cover " + card.position} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/92 via-casero-dark/38 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-3 text-white">
-                    <div className="rounded-xl bg-casero-dark/64 p-2.5 backdrop-blur-sm">
-                      <p className="font-heading text-xl font-extrabold leading-tight text-white">{card.title}</p>
-                      <p className="mt-1 text-xs font-bold text-white/92">Ver opciones</p>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -311,14 +281,14 @@ function TrustSeals() {
 
 export function HomeHero() {
   return (
-    <section className="relative isolate overflow-hidden border-b border-casero-dark/10 bg-casero-background lg:min-h-[700px]">
+    <section className="relative isolate overflow-hidden border-b border-casero-dark/10 bg-casero-background lg:min-h-[760px]">
       <Image
         src="/images/hero/hero-bg-riviera-desktop.webp"
         alt=""
         fill
         priority
         sizes="100vw"
-        className="hidden object-cover object-center opacity-70 md:block"
+        className="hidden object-cover object-center opacity-68 md:block"
         aria-hidden
       />
       <Image
@@ -329,25 +299,25 @@ export function HomeHero() {
         className="object-cover object-center opacity-52 md:hidden"
         aria-hidden
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-casero-background via-casero-background/92 to-casero-background/46" aria-hidden />
-      <div className="absolute inset-0 bg-gradient-to-b from-white/16 via-transparent to-casero-background/86" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-r from-casero-background via-casero-background/90 to-casero-background/36" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-b from-white/14 via-transparent to-casero-background/88" aria-hidden />
 
-      <div className="relative z-10 mx-auto max-w-[1500px] px-4 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-16 xl:px-12">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.25fr] lg:items-center xl:gap-14">
-          <div className="max-w-[760px]">
+      <div className="relative z-10 mx-auto w-full max-w-[1760px] px-[clamp(1rem,3.4vw,4.5rem)] py-8 sm:py-10 lg:py-16 2xl:py-20">
+        <div className="grid gap-8 lg:grid-cols-[minmax(500px,0.88fr)_minmax(720px,1.35fr)] lg:items-center xl:gap-12 2xl:gap-16">
+          <div className="max-w-[840px]">
             <span className="inline-flex items-center gap-2 rounded-full bg-casero-green px-4 py-2 text-sm font-extrabold text-white shadow-soft">
               <Star className="h-4 w-4 fill-current" aria-hidden />
               Marketplace local para Cancún y Riviera Maya
             </span>
 
-            <h1 className="mt-5 max-w-[12.8ch] font-heading text-[clamp(3rem,5vw,5.7rem)] font-extrabold leading-[0.96] tracking-normal text-casero-dark">
+            <h1 className="mt-5 max-w-[13.2ch] font-heading text-[clamp(3rem,5.2vw,6.25rem)] font-extrabold leading-[0.96] tracking-normal text-casero-dark">
               Servicios y negocios locales en un solo lugar
             </h1>
-            <p className="mt-5 max-w-[640px] text-lg font-medium leading-8 text-casero-text/78 sm:text-xl sm:leading-9">
+            <p className="mt-5 max-w-[680px] text-lg font-medium leading-8 text-casero-text/78 sm:text-xl sm:leading-9">
               Busca proveedores locales, compara opciones y contacta directo por WhatsApp.
             </p>
 
-            <form action="/buscar-servicios" className="mt-7 max-w-[640px] rounded-[1.2rem] border border-white/70 bg-white/94 p-3 shadow-soft backdrop-blur">
+            <form action="/buscar-servicios" className="mt-7 max-w-[680px] rounded-[1.2rem] border border-white/70 bg-white/94 p-3 shadow-soft backdrop-blur">
               <label className="sr-only" htmlFor="home-search">Buscar servicio o negocio</label>
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="flex min-h-16 min-w-0 items-center gap-3 rounded-xl border border-casero-dark/10 bg-casero-background px-4">
