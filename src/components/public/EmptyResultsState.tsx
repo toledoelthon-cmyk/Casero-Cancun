@@ -1,4 +1,5 @@
-import { Search, Store } from "lucide-react";
+import Image from "next/image";
+import { Store } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 type EmptyResultsStateProps = {
@@ -8,11 +9,15 @@ type EmptyResultsStateProps = {
   onReset?: () => void;
 };
 
+function SearchIcon() {
+  return <Image src="/icons/ui/icon-search.svg" alt="" width={16} height={16} aria-hidden />;
+}
+
 export function EmptyResultsState({ title, description, resetLabel = "Buscar otra cosa", onReset }: EmptyResultsStateProps) {
   return (
     <div className="rounded-[1.15rem] border border-casero-dark/10 bg-white p-5 text-center shadow-sm sm:p-7">
       <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-casero-beige text-casero-green shadow-sm">
-        <Search className="h-7 w-7" aria-hidden />
+        <Image src="/icons/ui/icon-search.svg" alt="" width={28} height={28} aria-hidden />
       </div>
       <h2 className="mt-4 font-heading text-2xl font-extrabold text-casero-dark">{title}</h2>
       <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-7 text-casero-text/68">{description}</p>
@@ -23,12 +28,12 @@ export function EmptyResultsState({ title, description, resetLabel = "Buscar otr
             type="button"
             onClick={onReset}
           >
-            <Search className="h-4 w-4" aria-hidden />
+            <SearchIcon />
             {resetLabel}
           </button>
         ) : (
           <Button href="/buscar-servicios" variant="outline" className="w-full font-extrabold sm:w-auto">
-            <Search className="h-4 w-4" aria-hidden />
+            <SearchIcon />
             {resetLabel}
           </Button>
         )}

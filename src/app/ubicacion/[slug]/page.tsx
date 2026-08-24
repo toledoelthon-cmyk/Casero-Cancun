@@ -5,10 +5,12 @@ import { notFound } from "next/navigation";
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { EmptyResultsState } from "@/components/public/EmptyResultsState";
 import { PublicPageHero } from "@/components/public/PublicPageHero";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getPublishedBusinessesByLocation } from "@/lib/data/businesses";
 import { locations } from "@/lib/demo-data";
+import { RIVIERA_MAYA_BANNER, ZONE_VISUALS } from "@/lib/publicVisualAssets";
 import { JsonLd, breadcrumbJsonLd, collectionPageJsonLd, locationPlaceJsonLd } from "@/lib/jsonLd";
 import { createPublicMetadata } from "@/lib/seo";
 
@@ -16,12 +18,6 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const zoneImages: Record<string, string> = {
-  cancun: "/images/zones/zona-cancun-card.webp",
-  "puerto-morelos": "/images/zones/zona-puerto-morelos-card.webp",
-  "playa-del-carmen": "/images/zones/zona-playa-del-carmen-card.webp",
-  tulum: "/images/zones/zona-tulum-card.webp",
-};
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -52,7 +48,8 @@ export default async function LocationPage({ params }: PageProps) {
     new Set(relatedBusinesses.flatMap((business) => business.categories ?? [business.category])),
   );
   const path = "/ubicacion/" + location.slug;
-  const heroImage = zoneImages[location.slug] ?? "/images/zones/zona-riviera-maya-banner.webp";
+  const zoneVisual = ZONE_VISUALS[location.slug as keyof typeof ZONE_VISUALS];
+  const heroImage = zoneVisual?.image ?? RIVIERA_MAYA_BANNER;
 
   return (
     <section className="bg-casero-background py-6 sm:py-8 lg:py-10">
@@ -86,7 +83,7 @@ export default async function LocationPage({ params }: PageProps) {
           title={"Servicios y negocios en " + location.name}
           description={"Encuentra proveedores locales publicados que atienden " + location.name + " y contacta directo por WhatsApp."}
           image={heroImage}
-          imageAlt={"Zona de cobertura en " + location.name}
+          imageAlt={zoneVisual?.imageAlt ?? "Riviera Maya y zonas de cobertura"}
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button href={`/buscar-servicios?q=${encodeURIComponent(location.name)}`} className="w-full font-extrabold sm:w-auto">
@@ -99,6 +96,7 @@ export default async function LocationPage({ params }: PageProps) {
             </Button>
           </div>
         </PublicPageHero>
+        <TrustStrip />
 
         {availableCategories.length > 0 ? (
           <Card className="mt-6 p-5 sm:mt-8 sm:p-6">

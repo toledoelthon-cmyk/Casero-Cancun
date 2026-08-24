@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { BusinessMap } from "@/components/maps/BusinessMap";
 import { CaseroServiceCaptureModal } from "@/components/marketplace/CaseroServiceCaptureModal";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { getBusinessBySlug } from "@/lib/data/businesses";
@@ -265,6 +266,10 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             </Card>
           </div>
         </div>
+      </div>
+
+      <div className="container-page mt-6">
+        <TrustStrip />
       </div>
 
       <div className="container-page mt-6 grid gap-6 lg:grid-cols-[1fr_22rem] lg:gap-8">

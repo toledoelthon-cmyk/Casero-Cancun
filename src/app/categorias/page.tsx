@@ -1,37 +1,15 @@
 import type { Metadata } from "next";
 import { PublicPageHero } from "@/components/public/PublicPageHero";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { VisualLinkCard } from "@/components/public/VisualLinkCard";
+import { CATEGORY_VISUALS } from "@/lib/publicVisualAssets";
 import { createPublicMetadata } from "@/lib/seo";
 
 const categorySections = [
-  {
-    title: "Servicios del hogar",
-    description: "Reparaciones, limpieza y mantenimiento.",
-    href: "/servicios-del-hogar",
-    image: "/images/categories/categoria-servicios-hogar-cover.webp",
-    imageAlt: "Servicios del hogar en Cancún",
-  },
-  {
-    title: "Tiendas y materiales",
-    description: "Ferreterías, materiales y productos.",
-    href: "/tiendas-y-materiales",
-    image: "/images/categories/categoria-materiales-cover.webp",
-    imageAlt: "Tiendas de materiales y ferreterías locales",
-  },
-  {
-    title: "Mascotas",
-    description: "Veterinarias, estética y cuidado.",
-    href: "/mascotas",
-    image: "/images/categories/categoria-mascotas-cover.webp",
-    imageAlt: "Servicios para mascotas en Cancún",
-  },
-  {
-    title: "Servicios para tu auto",
-    description: "Mecánicos, lavado, grúas y más.",
-    href: "/servicios-para-tu-auto",
-    image: "/images/categories/categoria-auto-cover.webp",
-    imageAlt: "Servicios automotrices locales",
-  },
+  CATEGORY_VISUALS.home_services,
+  CATEGORY_VISUALS.stores_materials,
+  CATEGORY_VISUALS.pets,
+  CATEGORY_VISUALS.auto_services,
 ];
 
 export const metadata: Metadata = createPublicMetadata({
@@ -50,10 +28,11 @@ export default function CategoriesPage() {
           title="Explora soluciones locales por tipo de necesidad"
           description="Cuatro secciones claras para encontrar proveedores, tiendas y servicios publicados en Cancún y Riviera Maya."
         />
+        <TrustStrip />
 
         <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:gap-5">
           {categorySections.map((section) => (
-            <VisualLinkCard key={section.href} {...section} cta="Explorar sección" meta="Casero Cancún" />
+            <VisualLinkCard key={section.href} {...section} cta="Explorar sección" meta="Casero Cancún" iconAlt="" />
           ))}
         </div>
       </div>

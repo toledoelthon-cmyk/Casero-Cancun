@@ -10,9 +10,11 @@ type VisualLinkCardProps = {
   imageAlt: string;
   cta: string;
   meta?: string;
+  icon?: string;
+  iconAlt?: string;
 };
 
-export function VisualLinkCard({ title, description, href, image, imageAlt, cta, meta }: VisualLinkCardProps) {
+export function VisualLinkCard({ title, description, href, image, imageAlt, cta, meta, icon, iconAlt = "" }: VisualLinkCardProps) {
   return (
     <Link
       href={href}
@@ -28,8 +30,17 @@ export function VisualLinkCard({ title, description, href, image, imageAlt, cta,
         />
       </div>
       <div className="flex flex-1 flex-col p-4 sm:p-5">
-        {meta ? <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-casero-green">{meta}</p> : null}
-        <h2 className="mt-1 line-clamp-2 font-heading text-xl font-extrabold leading-tight text-slate-950 sm:text-2xl">{title}</h2>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            {meta ? <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-casero-green">{meta}</p> : null}
+            <h2 className="mt-1 line-clamp-2 font-heading text-xl font-extrabold leading-tight text-slate-950 sm:text-2xl">{title}</h2>
+          </div>
+          {icon ? (
+            <span className="relative h-10 w-10 flex-none overflow-hidden rounded-xl bg-casero-background shadow-sm ring-1 ring-casero-dark/10">
+              <Image src={icon} alt={iconAlt} fill sizes="40px" className="object-contain p-2" />
+            </span>
+          ) : null}
+        </div>
         <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{description}</p>
         <p className="mt-auto inline-flex w-fit items-center gap-2 rounded-full bg-casero-green/10 px-3 py-1.5 text-xs font-extrabold text-emerald-800 shadow-sm ring-1 ring-casero-green/15">
           {cta}

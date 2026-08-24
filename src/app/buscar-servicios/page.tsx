@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Search, ShieldCheck } from "lucide-react";
 import { PublicBusinessDirectory } from "@/components/marketplace/PublicBusinessDirectory";
 import { PublicPageHero } from "@/components/public/PublicPageHero";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { getPublishedBusinesses } from "@/lib/data/businesses";
 import { categories, locations } from "@/lib/demo-data";
 import { createPublicMetadata } from "@/lib/seo";
@@ -60,6 +61,7 @@ export default async function SearchServicesPage({ searchParams }: PageProps) {
             <span className="rounded-full bg-white px-3 py-1.5 text-casero-dark shadow-sm ring-1 ring-casero-dark/10">Proveedores locales</span>
           </div>
         </PublicPageHero>
+        <TrustStrip />
 
         <PublicBusinessDirectory
           businesses={businesses}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -22,6 +23,7 @@ export default function ContactPage() {
         description="Escríbenos para registrar tu negocio, resolver dudas o preparar tu perfil dentro de la plataforma."
           level={1}
         />
+      <TrustStrip />
       <div className="mt-8 grid gap-5 md:grid-cols-3">
         <Card>
           <MessageCircle className="h-8 w-8 text-casero-green" aria-hidden />

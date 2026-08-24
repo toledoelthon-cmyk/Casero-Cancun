@@ -3,10 +3,12 @@ import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { CategoryCard } from "@/components/marketplace/CategoryCard";
 import { EmptyResultsState } from "@/components/public/EmptyResultsState";
 import { PublicPageHero } from "@/components/public/PublicPageHero";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { Button } from "@/components/ui/Button";
 import { getPublishedBusinessesBySection } from "@/lib/data/businesses";
 import type { CategorySection, DemoCategory } from "@/lib/demo-data";
 import { locations } from "@/lib/demo-data";
+import { CATEGORY_VISUALS } from "@/lib/publicVisualAssets";
 
 type SectionBusinessPageProps = {
   section: CategorySection;
@@ -15,13 +17,6 @@ type SectionBusinessPageProps = {
   description: string;
   categories: DemoCategory[];
   selectedLocationSlug?: string;
-};
-
-const sectionImages: Record<CategorySection, string> = {
-  home_services: "/images/categories/categoria-servicios-hogar-cover.webp",
-  stores_materials: "/images/categories/categoria-materiales-cover.webp",
-  pets: "/images/categories/categoria-mascotas-cover.webp",
-  auto_services: "/images/categories/categoria-auto-cover.webp",
 };
 
 export async function SectionBusinessPage({
@@ -41,7 +36,7 @@ export async function SectionBusinessPage({
   return (
     <section className="bg-casero-background py-6 sm:py-8 lg:py-10">
       <div className="container-page">
-        <PublicPageHero eyebrow={eyebrow} title={title} description={description} image={sectionImages[section]} imageAlt={title}>
+        <PublicPageHero eyebrow={eyebrow} title={title} description={description} image={CATEGORY_VISUALS[section].image} imageAlt={CATEGORY_VISUALS[section].imageAlt}>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button href="/buscar-servicios" className="w-full font-extrabold sm:w-auto">
               <Search className="h-4 w-4" aria-hidden />
@@ -53,6 +48,7 @@ export async function SectionBusinessPage({
             </Button>
           </div>
         </PublicPageHero>
+        <TrustStrip />
 
         <div className="mt-8 sm:mt-10">
           <h2 className="font-heading text-2xl font-extrabold text-casero-dark">Categorías</h2>

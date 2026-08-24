@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PlanCard } from "@/components/marketplace/PlanCard";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { plans } from "@/lib/demo-data";
@@ -21,6 +22,7 @@ export default function PlansPage() {
         description="Planes para proveedores de servicios, tiendas, negocios de mascotas, talleres y servicios automotrices con operación activa."
         align="center"
       />
+      <TrustStrip />
       <div className="mx-auto mt-6 max-w-3xl rounded-lg border border-casero-orange/25 bg-casero-orange/10 p-4 text-center text-sm font-semibold text-casero-dark">
         Durante la etapa de lanzamiento, los negocios aprobados pueden recibir su primer mes gratis.
       </div>

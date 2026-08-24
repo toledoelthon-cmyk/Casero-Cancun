@@ -5,9 +5,11 @@ import { notFound } from "next/navigation";
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { EmptyResultsState } from "@/components/public/EmptyResultsState";
 import { PublicPageHero } from "@/components/public/PublicPageHero";
+import { TrustStrip } from "@/components/public/TrustStrip";
 import { Button } from "@/components/ui/Button";
 import { getPublishedBusinessesByCategory } from "@/lib/data/businesses";
-import { categories, type CategorySection } from "@/lib/demo-data";
+import { categories } from "@/lib/demo-data";
+import { CATEGORY_VISUALS } from "@/lib/publicVisualAssets";
 import { JsonLd, breadcrumbJsonLd, collectionPageJsonLd } from "@/lib/jsonLd";
 import { createPublicMetadata } from "@/lib/seo";
 
@@ -15,12 +17,6 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const sectionImages: Record<CategorySection, string> = {
-  home_services: "/images/categories/categoria-servicios-hogar-cover.webp",
-  stores_materials: "/images/categories/categoria-materiales-cover.webp",
-  pets: "/images/categories/categoria-mascotas-cover.webp",
-  auto_services: "/images/categories/categoria-auto-cover.webp",
-};
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -77,8 +73,8 @@ export default async function CategoryPage({ params }: PageProps) {
           eyebrow="Categoría"
           title={category.name + " en Cancún y Riviera Maya"}
           description={category.description ?? "Explora proveedores locales publicados y contacta directo por WhatsApp."}
-          image={sectionImages[category.section]}
-          imageAlt={category.name + " en Casero Cancún"}
+          image={CATEGORY_VISUALS[category.section].image}
+          imageAlt={CATEGORY_VISUALS[category.section].imageAlt}
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button href={`/buscar-servicios?q=${encodeURIComponent(category.name)}`} className="w-full font-extrabold sm:w-auto">
@@ -91,6 +87,7 @@ export default async function CategoryPage({ params }: PageProps) {
             </Button>
           </div>
         </PublicPageHero>
+        <TrustStrip />
 
         <div className="mt-6 flex flex-col justify-between gap-3 rounded-[1rem] border border-casero-dark/10 bg-white p-4 shadow-sm sm:mt-8 sm:flex-row sm:items-center">
           <div>
