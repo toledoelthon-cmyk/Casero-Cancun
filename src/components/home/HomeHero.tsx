@@ -79,28 +79,60 @@ const miniCards = [
 ];
 
 function ServicePreviewCard({ card }: { card: (typeof serviceCards)[number] }) {
+  if (card.featured) {
+    return (
+      <article className="overflow-hidden rounded-[1.15rem] border border-casero-dark/10 bg-white shadow-soft">
+        <div className="relative min-h-[250px] overflow-hidden bg-casero-beige sm:min-h-[300px] lg:min-h-[330px]">
+          <Image
+            src={card.image}
+            alt={card.alt}
+            fill
+            priority
+            sizes="(min-width: 1024px) 34vw, 100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-casero-dark/88 via-casero-dark/44 to-transparent p-4 pt-16 text-white">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <span className={"rounded-md px-2.5 py-1.5 text-xs font-extrabold shadow-sm " + card.tone}>
+                {card.badge}
+              </span>
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-casero-green text-white shadow-soft">
+                <MessageCircle className="h-4 w-4" aria-hidden />
+              </span>
+            </div>
+            <h2 className="font-heading text-2xl font-extrabold leading-tight">{card.title}</h2>
+            <p className="mt-1 max-w-sm text-sm font-medium leading-5 text-white/82">{card.text}</p>
+            <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-white/78">
+              <MapPin className="h-3.5 w-3.5" aria-hidden />
+              {card.zone}
+            </p>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
   return (
-    <article className={card.featured ? "overflow-hidden rounded-[1rem] border border-casero-dark/10 bg-white shadow-soft md:row-span-2" : "overflow-hidden rounded-[1rem] border border-casero-dark/10 bg-white shadow-sm"}>
-      <div className={card.featured ? "relative aspect-[4/3] bg-casero-beige md:aspect-[5/4]" : "relative aspect-[16/10] bg-casero-beige"}>
+    <article className="grid overflow-hidden rounded-[1rem] border border-casero-dark/10 bg-white shadow-sm sm:grid-cols-[132px_1fr] lg:grid-cols-1 xl:grid-cols-[132px_1fr]">
+      <div className="relative min-h-[130px] bg-casero-beige sm:min-h-full lg:min-h-[150px] xl:min-h-full">
         <Image
           src={card.image}
           alt={card.alt}
           fill
-          priority={card.featured}
-          sizes={card.featured ? "(min-width: 1024px) 28vw, 100vw" : "(min-width: 1024px) 18vw, 100vw"}
+          sizes="(min-width: 1280px) 132px, (min-width: 1024px) 22vw, 100vw"
           className="object-cover"
         />
-        <span className={"absolute left-3 top-3 rounded-md px-2.5 py-1.5 text-xs font-extrabold shadow-sm " + card.tone}>
+        <span className={"absolute left-2.5 top-2.5 rounded-md px-2 py-1 text-[11px] font-extrabold shadow-sm " + card.tone}>
           {card.badge}
         </span>
       </div>
-      <div className="p-3 sm:p-4">
+      <div className="flex min-h-[130px] flex-col justify-between p-3.5">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className="font-heading text-lg font-extrabold leading-tight text-casero-dark">{card.title}</h2>
+          <div className="min-w-0">
+            <h2 className="font-heading text-base font-extrabold leading-tight text-casero-dark sm:text-lg lg:text-base xl:text-lg">{card.title}</h2>
             <p className="mt-1 text-sm leading-5 text-casero-text/70">{card.text}</p>
           </div>
-          <span className="grid h-9 w-9 flex-none place-items-center rounded-md bg-casero-green text-white">
+          <span className="grid h-8 w-8 flex-none place-items-center rounded-md bg-casero-green/10 text-casero-green">
             <MessageCircle className="h-4 w-4" aria-hidden />
           </span>
         </div>
@@ -116,10 +148,10 @@ function ServicePreviewCard({ card }: { card: (typeof serviceCards)[number] }) {
 export function HomeHero() {
   return (
     <section className="overflow-hidden border-b border-casero-dark/10 bg-casero-background">
-      <div className="container-page py-8 sm:py-12 lg:py-14">
-        <div className="rounded-[1.5rem] border border-casero-dark/10 bg-white p-4 shadow-soft sm:p-5 lg:p-6">
-          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div className="lg:pr-2">
+      <div className="container-page py-7 sm:py-10 lg:py-12">
+        <div className="rounded-[1.5rem] border border-casero-dark/10 bg-white p-4 shadow-soft sm:p-5 lg:p-7">
+          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(560px,1.18fr)] lg:items-center">
+            <div className="max-w-2xl lg:pr-1">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex rounded-md bg-casero-beige px-3 py-1 text-sm font-bold text-casero-green">
                   Cancún y Riviera Maya
@@ -130,17 +162,17 @@ export function HomeHero() {
                 </span>
               </div>
 
-              <h1 className="mt-4 max-w-3xl font-heading text-3xl font-extrabold tracking-normal text-casero-dark sm:text-5xl lg:text-6xl">
+              <h1 className="mt-4 max-w-[12ch] font-heading text-[clamp(2.35rem,6.4vw,4.6rem)] font-extrabold leading-[0.98] tracking-normal text-casero-dark lg:max-w-[13ch]">
                 Servicios y negocios locales en un solo lugar
               </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-casero-text/75 sm:text-lg sm:leading-8">
+              <p className="mt-4 max-w-xl text-base leading-7 text-casero-text/75 sm:text-lg sm:leading-8">
                 Busca proveedores locales, compara opciones y contacta directo por WhatsApp.
               </p>
 
-              <form action="/buscar-servicios" className="mt-6 rounded-[1rem] border border-casero-dark/10 bg-casero-background p-3 shadow-sm sm:p-4">
+              <form action="/buscar-servicios" className="mt-6 rounded-[1.1rem] border border-casero-dark/10 bg-casero-background p-2.5 shadow-sm sm:p-3">
                 <label className="sr-only" htmlFor="home-search">Buscar servicio o negocio</label>
-                <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-                  <div className="flex min-h-12 items-center gap-3 rounded-md border border-casero-dark/10 bg-white px-3">
+                <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_auto]">
+                  <div className="flex min-h-14 min-w-0 items-center gap-3 rounded-lg border border-casero-dark/10 bg-white px-4 shadow-[0_1px_0_rgba(27,31,35,0.04)]">
                     <Search className="h-5 w-5 flex-none text-casero-green" aria-hidden />
                     <input
                       id="home-search"
@@ -148,11 +180,11 @@ export function HomeHero() {
                       type="search"
                       aria-label="Buscar servicio o negocio"
                       placeholder="Busca plomero, electricista, veterinaria..."
-                      className="min-h-11 w-full bg-transparent text-base outline-none placeholder:text-casero-text/45"
+                      className="min-h-12 w-full min-w-0 bg-transparent text-base outline-none placeholder:text-casero-text/45 sm:text-[17px]"
                     />
                   </div>
                   <button
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-casero-green px-5 py-2.5 text-sm font-bold text-white shadow-soft transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-casero-green focus-visible:ring-offset-2"
+                    className="inline-flex min-h-14 items-center justify-center gap-2 rounded-lg bg-casero-green px-6 py-3 text-sm font-extrabold text-white shadow-soft transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-casero-green focus-visible:ring-offset-2"
                     type="submit"
                   >
                     Buscar
@@ -161,34 +193,36 @@ export function HomeHero() {
                 </div>
               </form>
 
-              <div className="mt-4 grid gap-3 sm:flex sm:flex-wrap">
-                <Button href="/buscar-servicios" className="w-full sm:w-auto">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap">
+                <Button href="/buscar-servicios" className="w-full px-6 py-3 text-base sm:w-auto">
                   <Search className="h-4 w-4" aria-hidden />
                   Buscar servicio
                 </Button>
-                <Button href="/registrar-mi-negocio" variant="secondary" className="w-full sm:w-auto">
+                <Button href="/registrar-mi-negocio" variant="secondary" className="w-full px-6 py-3 text-base sm:w-auto">
                   Registrar negocio
                 </Button>
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-wrap gap-2.5">
                 {quickSearchLinks.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="rounded-md bg-casero-beige px-3 py-2 text-sm font-semibold text-casero-dark transition hover:bg-casero-orange/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-orange"
+                    className="rounded-lg bg-casero-beige px-3.5 py-2.5 text-sm font-bold text-casero-dark transition hover:bg-casero-orange/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-orange sm:text-[15px]"
                   >
                     {item.label}
                   </Link>
                 ))}
               </div>
 
-              <div className="mt-5 grid gap-2 sm:grid-cols-3">
+              <div className="mt-5 grid gap-2 rounded-[1rem] border border-casero-dark/10 bg-white p-2 shadow-sm sm:grid-cols-3">
                 {heroBenefits.map((benefit) => {
                   const Icon = benefit.icon;
                   return (
-                    <div key={benefit.label} className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-bold text-casero-text shadow-sm">
-                      <Icon className="h-4 w-4 text-casero-green" aria-hidden />
+                    <div key={benefit.label} className="flex min-h-12 items-center gap-2 rounded-lg bg-casero-background px-3 py-2 text-sm font-bold leading-tight text-casero-text">
+                      <span className="grid h-8 w-8 flex-none place-items-center rounded-md bg-casero-green/10 text-casero-green">
+                        <Icon className="h-4 w-4" aria-hidden />
+                      </span>
                       <span>{benefit.label}</span>
                     </div>
                   );
@@ -212,7 +246,7 @@ export function HomeHero() {
               </div>
             </div>
 
-            <div className="rounded-[1.25rem] bg-casero-background p-3 sm:p-4">
+            <div className="rounded-[1.25rem] border border-casero-dark/10 bg-casero-background p-3 shadow-sm sm:p-4">
               <div className="flex flex-wrap items-center justify-between gap-3 px-1 pb-3">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-casero-text/50">Vista previa del directorio</p>
@@ -227,7 +261,7 @@ export function HomeHero() {
                 </div>
               </div>
 
-              <div className="grid gap-3 md:grid-cols-[1.1fr_0.9fr]">
+              <div className="grid gap-3 xl:grid-cols-[1.05fr_0.95fr]">
                 <ServicePreviewCard card={serviceCards[0]} />
                 <div className="grid gap-3">
                   {serviceCards.slice(1).map((card) => (
@@ -238,13 +272,14 @@ export function HomeHero() {
 
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 {miniCards.map((card) => (
-                  <Link key={card.href} href={card.href} className="flex items-center gap-3 rounded-[1rem] bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft">
-                    <div className="relative h-14 w-14 flex-none overflow-hidden rounded-lg bg-casero-beige">
-                      <Image src={card.image} alt={card.alt} fill sizes="56px" className="object-cover" />
+                  <Link key={card.href} href={card.href} className="flex min-h-20 items-center gap-3 rounded-[1rem] border border-casero-dark/10 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft">
+                    <div className="relative h-16 w-16 flex-none overflow-hidden rounded-xl bg-casero-beige">
+                      <Image src={card.image} alt={card.alt} fill sizes="64px" className="object-cover" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-xs font-bold uppercase tracking-[0.12em] text-casero-text/50">Ejemplo</p>
                       <p className="font-heading text-base font-extrabold text-casero-dark">{card.title}</p>
+                      <p className="mt-1 text-xs font-semibold text-casero-green">Ver opciones</p>
                     </div>
                   </Link>
                 ))}
