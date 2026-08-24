@@ -65,12 +65,12 @@ function BusinessPlaceholder({ business }: { business: DemoBusiness | LegacyBusi
   const { Icon, label } = getPlaceholderMeta(business);
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-casero-turquoise/18 via-casero-beige to-casero-orange/20 p-6 text-center">
-      <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/90 text-casero-green shadow-sm">
-        <Icon className="h-7 w-7" aria-hidden />
+    <div className="flex h-full w-full flex-col items-center justify-center rounded-[0.9rem] bg-gradient-to-br from-casero-turquoise/14 via-white to-casero-orange/14 p-5 text-center">
+      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white text-casero-green shadow-sm ring-1 ring-casero-dark/10">
+        <Icon className="h-6 w-6" aria-hidden />
       </span>
-      <p className="mt-4 font-heading text-2xl font-extrabold text-casero-dark">{business.name.charAt(0)}</p>
-      <p className="mt-1 text-xs font-extrabold uppercase tracking-[0.14em] text-casero-text/55">{label}</p>
+      <p className="mt-3 font-heading text-xl font-extrabold text-casero-dark">{business.name.charAt(0)}</p>
+      <p className="mt-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-casero-text/55">{label}</p>
     </div>
   );
 }
@@ -101,7 +101,7 @@ function BusinessImage({ business }: { business: DemoBusiness | LegacyBusiness }
     <img
       src={imageUrl}
       alt={image?.alt ?? business.name}
-      className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+      className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-[1.02]"
     />
   );
 }
@@ -116,44 +116,45 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const rating = isDemoBusiness(business) ? business.rating : undefined;
   const reviewCount = isDemoBusiness(business) ? business.reviewCount : undefined;
   const section = isDemoBusiness(business) && business.section ? sectionLabels[business.section] : undefined;
-  const categories = isDemoBusiness(business) ? (business.categories ?? [business.category]).slice(0, 3) : [business.category];
+  const categories = isDemoBusiness(business) ? (business.categories ?? [business.category]).slice(0, 2) : [business.category];
   const locations = isDemoBusiness(business) ? (business.locations ?? [business.location]).slice(0, 2) : [business.location];
-  const visibleBadges = badges.slice(0, 4);
+  const visibleBadges = badges.slice(0, 3);
 
   return (
     <article className="group overflow-hidden rounded-[1.15rem] border border-casero-dark/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft">
-      <div className="grid lg:grid-cols-[17.5rem_1fr]">
-        <Link href={`/negocio/${business.slug}`} className="relative block min-h-[220px] overflow-hidden bg-casero-background lg:min-h-full">
-          <BusinessImage business={business} />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/82 via-black/35 to-transparent p-3 text-white" aria-hidden />
-          <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-            {business.featured ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
-                <Star className="h-3.5 w-3.5 fill-casero-orange text-casero-orange" aria-hidden />
-                Recomendado
-              </span>
-            ) : null}
-            {business.verified ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-700 px-3 py-1 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
-                <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
-                Verificado
-              </span>
-            ) : null}
+      <div className="grid md:grid-cols-[14rem_1fr] xl:grid-cols-[15.5rem_1fr]">
+        <Link href={`/negocio/${business.slug}`} className="block bg-casero-background p-3 md:p-4">
+          <div className="flex aspect-[16/10] max-h-[190px] items-center justify-center overflow-hidden rounded-[1rem] border border-casero-dark/10 bg-white shadow-sm md:aspect-square md:max-h-none">
+            <BusinessImage business={business} />
           </div>
         </Link>
 
         <div className="flex min-w-0 flex-col p-4 sm:p-5 lg:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              {section ? <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-casero-green">{section}</p> : null}
+              <div className="flex flex-wrap gap-2">
+                {section ? <p className="rounded-full bg-casero-green/10 px-3 py-1 text-xs font-extrabold uppercase tracking-[0.12em] text-casero-green">{section}</p> : null}
+                {business.featured ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-casero-orange/18 px-3 py-1 text-xs font-extrabold text-casero-dark">
+                    <Star className="h-3.5 w-3.5 fill-casero-orange text-casero-orange" aria-hidden />
+                    Recomendado
+                  </span>
+                ) : null}
+                {business.verified ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-casero-green/10 px-3 py-1 text-xs font-extrabold text-casero-green">
+                    <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
+                    Verificado
+                  </span>
+                ) : null}
+              </div>
               <Link href={`/negocio/${business.slug}`}>
-                <h3 className="mt-1 font-heading text-xl font-extrabold leading-snug text-casero-dark transition hover:text-casero-green sm:text-2xl">
+                <h3 className="mt-3 font-heading text-xl font-extrabold leading-snug text-casero-dark transition hover:text-casero-green sm:text-2xl">
                   {business.name}
                 </h3>
               </Link>
             </div>
             {rating ? (
-              <p className="inline-flex flex-none items-center gap-1 rounded-full bg-casero-orange/18 px-3 py-1.5 text-sm font-extrabold text-casero-dark">
+              <p className="inline-flex flex-none items-center gap-1 rounded-full bg-casero-orange/16 px-3 py-1.5 text-sm font-extrabold text-casero-dark">
                 <Star className="h-4 w-4 fill-casero-orange text-casero-orange" aria-hidden />
                 {rating.toFixed(1)}
                 <span className="font-semibold text-casero-text/58">({reviewCount})</span>
@@ -161,7 +162,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
             ) : null}
           </div>
 
-          <p className="mt-3 line-clamp-2 text-sm font-semibold leading-6 text-casero-text/70 sm:line-clamp-3">{description}</p>
+          <p className="mt-3 line-clamp-2 text-sm font-semibold leading-6 text-casero-text/70">{description}</p>
 
           <div className="mt-4 flex flex-wrap gap-2">
             {categories.map((category) => (
