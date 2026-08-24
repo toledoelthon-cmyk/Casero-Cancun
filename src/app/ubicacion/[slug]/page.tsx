@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { Button } from "@/components/ui/Button";
@@ -6,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getPublishedBusinessesByLocation } from "@/lib/data/businesses";
 import { locations } from "@/lib/demo-data";
+import { JsonLd, breadcrumbJsonLd, collectionPageJsonLd, locationPlaceJsonLd } from "@/lib/jsonLd";
 import { createPublicMetadata } from "@/lib/seo";
 
 type PageProps = {
@@ -20,9 +22,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const location = locations.find((item) => item.slug === slug);
 
   return createPublicMetadata({
-    title: location ? `${location.name} | Casero Cancún` : "Ubicación no encontrada | Casero Cancún",
-    description: location ? `Negocios publicados que atienden ${location.name} en Casero Cancún.` : "Explora negocios locales por zona de atención en Cancún.",
-    path: `/ubicacion/${slug}`,
+    title: location ? "Servicios en " + location.name + " | Casero Cancún" : "Ubicación no encontrada | Casero Cancún",
+    description: location
+      ? "Negocios publicados que atienden " + location.name + " en Casero Cancún."
+      : "Explora negocios locales por zona de atención en Cancún y Riviera Maya.",
+    path: "/ubicacion/" + slug,
   });
 }
 
@@ -38,14 +42,40 @@ export default async function LocationPage({ params }: PageProps) {
   const availableCategories = Array.from(
     new Set(relatedBusinesses.flatMap((business) => business.categories ?? [business.category])),
   );
+  const path = "/ubicacion/" + location.slug;
 
   return (
     <section className="container-page py-8 sm:py-12">
+      <JsonLd
+        data={[
+          collectionPageJsonLd({
+            title: "Servicios en " + location.name,
+            description: "Negocios publicados que atienden " + location.name + " en Casero Cancún.",
+            path,
+            businesses: relatedBusinesses,
+          }),
+          locationPlaceJsonLd(location),
+          breadcrumbJsonLd([
+            { name: "Inicio", path: "/" },
+            { name: "Ubicaciones", path: "/ubicaciones" },
+            { name: location.name, path },
+          ]),
+        ]}
+      />
+      <nav className="mb-5 text-sm font-semibold text-casero-text/55" aria-label="Breadcrumb">
+        <Link href="/" className="hover:text-casero-green">Inicio</Link>
+        <span className="mx-2">&gt;</span>
+        <Link href="/ubicaciones" className="hover:text-casero-green">Ubicaciones</Link>
+        <span className="mx-2">&gt;</span>
+        <span className="text-casero-dark">{location.name}</span>
+      </nav>
+
       <SectionHeader
         eyebrow="Ubicación"
         title={location.name}
         description="Negocios publicados que atienden esta zona."
-      level={1} />
+        level={1}
+      />
 
       {availableCategories.length > 0 ? (
         <Card className="mt-6 p-5 sm:mt-8 sm:p-6">

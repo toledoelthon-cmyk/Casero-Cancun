@@ -9,13 +9,10 @@ import { Button } from "@/components/ui/Button";
 import { brandAssets } from "@/lib/brand";
 
 const links = [
-  { href: "/", label: "Inicio" },
-  { href: "/buscar-servicios", label: "Buscar servicios" },
-  { href: "/tiendas-y-materiales", label: "Tiendas y materiales" },
-  { href: "/mascotas", label: "Mascotas" },
-  { href: "/servicios-para-tu-auto", label: "Servicios para tu auto" },
+  { href: "/buscar-servicios", label: "Buscar" },
+  { href: "/categorias", label: "Categorías" },
+  { href: "/ubicaciones", label: "Zonas" },
   { href: "/planes", label: "Planes" },
-  { href: "/registrar-mi-negocio", label: "Registrar negocio" },
   { href: "/proveedor/login", label: "Proveedores" },
   { href: "/contacto", label: "Contacto" },
 ];
@@ -41,7 +38,7 @@ export function Header() {
           />
         </Link>
 
-        <nav className="hidden items-center gap-4 text-sm font-semibold text-casero-text/75 2xl:flex">
+        <nav className="hidden items-center gap-4 text-sm font-semibold text-casero-text/75 xl:flex">
           {links.map((link) => (
             <Link key={link.href} href={link.href} className="transition hover:text-casero-green">
               {link.label}
@@ -49,13 +46,13 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden 2xl:block">
+        <div className="hidden xl:block">
           <Button href="/registrar-mi-negocio" variant="primary">
             Registrar negocio
           </Button>
         </div>
 
-        <div className="2xl:hidden">
+        <div className="xl:hidden">
           <button
             className="grid h-11 w-11 place-items-center rounded-md border border-casero-dark/10 bg-white text-casero-dark"
             type="button"

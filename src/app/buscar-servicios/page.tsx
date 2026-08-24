@@ -5,17 +5,22 @@ import { getPublishedBusinesses } from "@/lib/data/businesses";
 import { categories, locations } from "@/lib/demo-data";
 import { createPublicMetadata } from "@/lib/seo";
 
+type PageProps = {
+  searchParams: Promise<{ q?: string }>;
+};
+
 export const metadata: Metadata = createPublicMetadata({
-  title: "Buscar servicios locales en Cancún | Casero Cancún",
+  title: "Buscar servicios en Cancún y Riviera Maya | Casero Cancún",
   description:
-    "Busca proveedores, tiendas de materiales, servicios para mascotas y servicios automotrices publicados en Cancún.",
+    "Busca proveedores, tiendas de materiales, mascotas y servicios automotrices publicados en Cancún, Puerto Morelos, Playa del Carmen y Tulum.",
   path: "/buscar-servicios",
 });
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function SearchServicesPage() {
+export default async function SearchServicesPage({ searchParams }: PageProps) {
+  const { q } = await searchParams;
   const businesses = await getPublishedBusinesses();
 
   return (
@@ -23,8 +28,8 @@ export default async function SearchServicesPage() {
       <div className="rounded-lg bg-white p-5 shadow-sm md:p-8">
         <SectionHeader
           eyebrow="Directorio local"
-          title="Busca negocios publicados en Casero Cancún"
-          description="Filtra por texto, sección, categoría, ubicación y atributos para encontrar proveedores, tiendas y servicios locales."
+          title="Busca servicios y negocios en Casero Cancún"
+          description="Filtra por texto, área, categoría, zona y atributos para encontrar opciones locales sin leer de más."
           level={1}
         />
       </div>
@@ -33,6 +38,7 @@ export default async function SearchServicesPage() {
         businesses={businesses}
         categories={categories}
         locations={locations}
+        initialQuery={q ?? ""}
         title="Mostrando"
       />
     </section>

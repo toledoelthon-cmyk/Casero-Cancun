@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   BadgeCheck,
@@ -22,6 +23,9 @@ import { CaseroServiceCaptureModal } from "@/components/marketplace/CaseroServic
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { getBusinessBySlug } from "@/lib/data/businesses";
+import { JsonLd, breadcrumbJsonLd, businessJsonLd } from "@/lib/jsonLd";
+import { createPublicMetadata } from "@/lib/seo";
+import { slugify } from "@/lib/utils/slugify";
 import type { DemoBusiness } from "@/lib/demo-data";
 
 type PageProps = {
@@ -117,10 +121,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  return {
-    title: `${business.name} | Casero Cancún`,
+  return createPublicMetadata({
+    title: business.name + " | Casero Cancún",
     description: business.shortDescription,
-  };
+    path: "/negocio/" + business.slug,
+  });
 }
 
 export default async function BusinessProfilePage({ params }: PageProps) {
@@ -145,6 +150,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
   const description =
     business.longDescription ??
     `${business.shortDescription} Este perfil está preparado para mostrar información clara, contacto directo y señales de confianza dentro de Casero Cancún.`;
+  const path = `/negocio/${business.slug}`;
   const renderQuoteButton = () => (
     <CaseroServiceCaptureModal
       businessName={business.name}
@@ -159,6 +165,16 @@ export default async function BusinessProfilePage({ params }: PageProps) {
   );
   return (
     <section className="bg-casero-background pb-24 md:pb-14">
+      <JsonLd
+        data={[
+          businessJsonLd(business),
+          breadcrumbJsonLd([
+            { name: "Inicio", path: "/" },
+            { name: "Negocios", path: "/buscar-servicios" },
+            { name: business.name, path },
+          ]),
+        ]}
+      />
       <div className="relative bg-white">
         <div className="aspect-[16/9] max-h-[34rem] w-full overflow-hidden bg-casero-beige md:aspect-[21/8]">
           <BusinessImage business={business} image={mainImage} priority />
@@ -223,7 +239,17 @@ export default async function BusinessProfilePage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="container-page mt-6 grid gap-6 lg:mt-8 lg:grid-cols-[1fr_22rem] lg:gap-8">
+      <div className="container-page mt-6">
+        <nav className="mb-5 text-sm font-semibold text-casero-text/55" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-casero-green">Inicio</Link>
+          <span className="mx-2">&gt;</span>
+          <Link href="/buscar-servicios" className="hover:text-casero-green">Negocios</Link>
+          <span className="mx-2">&gt;</span>
+          <span className="text-casero-dark">{business.name}</span>
+        </nav>
+      </div>
+
+      <div className="container-page grid gap-6 lg:grid-cols-[1fr_22rem] lg:gap-8">
         <div className="space-y-6">
           <Card className="p-5 sm:p-6">
             <h2 className="font-heading text-xl font-bold text-casero-dark sm:text-2xl">Sobre el negocio</h2>
@@ -327,7 +353,9 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             ) : null}
             <div className="mt-4 flex flex-wrap gap-2">
               {locations.map((location) => (
-                <Badge key={location}>{location}</Badge>
+                <Link key={location} href={"/ubicacion/" + slugify(location)}>
+                  <Badge>{location}</Badge>
+                </Link>
               ))}
             </div>
           </Card>
@@ -353,9 +381,9 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             <h2 className="font-heading text-xl font-bold text-casero-dark">Categorías</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {categories.map((category) => (
-                <Badge key={category} tone="turquoise">
-                  {category}
-                </Badge>
+                <Link key={category} href={"/categoria/" + slugify(category)}>
+                  <Badge tone="turquoise">{category}</Badge>
+                </Link>
               ))}
             </div>
           </Card>

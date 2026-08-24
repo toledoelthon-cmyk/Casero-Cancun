@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { CategorySection, DemoBusiness, DemoCategory, DemoLocation } from "@/lib/demo-data";
 
@@ -11,6 +12,7 @@ type PublicBusinessDirectoryProps = {
   categories: DemoCategory[];
   locations: DemoLocation[];
   initialSection?: CategorySection | "all";
+  initialQuery?: string;
   title?: string;
 };
 
@@ -52,7 +54,9 @@ function matchesAttribute(business: DemoBusiness, attribute: AttributeValue) {
 
   if (attribute === "verified") return business.verified;
   if (attribute === "emergency") return badges.includes("urgencias");
-  if (attribute === "home_service") return business.locationMode === "home_service" || business.locationMode === "both" || features.includes("servicio a domicilio");
+  if (attribute === "home_service") {
+    return business.locationMode === "home_service" || business.locationMode === "both" || features.includes("servicio a domicilio");
+  }
   if (attribute === "invoice") return badges.includes("factura");
   if (attribute === "card") return features.includes("acepta tarjeta");
   if (attribute === "airbnb") return badges.includes("atiende airbnb");
@@ -66,9 +70,10 @@ export function PublicBusinessDirectory({
   categories,
   locations,
   initialSection = "all",
+  initialQuery = "",
   title = "Resultados",
 }: PublicBusinessDirectoryProps) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [section, setSection] = useState<CategorySection | "all">(initialSection);
   const [categorySlug, setCategorySlug] = useState("all");
   const [locationSlug, setLocationSlug] = useState("all");
@@ -152,12 +157,12 @@ export function PublicBusinessDirectory({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           className="w-full bg-transparent text-base outline-none placeholder:text-casero-text/40 lg:text-sm"
-          placeholder="Plomería, ferretería..."
+          placeholder="Plomería, ferretería, veterinaria..."
         />
       </div>
 
       <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-section">
-        Sección
+        Área
       </label>
       <select
         id="directory-section"
@@ -168,7 +173,7 @@ export function PublicBusinessDirectory({
         }}
         className="mt-2 w-full rounded-md border border-casero-dark/10 bg-white px-3 py-3 text-base outline-casero-green lg:text-sm"
       >
-        <option value="all">Todas las secciones</option>
+        <option value="all">Todas las áreas</option>
         {sectionOptions.map((item) => (
           <option key={item.value} value={item.value}>
             {item.label}
@@ -194,7 +199,7 @@ export function PublicBusinessDirectory({
       </select>
 
       <label className="mt-5 block text-sm font-bold text-casero-dark" htmlFor="directory-location">
-        Ubicación
+        Zona
       </label>
       <select
         id="directory-location"
@@ -257,7 +262,7 @@ export function PublicBusinessDirectory({
             <Filter className="h-4 w-4" aria-hidden />
             Filtrar
           </span>
-          <span className="text-xs text-casero-text/55">{activeFilterCount ? `${activeFilterCount} activos` : "Sin filtros"}</span>
+          <span className="text-xs text-casero-text/55">{activeFilterCount ? activeFilterCount + " activos" : "Sin filtros"}</span>
         </button>
         <Card className={filtersOpen ? "mt-3 p-4 lg:mt-0 lg:block lg:p-6" : "hidden lg:block"}>
           {filtersContent}
@@ -284,8 +289,20 @@ export function PublicBusinessDirectory({
           ) : (
             <Card className="p-5 sm:p-6">
               <p className="text-sm leading-7 text-casero-text/70">
-                No encontramos negocios publicados con esos filtros. Prueba con otra categoria, zona o texto de busqueda.
+                No encontramos negocios publicados con esos filtros. Prueba con otra categoría, zona o texto de búsqueda.
               </p>
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                <button
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-casero-dark/10 bg-white px-5 py-2.5 text-sm font-bold text-casero-dark"
+                  type="button"
+                  onClick={clearFilters}
+                >
+                  Limpiar filtros
+                </button>
+                <Button href="/registrar-mi-negocio" variant="primary" className="w-full sm:w-auto">
+                  Registrar mi negocio
+                </Button>
+              </div>
             </Card>
           )}
         </div>

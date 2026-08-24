@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BusinessCard } from "@/components/marketplace/BusinessCard";
 import { Button } from "@/components/ui/Button";
@@ -6,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getPublishedBusinessesByCategory } from "@/lib/data/businesses";
 import { categories } from "@/lib/demo-data";
+import { JsonLd, breadcrumbJsonLd, collectionPageJsonLd } from "@/lib/jsonLd";
 import { createPublicMetadata } from "@/lib/seo";
 
 type PageProps = {
@@ -20,9 +22,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const category = categories.find((item) => item.slug === slug);
 
   return createPublicMetadata({
-    title: category ? `${category.name} | Casero Cancún` : "Categoría no encontrada | Casero Cancún",
+    title: category ? category.name + " en Cancún y Riviera Maya | Casero Cancún" : "Categoría no encontrada | Casero Cancún",
     description: category?.description ?? "Explora proveedores y negocios locales publicados por categoría en Casero Cancún.",
-    path: `/categoria/${slug}`,
+    path: "/categoria/" + slug,
   });
 }
 
@@ -35,9 +37,33 @@ export default async function CategoryPage({ params }: PageProps) {
   }
 
   const relatedBusinesses = await getPublishedBusinessesByCategory(category.slug);
+  const path = "/categoria/" + category.slug;
 
   return (
     <section className="container-page py-8 sm:py-12">
+      <JsonLd
+        data={[
+          collectionPageJsonLd({
+            title: category.name + " en Cancún y Riviera Maya",
+            description: category.description,
+            path,
+            businesses: relatedBusinesses,
+          }),
+          breadcrumbJsonLd([
+            { name: "Inicio", path: "/" },
+            { name: "Categorías", path: "/categorias" },
+            { name: category.name, path },
+          ]),
+        ]}
+      />
+      <nav className="mb-5 text-sm font-semibold text-casero-text/55" aria-label="Breadcrumb">
+        <Link href="/" className="hover:text-casero-green">Inicio</Link>
+        <span className="mx-2">&gt;</span>
+        <Link href="/categorias" className="hover:text-casero-green">Categorías</Link>
+        <span className="mx-2">&gt;</span>
+        <span className="text-casero-dark">{category.name}</span>
+      </nav>
+
       <SectionHeader eyebrow="Categoría" title={category.name} description={category.description} level={1} />
 
       <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5">

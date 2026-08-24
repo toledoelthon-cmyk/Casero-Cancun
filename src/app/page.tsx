@@ -1,86 +1,99 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BadgeCheck, Car, HeartHandshake, MapPin, MessageCircle, Search, ShieldCheck, Store, Wrench } from "lucide-react";
+import {
+  BadgeCheck,
+  Car,
+  ChevronRight,
+  HeartHandshake,
+  MapPin,
+  MessageCircle,
+  Search,
+  ShieldCheck,
+  Store,
+  Wrench,
+} from "lucide-react";
 import { CategoryCard } from "@/components/marketplace/CategoryCard";
 import { TrustFeatureCard } from "@/components/marketplace/TrustFeatureCard";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/jsonLd";
 import { autoServiceCategories, petCategories, serviceCategories, storeCategories } from "@/lib/demo-data";
 import { createPublicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPublicMetadata({
-  title: "Casero Cancún | Servicios locales, mascotas, auto, tiendas y materiales",
+  title: "Servicios y negocios confiables en Cancún y Riviera Maya | Casero Cancún",
   description:
-    "Directorio local para encontrar servicios del hogar, tiendas de materiales, proveedores para mascotas y servicios automotrices en Cancún.",
+    "Encuentra proveedores locales, tiendas, mascotas y servicios para tu auto en Cancún, Puerto Morelos, Playa del Carmen y Tulum. Contacta directo por WhatsApp.",
   path: "/",
 });
 
 const mainSections = [
   {
     title: "Servicios del hogar",
-    text: "Plomería, electricidad, limpieza, pintura, mantenimiento, aire acondicionado y más.",
+    text: "Reparaciones, limpieza y mantenimiento.",
     href: "/servicios-del-hogar",
-    button: "Buscar servicios del hogar",
     icon: Wrench,
   },
   {
     title: "Tiendas y materiales",
-    text: "Ferreterías, materiales de construcción, herramientas, refacciones y suministros locales.",
+    text: "Ferreterías, materiales y productos.",
     href: "/tiendas-y-materiales",
-    button: "Ver tiendas y materiales",
     icon: Store,
   },
   {
     title: "Mascotas",
-    text: "Veterinarias, estética canina, alimentos, accesorios, paseadores y servicios para mascotas.",
+    text: "Veterinarias, estética y cuidado.",
     href: "/mascotas",
-    button: "Ver servicios para mascotas",
     icon: HeartHandshake,
   },
   {
     title: "Servicios para tu auto",
-    text: "Talleres, lavado, grúas, llanteras, diagnóstico, refacciones y servicios automotrices.",
+    text: "Mecánicos, lavado, grúas y más.",
     href: "/servicios-para-tu-auto",
-    button: "Ver servicios para tu auto",
     icon: Car,
   },
 ];
 
+const quickSearchLinks = [
+  { label: "Plomero", href: "/categoria/plomeria" },
+  { label: "Electricista", href: "/categoria/electricidad" },
+  { label: "Aire acondicionado", href: "/categoria/aire-acondicionado" },
+  { label: "Ferretería", href: "/categoria/ferreterias" },
+  { label: "Veterinaria", href: "/categoria/veterinarias" },
+  { label: "Mecánico", href: "/categoria/talleres-mecanicos" },
+];
+
+const coverageZones = [
+  { label: "Cancún", href: "/ubicacion/cancun" },
+  { label: "Puerto Morelos", href: "/ubicacion/puerto-morelos" },
+  { label: "Playa del Carmen", href: "/ubicacion/playa-del-carmen" },
+  { label: "Tulum", href: "/ubicacion/tulum" },
+];
+
+const clientSteps = ["Busca lo que necesitas", "Elige un proveedor", "Contacta por WhatsApp"];
+const providerSteps = ["Registra tu negocio", "Revisamos tu publicación", "Recibe contactos por WhatsApp"];
+
 const trustFeatures = [
   {
     icon: Wrench,
-    title: "Negocios locales",
-    text: "Servicios, tiendas, mascotas y soluciones para auto con enfoque en Cancún y zonas cercanas.",
+    title: "Proveedores locales",
+    text: "Explora servicios, tiendas y negocios enfocados en Cancún y Riviera Maya.",
   },
   {
     icon: MessageCircle,
     title: "WhatsApp directo",
-    text: "Contacta sin intermediarios para pedir precio, disponibilidad o agendar una visita.",
-  },
-  {
-    icon: MapPin,
-    title: "Zonas claras",
-    text: "Identifica si atienden Centro, Zona Hotelera, Huayacán, Cumbres, Puerto Cancún y más.",
+    text: "Pregunta precio, disponibilidad o agenda sin intermediarios.",
   },
   {
     icon: BadgeCheck,
-    title: "Perfiles revisados",
-    text: "La plataforma está preparada para publicar perfiles aprobados y negocios verificados.",
+    title: "Publicaciones revisadas",
+    text: "Los perfiles publicados pasan por revisión antes de aparecer en el directorio.",
   },
-];
-
-const steps = [
-  "Busca la solución",
-  "Revisa perfiles y zonas",
-  "Contacta por WhatsApp",
-  "Agenda directamente con el negocio",
-];
-
-const quickSearchLinks = [
-  { label: "Plomería", href: "/categoria/plomeria" },
-  { label: "Ferreterías", href: "/categoria/ferreterias" },
-  { label: "Veterinarias", href: "/categoria/veterinarias" },
-  { label: "Talleres mecánicos", href: "/categoria/talleres-mecanicos" },
+  {
+    icon: MapPin,
+    title: "Cobertura por zonas",
+    text: "Filtra por ciudad o zona de atención para decidir más rápido.",
+  },
 ];
 
 export default function Home() {
@@ -97,29 +110,27 @@ export default function Home() {
 
   return (
     <>
-      <section className="overflow-hidden border-b border-casero-dark/10 bg-white">
-        <div className="container-page grid items-center gap-8 py-8 sm:py-12 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1.05fr_0.95fr]">
+      <JsonLd data={[websiteJsonLd(), organizationJsonLd()]} />
+
+      <section className="border-b border-casero-dark/10 bg-white">
+        <div className="container-page grid items-center gap-8 py-8 sm:py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
           <div>
             <span className="inline-flex rounded-md bg-casero-beige px-3 py-1 text-sm font-bold text-casero-green">
-              Directorio local para Cancún
+              Cancún y Riviera Maya
             </span>
             <h1 className="mt-4 max-w-4xl font-heading text-3xl font-extrabold tracking-normal text-casero-dark sm:text-5xl lg:text-6xl">
-              Servicios, negocios y soluciones locales en Cancún.
+              Encuentra servicios y negocios confiables en Cancún y Riviera Maya
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-casero-text/75 sm:mt-6 sm:text-lg sm:leading-8">
-              Casero Cancún conecta clientes con proveedores locales, tiendas de materiales, negocios de mascotas y
-              servicios automotrices confiables.
+              Busca proveedores locales en Cancún, Puerto Morelos, Playa del Carmen y Tulum. Compara opciones y contacta directo por WhatsApp.
             </p>
             <div className="mt-6 grid gap-3 sm:mt-8 sm:flex sm:flex-wrap">
               <Button href="/buscar-servicios" className="w-full sm:w-auto">
                 <Search className="h-4 w-4" aria-hidden />
-                Buscar en el directorio
+                Buscar servicio
               </Button>
               <Button href="/registrar-mi-negocio" variant="secondary" className="w-full sm:w-auto">
-                Registrar negocio
-              </Button>
-              <Button href="/categorias" variant="outline" className="w-full sm:w-auto">
-                Ver categorías
+                Registrar mi negocio
               </Button>
             </div>
           </div>
@@ -128,21 +139,25 @@ export default function Home() {
             <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
               <div>
                 <p className="text-sm text-white/60">Búsqueda rápida</p>
-                <p className="font-heading text-xl font-bold">Hogar, materiales, mascotas y auto</p>
+                <p className="font-heading text-xl font-bold">¿Qué necesitas hoy?</p>
               </div>
               <ShieldCheck className="h-8 w-8 text-casero-orange" aria-hidden />
             </div>
-            <div className="mt-5 grid gap-3">
+            <Link
+              href="/buscar-servicios"
+              className="mt-5 flex min-h-12 items-center gap-3 rounded-md bg-white px-4 py-3 text-casero-text shadow-sm transition hover:bg-casero-beige focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-orange"
+            >
+              <Search className="h-5 w-5 text-casero-green" aria-hidden />
+              <span className="font-semibold text-casero-text/55">¿Qué necesitas hoy?</span>
+            </Link>
+            <div className="mt-4 flex flex-wrap gap-2">
               {quickSearchLinks.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex cursor-pointer items-center gap-3 rounded-md bg-white/10 p-3 transition hover:bg-white/15 active:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-orange sm:p-4"
+                  className="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-orange"
                 >
-                  <span className="grid h-9 w-9 place-items-center rounded-md bg-white/10">
-                    <Store className="h-4 w-4 text-casero-orange" aria-hidden />
-                  </span>
-                  <span className="font-semibold">{item.label}</span>
+                  {item.label}
                 </Link>
               ))}
             </div>
@@ -150,11 +165,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container-page py-10 sm:py-16">
+      <section id="categorias" className="container-page py-10 sm:py-16">
         <SectionHeader
-          eyebrow="Explora por sección"
-          title="Encuentra lo que necesitas en Cancún"
-          description="Cuatro accesos principales para resolver necesidades de casa, compras locales, mascotas y auto."
+          eyebrow="Explora por área"
+          title="Cuatro formas simples de empezar"
+          description="Elige el tipo de ayuda que necesitas y ve directo a negocios publicados."
         />
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {mainSections.map((section) => {
@@ -164,15 +179,15 @@ export default function Home() {
               <Link
                 key={section.href}
                 href={section.href}
-                className="group flex h-full cursor-pointer flex-col rounded-lg border border-casero-dark/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/40 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green sm:p-5"
+                className="group flex h-full cursor-pointer flex-col rounded-lg border border-casero-dark/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/40 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
               >
                 <span className="grid h-12 w-12 place-items-center rounded-md bg-casero-beige text-casero-green">
                   <Icon className="h-6 w-6" aria-hidden />
                 </span>
                 <h2 className="mt-5 font-heading text-xl font-extrabold text-casero-dark">{section.title}</h2>
                 <p className="mt-3 flex-1 text-sm leading-6 text-casero-text/70">{section.text}</p>
-                <span className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-casero-dark/15 bg-white px-5 py-2.5 text-sm font-semibold text-casero-dark transition group-hover:border-casero-green group-hover:text-casero-green">
-                  {section.button}
+                <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-casero-green">
+                  Ver opciones <ChevronRight className="h-4 w-4" aria-hidden />
                 </span>
               </Link>
             );
@@ -180,36 +195,70 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="zonas" className="bg-casero-beige/55 py-10 sm:py-16">
+        <div className="container-page">
+          <SectionHeader
+            eyebrow="Zonas"
+            title="Zonas de cobertura"
+            description="Encuentra proveedores y negocios locales en las principales zonas de la Riviera Maya."
+          />
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {coverageZones.map((zone) => (
+              <Link
+                key={zone.href}
+                href={zone.href}
+                className="flex min-h-20 items-center justify-between rounded-lg border border-casero-dark/10 bg-white p-4 font-heading text-lg font-extrabold text-casero-dark shadow-sm transition hover:border-casero-green/40 hover:text-casero-green hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
+              >
+                <span>{zone.label}</span>
+                <MapPin className="h-5 w-5 text-casero-orange" aria-hidden />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="container-page py-10 sm:py-16">
-        <div className="rounded-lg border border-casero-green/20 bg-white p-5 shadow-sm sm:p-8 md:p-10">
-          <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-casero-green">Para proveedores</p>
-              <h2 className="mt-3 font-heading text-2xl font-extrabold text-casero-dark sm:text-3xl">
-                Tienes un negocio o prestas servicios en Cancun?
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-casero-text/70 sm:text-base sm:leading-7">
-                Crea tu cuenta de proveedor, registra tu negocio y administra tu perfil desde tu panel.
-              </p>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-lg border border-casero-dark/10 bg-white p-5 shadow-sm sm:p-6">
+            <h2 className="font-heading text-2xl font-extrabold text-casero-dark">¿Cómo funciona?</h2>
+            <div className="mt-5 grid gap-3">
+              {clientSteps.map((step, index) => (
+                <div key={step} className="flex items-center gap-3 rounded-md bg-casero-background p-3">
+                  <span className="grid h-9 w-9 place-items-center rounded-md bg-casero-green font-heading font-bold text-white">{index + 1}</span>
+                  <span className="font-semibold text-casero-dark">{step}</span>
+                </div>
+              ))}
             </div>
-            <div className="grid gap-3 sm:flex lg:flex-col xl:flex-row">
-              <Button href="/proveedor/login" variant="secondary" className="w-full sm:w-auto">
-                Crear cuenta de proveedor
-              </Button>
-              <Button href="/registrar-mi-negocio" variant="outline" className="w-full sm:w-auto">
+          </div>
+
+          <div className="rounded-lg border border-casero-green/20 bg-white p-5 shadow-sm sm:p-6">
+            <h2 className="font-heading text-2xl font-extrabold text-casero-dark">¿Tienes un negocio o prestas servicios?</h2>
+            <div className="mt-5 grid gap-3">
+              {providerSteps.map((step, index) => (
+                <div key={step} className="flex items-center gap-3 rounded-md bg-casero-background p-3">
+                  <span className="grid h-9 w-9 place-items-center rounded-md bg-casero-orange font-heading font-bold text-casero-dark">{index + 1}</span>
+                  <span className="font-semibold text-casero-dark">{step}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
+              <Button href="/registrar-mi-negocio" className="w-full sm:w-auto" variant="primary">
                 Registrar mi negocio
+              </Button>
+              <Button href="/proveedor/login" variant="outline" className="w-full sm:w-auto">
+                Proveedores
               </Button>
             </div>
           </div>
         </div>
       </section>
-      <section className="bg-casero-beige/55 py-10 sm:py-16">
+
+      <section className="bg-white py-10 sm:py-16">
         <div className="container-page">
           <SectionHeader
             eyebrow="Confianza"
-            title="Una plataforma pensada para decidir rápido y con claridad"
-            description="Información práctica para contactar al negocio correcto sin perder tiempo entre resultados genéricos."
+            title="Decide rápido y contacta claro"
+            description="Información práctica para explorar, comparar y contactar sin perder tiempo."
           />
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {trustFeatures.map((feature) => (
@@ -220,7 +269,7 @@ export default function Home() {
       </section>
 
       <section className="container-page py-10 sm:py-16">
-        <SectionHeader eyebrow="Categorías destacadas" title="Servicios locales Cancún para cada necesidad" />
+        <SectionHeader eyebrow="Categorías populares" title="Búsquedas frecuentes en Casero Cancún" />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...highlightedServices, ...highlightedStores, ...highlightedPets, ...highlightedAuto].map((category) => (
             <CategoryCard key={category.slug} category={category} />
@@ -228,34 +277,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-white py-10 sm:py-16">
-        <div className="container-page">
-          <SectionHeader eyebrow="Cómo funciona" title="De la búsqueda al contacto directo" align="center" />
-          <div className="mt-10 grid gap-4 md:grid-cols-4">
-            {steps.map((step, index) => (
-              <div key={step} className="rounded-lg border border-casero-dark/10 bg-casero-background p-5">
-                <span className="grid h-10 w-10 place-items-center rounded-md bg-casero-green font-heading font-bold text-white">
-                  {index + 1}
-                </span>
-                <h3 className="mt-4 font-heading text-lg font-bold text-casero-dark">{step}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="container-page py-10 sm:py-16">
         <div className="rounded-lg bg-casero-dark p-5 text-white shadow-soft sm:p-8 md:p-10">
           <p className="font-heading text-2xl font-extrabold sm:text-3xl">Haz que más clientes encuentren tu negocio</p>
           <p className="mt-3 max-w-3xl text-white/70">
-            Registra tu servicio, tienda, negocio de mascotas o servicio automotriz en una plataforma local creada para Cancún.
+            Registra tu servicio, tienda, negocio de mascotas o servicio automotriz en una plataforma local creada para Casero Cancún y Riviera Maya.
           </p>
           <Button href="/registrar-mi-negocio" className="mt-6 w-full sm:w-auto" variant="primary">
-            Registrar negocio
+            Registrar mi negocio
           </Button>
         </div>
       </section>
     </>
   );
 }
-

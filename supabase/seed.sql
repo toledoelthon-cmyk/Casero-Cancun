@@ -178,6 +178,10 @@ insert into public.locations (
   slug
 )
 values
+  ('Cancún', 'cancun'),
+  ('Puerto Morelos', 'puerto-morelos'),
+  ('Playa del Carmen', 'playa-del-carmen'),
+  ('Tulum', 'tulum'),
   ('Cancún Centro', 'cancun-centro'),
   ('Cancún y alrededores', 'cancun-y-alrededores'),
   ('Zona Hotelera', 'zona-hotelera'),
@@ -193,8 +197,7 @@ values
   ('Av. Kabah', 'av-kabah'),
   ('Av. Nichupté', 'av-nichupte'),
   ('Av. López Portillo', 'av-lopez-portillo'),
-  ('Costa Mujeres', 'costa-mujeres'),
-  ('Puerto Morelos', 'puerto-morelos')
+  ('Costa Mujeres', 'costa-mujeres')
 on conflict (slug) do update
 set
   name = excluded.name;

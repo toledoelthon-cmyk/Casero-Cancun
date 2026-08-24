@@ -13,6 +13,7 @@ const staticRoutes = [
   "/mascotas",
   "/servicios-para-tu-auto",
   "/categorias",
+  "/ubicaciones",
   "/planes",
   "/registrar-mi-negocio",
   "/contacto",

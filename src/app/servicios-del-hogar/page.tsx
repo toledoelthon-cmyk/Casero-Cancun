@@ -8,9 +8,9 @@ type PageProps = {
 };
 
 export const metadata: Metadata = createPublicMetadata({
-  title: "Servicios para el hogar en Cancún | Casero Cancún",
+  title: "Servicios para el hogar en Cancún y Riviera Maya | Casero Cancún",
   description:
-    "Encuentra plomería, electricidad, limpieza, aire acondicionado, pintura y mantenimiento para hogares y propiedades en Cancún.",
+    "Encuentra plomería, electricidad, limpieza, aire acondicionado, pintura y mantenimiento para hogares y propiedades en Cancún y Riviera Maya.",
   path: "/servicios-del-hogar",
 });
 
@@ -24,7 +24,7 @@ export default async function HomeServicesPage({ searchParams }: PageProps) {
     <SectionBusinessPage
       section="home_services"
       eyebrow="Servicios del hogar"
-      title="Servicios del hogar en Cancún"
+      title="Servicios del hogar en Cancún y Riviera Maya"
       description="Plomería, electricidad, limpieza, aire acondicionado y mantenimiento local para hogares y propiedades."
       categories={serviceCategories}
       selectedLocationSlug={ubicacion ?? "all"}

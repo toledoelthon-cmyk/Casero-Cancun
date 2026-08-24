@@ -423,6 +423,10 @@ export const autoServiceCategories: DemoCategory[] = [
 export const categories = [...serviceCategories, ...storeCategories, ...petCategories, ...autoServiceCategories];
 
 export const locations: DemoLocation[] = [
+  { name: "Cancún", slug: "cancun" },
+  { name: "Puerto Morelos", slug: "puerto-morelos" },
+  { name: "Playa del Carmen", slug: "playa-del-carmen" },
+  { name: "Tulum", slug: "tulum" },
   { name: "Cancún Centro", slug: "cancun-centro" },
   { name: "Cancún y alrededores", slug: "cancun-y-alrededores" },
   { name: "Zona Hotelera", slug: "zona-hotelera" },
@@ -439,7 +443,6 @@ export const locations: DemoLocation[] = [
   { name: "Av. Nichupté", slug: "av-nichupte" },
   { name: "Av. López Portillo", slug: "av-lopez-portillo" },
   { name: "Costa Mujeres", slug: "costa-mujeres" },
-  { name: "Puerto Morelos", slug: "puerto-morelos" },
 ];
 
 export const plans: DemoPlan[] = [
