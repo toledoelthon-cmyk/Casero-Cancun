@@ -24,13 +24,6 @@ const mainSections = [
   { title: "Servicios para tu auto", text: "Mecánicos, lavado, grúas y más.", href: "/servicios-para-tu-auto", icon: Car },
 ];
 
-const coverageZones = [
-  { label: "Cancún", href: "/ubicacion/cancun" },
-  { label: "Puerto Morelos", href: "/ubicacion/puerto-morelos" },
-  { label: "Playa del Carmen", href: "/ubicacion/playa-del-carmen" },
-  { label: "Tulum", href: "/ubicacion/tulum" },
-];
-
 const clientSteps = ["Busca lo que necesitas", "Elige un proveedor", "Contacta por WhatsApp"];
 const providerSteps = ["Registra tu negocio", "Revisamos tu publicación", "Recibe contactos por WhatsApp"];
 
@@ -70,20 +63,6 @@ export default function Home() {
               </Link>
             );
           })}
-        </div>
-      </section>
-
-      <section id="zonas" className="bg-casero-beige/55 py-10 sm:py-16">
-        <div className="container-page">
-          <SectionHeader eyebrow="Zonas" title="Zonas de cobertura" description="Encuentra proveedores locales en Cancún y Riviera Maya." />
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {coverageZones.map((zone) => (
-              <Link key={zone.href} href={zone.href} className="flex min-h-20 items-center justify-between rounded-lg border border-casero-dark/10 bg-white p-4 font-heading text-lg font-extrabold text-casero-dark shadow-sm transition hover:border-casero-green/40 hover:text-casero-green hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green">
-                <span>{zone.label}</span>
-                <MapPin className="h-5 w-5 text-casero-orange" aria-hidden />
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
