@@ -22,7 +22,6 @@ const marketplaceCards = [
     image: "/images/hero/hero-main-service-card.webp",
     alt: "Servicio local de plomería atendiendo una reparación en casa",
     position: "object-[42%_center]",
-    safeFrame: true,
   },
   {
     title: "Aire y electricidad",
@@ -110,53 +109,34 @@ function MarketplaceCard({ card }: { card: MarketplaceCard }) {
   return (
     <Link
       href={card.href}
-      className="group overflow-hidden rounded-[1.1rem] border border-white/70 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
+      className="group block h-full overflow-hidden rounded-[1.1rem] border border-white/70 bg-casero-dark shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
     >
-      <article className="grid h-full overflow-hidden rounded-[1.1rem] bg-white">
-        <div className="relative aspect-[16/10] min-h-[188px] overflow-hidden bg-casero-dark xl:min-h-[215px]">
-          {card.safeFrame ? (
-            <>
-              <Image
-                src={card.image}
-                alt=""
-                fill
-                sizes="(min-width: 1280px) 23vw, (min-width: 1024px) 30vw, 100vw"
-                className={"scale-110 object-cover opacity-55 blur-md " + card.position}
-                aria-hidden
-              />
-              <Image
-                src={card.image}
-                alt={card.alt}
-                fill
-                sizes="(min-width: 1280px) 23vw, (min-width: 1024px) 30vw, 100vw"
-                className="object-contain p-2.5"
-              />
-            </>
-          ) : (
-            <Image
-              src={card.image}
-              alt={card.alt}
-              fill
-              sizes="(min-width: 1280px) 23vw, (min-width: 1024px) 30vw, 100vw"
-              className={"object-cover " + card.position}
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/96 via-casero-dark/44 to-casero-dark/12" />
-          <span className="absolute left-3 top-3 rounded-full bg-casero-dark/88 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
+      <article className="h-full overflow-hidden rounded-[1.1rem] bg-casero-dark">
+        <div className="relative h-full min-h-[205px] overflow-hidden bg-casero-dark sm:min-h-[220px] lg:min-h-[184px] xl:min-h-[198px]">
+          <Image
+            src={card.image}
+            alt={card.alt}
+            fill
+            sizes="(min-width: 1280px) 23vw, (min-width: 1024px) 30vw, 100vw"
+            className={"object-cover transition duration-500 group-hover:scale-[1.03] " + card.position}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/38 to-black/10" />
+          <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-black/95 via-black/68 to-transparent" />
+          <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
             {card.badge}
           </span>
-          <div className="absolute inset-x-0 bottom-0 p-3 text-white">
-            <div className="rounded-xl bg-casero-dark/74 p-3 backdrop-blur-sm">
+          <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-3.5">
+            <div className="rounded-xl bg-slate-950/72 p-3 shadow-sm backdrop-blur-sm">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h2 className="font-heading text-xl font-extrabold leading-tight text-white">{card.title}</h2>
-                  <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-white/94">{card.text}</p>
+                  <h2 className="font-heading text-lg font-extrabold leading-tight text-white sm:text-xl">{card.title}</h2>
+                  <p className="mt-1 line-clamp-2 text-sm font-bold leading-5 text-white">{card.text}</p>
                 </div>
-                <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-casero-green text-white shadow-sm">
+                <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-emerald-700 text-white shadow-sm ring-1 ring-white/20">
                   <MessageCircle className="h-5 w-5" aria-hidden />
                 </span>
               </div>
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/18 px-2.5 py-1 text-xs font-bold text-white">
+              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/92 px-2.5 py-1 text-xs font-extrabold text-casero-dark shadow-sm">
                 <MapPin className="h-3.5 w-3.5" aria-hidden />
                 {card.zone}
               </p>
@@ -167,10 +147,9 @@ function MarketplaceCard({ card }: { card: MarketplaceCard }) {
     </Link>
   );
 }
-
 function MarketplacePreview() {
   return (
-    <div className="grid min-w-0 gap-4">
+    <div className="grid min-w-0 gap-3">
       <div className="flex flex-wrap items-end justify-between gap-3 px-1">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-casero-text/55">Vista previa del directorio</p>
@@ -182,9 +161,9 @@ function MarketplacePreview() {
         </span>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         {marketplaceCards.map((card, index) => (
-          <div key={card.href} className={index === 4 ? "sm:col-span-2 lg:col-span-1" : undefined}>
+          <div key={card.href} className={index === 4 ? "sm:col-span-2 lg:col-span-1" : "h-full"}>
             <MarketplaceCard card={card} />
           </div>
         ))}
@@ -302,7 +281,7 @@ export function HomeHero() {
           fill
           priority
           sizes="100vw"
-          className="hidden object-cover object-center opacity-48 md:block"
+          className="hidden object-cover object-center opacity-28 blur-[1px] md:block"
           aria-hidden
         />
         <Image
@@ -310,28 +289,29 @@ export function HomeHero() {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover object-center opacity-36 md:hidden"
+          className="object-cover object-center opacity-24 blur-[1px] md:hidden"
           aria-hidden
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-casero-background via-casero-background/92 to-casero-background/52" aria-hidden />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/18 via-casero-background/12 to-casero-background" aria-hidden />
+        <div className="absolute inset-0 bg-gradient-to-r from-casero-background via-casero-background/95 to-casero-background/78" aria-hidden />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/42 via-casero-background/28 to-casero-background" aria-hidden />
+        <div className="absolute inset-y-0 right-0 w-full bg-gradient-to-l from-casero-background/72 via-casero-background/34 to-transparent md:w-2/3" aria-hidden />
 
-        <div className="relative z-10 mx-auto w-full max-w-[1536px] px-4 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-14 xl:px-12 xl:py-16">
-          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center xl:gap-12">
+        <div className="relative z-10 mx-auto w-full max-w-[1536px] px-4 py-7 sm:px-6 sm:py-9 lg:px-10 lg:py-11 xl:px-12 xl:py-12">
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center xl:gap-9">
             <div className="max-w-[720px]">
               <span className="inline-flex items-center gap-2 rounded-full bg-casero-green px-4 py-2 text-sm font-extrabold text-white shadow-soft">
                 <Star className="h-4 w-4 fill-current" aria-hidden />
                 Marketplace local para Cancún y Riviera Maya
               </span>
 
-              <h1 className="mt-5 max-w-[13ch] font-heading text-[clamp(2.8rem,4.8vw,5.5rem)] font-extrabold leading-[0.98] tracking-normal text-casero-dark">
+              <h1 className="mt-4 max-w-[13ch] font-heading text-[clamp(2.8rem,4.8vw,5.5rem)] font-extrabold leading-[0.98] tracking-normal text-casero-dark">
                 Servicios y negocios locales en un solo lugar
               </h1>
-              <p className="mt-5 max-w-[640px] text-lg font-medium leading-8 text-casero-text/78 sm:text-xl sm:leading-9">
+              <p className="mt-4 max-w-[640px] text-lg font-medium leading-8 text-casero-text/78 sm:text-xl sm:leading-9">
                 Busca proveedores locales, compara opciones y contacta directo por WhatsApp.
               </p>
 
-              <form action="/buscar-servicios" className="mt-7 max-w-[660px] rounded-[1.2rem] border border-white/70 bg-white/94 p-3 shadow-soft backdrop-blur">
+              <form action="/buscar-servicios" className="mt-5 max-w-[660px] rounded-[1.2rem] border border-white/70 bg-white/94 p-3 shadow-soft backdrop-blur">
                 <label className="sr-only" htmlFor="home-search">Buscar servicio o negocio</label>
                 <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                   <div className="flex min-h-16 min-w-0 items-center gap-3 rounded-xl border border-casero-dark/10 bg-casero-background px-4">
@@ -355,7 +335,7 @@ export function HomeHero() {
                 </div>
               </form>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap">
                 <Button href="/buscar-servicios" className="min-h-14 w-full px-7 py-3 text-base sm:w-auto">
                   <Search className="h-5 w-5" aria-hidden />
                   Buscar servicio
