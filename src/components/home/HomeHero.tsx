@@ -22,7 +22,7 @@ const marketplaceCards = [
     image: "/images/hero/hero-main-service-card.webp",
     alt: "Servicio local de plomería atendiendo una reparación en casa",
     featured: true,
-    position: "object-center",
+    position: "object-[42%_center]",
   },
   {
     title: "Aire y electricidad",
@@ -32,7 +32,7 @@ const marketplaceCards = [
     href: "/buscar-servicios?q=aire%20acondicionado",
     image: "/images/hero/hero-card-electricidad.webp",
     alt: "Técnico local revisando instalación eléctrica y aire acondicionado",
-    position: "object-center",
+    position: "object-[45%_center]",
   },
   {
     title: "Ferretería y materiales",
@@ -42,7 +42,7 @@ const marketplaceCards = [
     href: "/buscar-servicios?q=ferreteria",
     image: "/images/hero/hero-card-ferreteria.webp",
     alt: "Ferretería local con materiales y atención a clientes",
-    position: "object-center",
+    position: "object-[40%_center]",
   },
 ];
 
@@ -52,12 +52,14 @@ const miniMarketplaceCards = [
     href: "/buscar-servicios?q=veterinaria",
     image: "/images/hero/hero-card-mascotas.webp",
     alt: "Servicio local de mascotas y veterinaria",
+    position: "object-[center_42%]",
   },
   {
     title: "Mecánico",
     href: "/buscar-servicios?q=mecanico",
     image: "/images/hero/hero-card-auto.webp",
     alt: "Servicio mecánico local para auto",
+    position: "object-[48%_center]",
   },
 ];
 
@@ -67,24 +69,28 @@ const zoneTiles = [
     href: "/ubicacion/cancun",
     image: "/images/zones/zona-cancun-card.webp",
     alt: "Zona de cobertura en Cancún",
+    position: "object-center",
   },
   {
     label: "Puerto Morelos",
     href: "/ubicacion/puerto-morelos",
     image: "/images/zones/zona-puerto-morelos-card.webp",
     alt: "Zona de cobertura en Puerto Morelos",
+    position: "object-[center_45%]",
   },
   {
     label: "Playa del Carmen",
     href: "/ubicacion/playa-del-carmen",
     image: "/images/zones/zona-playa-del-carmen-card.webp",
     alt: "Zona de cobertura en Playa del Carmen",
+    position: "object-center",
   },
   {
     label: "Tulum",
     href: "/ubicacion/tulum",
     image: "/images/zones/zona-tulum-card.webp",
     alt: "Zona de cobertura en Tulum",
+    position: "object-[center_45%]",
   },
 ];
 
@@ -150,20 +156,22 @@ function MarketplacePreview() {
               sizes="(min-width: 1280px) 42vw, (min-width: 1024px) 48vw, 100vw"
               className={"object-cover " + featured.position}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/86 via-casero-dark/22 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <span className="rounded-full bg-casero-green px-3 py-1.5 text-xs font-extrabold shadow-sm">{featured.badge}</span>
-                <span className="grid h-11 w-11 place-items-center rounded-full bg-casero-green text-white shadow-soft">
-                  <MessageCircle className="h-5 w-5" aria-hidden />
-                </span>
+            <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/94 via-casero-dark/48 to-casero-dark/8" />
+            <div className="absolute inset-x-0 bottom-0 p-4 text-white sm:p-5">
+              <div className="rounded-[1.1rem] border border-white/18 bg-casero-dark/68 p-4 shadow-soft backdrop-blur-sm sm:p-5">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span className="rounded-full bg-casero-green px-3 py-1.5 text-xs font-extrabold text-white shadow-sm">{featured.badge}</span>
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-casero-green text-white shadow-soft">
+                    <MessageCircle className="h-5 w-5" aria-hidden />
+                  </span>
+                </div>
+                <h2 className="font-heading text-3xl font-extrabold leading-tight text-white sm:text-4xl">{featured.title}</h2>
+                <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-white/90 sm:text-base">{featured.text}</p>
+                <p className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/14 px-3 py-1.5 text-sm font-bold text-white">
+                  <MapPin className="h-4 w-4" aria-hidden />
+                  {featured.zone}
+                </p>
               </div>
-              <h2 className="font-heading text-3xl font-extrabold leading-tight sm:text-4xl">{featured.title}</h2>
-              <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-white/84 sm:text-base">{featured.text}</p>
-              <p className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-white/82">
-                <MapPin className="h-4 w-4" aria-hidden />
-                {featured.zone}
-              </p>
             </div>
           </div>
         </Link>
@@ -183,7 +191,8 @@ function MarketplacePreview() {
                   sizes="(min-width: 1280px) 28vw, (min-width: 640px) 220px, 100vw"
                   className={"object-cover " + card.position}
                 />
-                <span className="absolute left-3 top-3 rounded-full bg-white/92 px-3 py-1.5 text-xs font-extrabold text-casero-green shadow-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/34 via-transparent to-casero-dark/10" />
+                <span className="absolute left-3 top-3 rounded-full bg-casero-dark/78 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
                   {card.badge}
                 </span>
               </div>
@@ -213,11 +222,13 @@ function MarketplacePreview() {
                 className="group overflow-hidden rounded-[1.1rem] border border-white/70 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
               >
                 <div className="relative aspect-[16/9] min-h-[135px] bg-casero-beige">
-                  <Image src={card.image} alt={card.alt} fill sizes="(min-width: 1280px) 14vw, 50vw" className="object-cover object-center" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/76 via-casero-dark/10 to-transparent" />
+                  <Image src={card.image} alt={card.alt} fill sizes="(min-width: 1280px) 14vw, 50vw" className={"object-cover " + card.position} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/90 via-casero-dark/32 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-3 text-white">
-                    <p className="font-heading text-xl font-extrabold leading-tight">{card.title}</p>
-                    <p className="mt-1 text-xs font-bold text-white/84">Ver opciones</p>
+                    <div className="rounded-xl bg-casero-dark/58 p-2.5 backdrop-blur-sm">
+                      <p className="font-heading text-xl font-extrabold leading-tight text-white">{card.title}</p>
+                      <p className="mt-1 text-xs font-bold text-white/90">Ver opciones</p>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -247,11 +258,13 @@ function ZoneTiles() {
             className="group overflow-hidden rounded-[1.15rem] border border-casero-dark/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
           >
             <div className="relative aspect-[16/10] min-h-[170px] bg-casero-beige lg:min-h-[190px]">
-              <Image src={zone.image} alt={zone.alt} fill sizes="(min-width: 1024px) 23vw, 50vw" className="object-cover object-center" />
-              <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/78 via-casero-dark/18 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                <p className="font-heading text-2xl font-extrabold leading-tight">{zone.label}</p>
-                <p className="mt-1 text-sm font-bold text-white/84">Ver proveedores</p>
+              <Image src={zone.image} alt={zone.alt} fill sizes="(min-width: 1024px) 23vw, 50vw" className={"object-cover " + zone.position} />
+              <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/90 via-casero-dark/34 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-4">
+                <div className="rounded-xl bg-casero-dark/54 p-3 backdrop-blur-sm">
+                  <p className="font-heading text-2xl font-extrabold leading-tight text-white">{zone.label}</p>
+                  <p className="mt-1 text-sm font-bold text-white/90">Ver proveedores</p>
+                </div>
               </div>
             </div>
           </Link>
