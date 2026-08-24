@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 const quickSearchLinks = [
   { label: "Plomero", href: "/buscar-servicios?q=plomero", icon: "/icons/services/icon-plomeria.svg" },
   { label: "Electricista", href: "/buscar-servicios?q=electricista", icon: "/icons/services/icon-electricidad.svg" },
-  { label: "Aire acondicionado", href: "/buscar-servicios?q=aire%20acondicionado", icon: "/icons/services/icon-aire-acondicionado.svg" },
+  { label: "Aire acondicionado", shortLabel: "Aire A/C", href: "/buscar-servicios?q=aire%20acondicionado", icon: "/icons/services/icon-aire-acondicionado.svg", wide: true },
   { label: "Ferretería", href: "/buscar-servicios?q=ferreteria", icon: "/icons/services/icon-ferreteria.svg" },
   { label: "Veterinaria", href: "/buscar-servicios?q=veterinaria", icon: "/icons/services/icon-veterinaria.svg" },
   { label: "Mecánico", href: "/buscar-servicios?q=mecanico", icon: "/icons/services/icon-mecanico.svg" },
@@ -108,17 +108,29 @@ function QuickSearchButtons() {
         <p className="font-heading text-xl font-extrabold text-casero-dark">Búsquedas rápidas</p>
         <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-extrabold text-casero-green shadow-sm">Popular</span>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="flex flex-wrap gap-3">
         {quickSearchLinks.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="group flex min-h-[76px] items-center gap-3 rounded-2xl border border-white/70 bg-white/94 px-3.5 py-3 text-sm font-extrabold text-casero-dark shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green sm:text-[15px]"
+            className={
+              "group flex min-h-[72px] min-w-0 items-center gap-3 rounded-2xl border border-white/70 bg-white/94 px-3.5 py-3 text-sm font-extrabold text-casero-dark shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green sm:text-[15px] " +
+              (item.wide ? "flex-[1.3_1_210px] sm:flex-[1.35_1_240px]" : "flex-[1_1_155px] sm:flex-[1_1_170px]")
+            }
           >
             <span className="grid h-12 w-12 flex-none place-items-center rounded-xl bg-casero-beige transition group-hover:bg-casero-orange/20">
               <Image src={item.icon} alt="" width={28} height={28} aria-hidden />
             </span>
-            <span className="leading-tight">{item.label}</span>
+            <span className="min-w-0 leading-tight">
+              {item.shortLabel ? (
+                <>
+                  <span className="sm:hidden">{item.shortLabel}</span>
+                  <span className="hidden sm:inline whitespace-nowrap">{item.label}</span>
+                </>
+              ) : (
+                item.label
+              )}
+            </span>
           </Link>
         ))}
       </div>
@@ -147,18 +159,26 @@ function MarketplacePreview() {
           href={featured.href}
           className="group overflow-hidden rounded-[1.35rem] border border-white/70 bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
         >
-          <div className="relative aspect-[4/3] min-h-[330px] bg-casero-beige sm:aspect-[16/10] lg:aspect-[4/3] xl:h-full xl:min-h-[520px]">
+          <div className="relative aspect-[4/3] min-h-[330px] overflow-hidden bg-casero-dark sm:aspect-[16/10] lg:aspect-[4/3] xl:h-full xl:min-h-[520px]">
+            <Image
+              src={featured.image}
+              alt=""
+              fill
+              sizes="(min-width: 1280px) 42vw, (min-width: 1024px) 48vw, 100vw"
+              className={"scale-110 object-cover opacity-58 blur-md " + featured.position}
+              aria-hidden
+            />
             <Image
               src={featured.image}
               alt={featured.alt}
               fill
               priority
               sizes="(min-width: 1280px) 42vw, (min-width: 1024px) 48vw, 100vw"
-              className={"object-cover " + featured.position}
+              className="object-contain p-2 sm:p-3"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/94 via-casero-dark/48 to-casero-dark/8" />
+            <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/96 via-casero-dark/44 to-casero-dark/12" />
             <div className="absolute inset-x-0 bottom-0 p-4 text-white sm:p-5">
-              <div className="rounded-[1.1rem] border border-white/18 bg-casero-dark/68 p-4 shadow-soft backdrop-blur-sm sm:p-5">
+              <div className="rounded-[1.1rem] border border-white/18 bg-casero-dark/72 p-4 shadow-soft backdrop-blur-sm sm:p-5">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <span className="rounded-full bg-casero-green px-3 py-1.5 text-xs font-extrabold text-white shadow-sm">{featured.badge}</span>
                   <span className="grid h-11 w-11 place-items-center rounded-full bg-casero-green text-white shadow-soft">
@@ -166,8 +186,8 @@ function MarketplacePreview() {
                   </span>
                 </div>
                 <h2 className="font-heading text-3xl font-extrabold leading-tight text-white sm:text-4xl">{featured.title}</h2>
-                <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-white/90 sm:text-base">{featured.text}</p>
-                <p className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/14 px-3 py-1.5 text-sm font-bold text-white">
+                <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-white/92 sm:text-base">{featured.text}</p>
+                <p className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/16 px-3 py-1.5 text-sm font-bold text-white">
                   <MapPin className="h-4 w-4" aria-hidden />
                   {featured.zone}
                 </p>
@@ -191,8 +211,8 @@ function MarketplacePreview() {
                   sizes="(min-width: 1280px) 28vw, (min-width: 640px) 220px, 100vw"
                   className={"object-cover " + card.position}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/34 via-transparent to-casero-dark/10" />
-                <span className="absolute left-3 top-3 rounded-full bg-casero-dark/78 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/42 via-transparent to-casero-dark/14" />
+                <span className="absolute left-3 top-3 rounded-full bg-casero-dark/82 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
                   {card.badge}
                 </span>
               </div>
@@ -223,11 +243,11 @@ function MarketplacePreview() {
               >
                 <div className="relative aspect-[16/9] min-h-[135px] bg-casero-beige">
                   <Image src={card.image} alt={card.alt} fill sizes="(min-width: 1280px) 14vw, 50vw" className={"object-cover " + card.position} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/90 via-casero-dark/32 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/92 via-casero-dark/38 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-3 text-white">
-                    <div className="rounded-xl bg-casero-dark/58 p-2.5 backdrop-blur-sm">
+                    <div className="rounded-xl bg-casero-dark/64 p-2.5 backdrop-blur-sm">
                       <p className="font-heading text-xl font-extrabold leading-tight text-white">{card.title}</p>
-                      <p className="mt-1 text-xs font-bold text-white/90">Ver opciones</p>
+                      <p className="mt-1 text-xs font-bold text-white/92">Ver opciones</p>
                     </div>
                   </div>
                 </div>
@@ -259,11 +279,11 @@ function ZoneTiles() {
           >
             <div className="relative aspect-[16/10] min-h-[170px] bg-casero-beige lg:min-h-[190px]">
               <Image src={zone.image} alt={zone.alt} fill sizes="(min-width: 1024px) 23vw, 50vw" className={"object-cover " + zone.position} />
-              <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/90 via-casero-dark/34 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-casero-dark/92 via-casero-dark/38 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-4">
-                <div className="rounded-xl bg-casero-dark/54 p-3 backdrop-blur-sm">
+                <div className="rounded-xl bg-casero-dark/62 p-3 backdrop-blur-sm">
                   <p className="font-heading text-2xl font-extrabold leading-tight text-white">{zone.label}</p>
-                  <p className="mt-1 text-sm font-bold text-white/90">Ver proveedores</p>
+                  <p className="mt-1 text-sm font-bold text-white/92">Ver proveedores</p>
                 </div>
               </div>
             </div>
