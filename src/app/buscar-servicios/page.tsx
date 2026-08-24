@@ -51,13 +51,13 @@ export default async function SearchServicesPage({ searchParams }: PageProps) {
               </button>
             </div>
           </form>
-          <div className="mt-4 flex flex-wrap gap-2 text-xs font-extrabold text-white">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-black/42 px-3 py-1.5 backdrop-blur-sm">
+          <div className="mt-4 flex flex-wrap gap-2 text-xs font-extrabold text-casero-dark">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-casero-green/10 px-3 py-1.5 text-emerald-800 ring-1 ring-casero-green/15">
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
               Publicaciones revisadas
             </span>
-            <span className="rounded-full bg-black/42 px-3 py-1.5 backdrop-blur-sm">WhatsApp visible</span>
-            <span className="rounded-full bg-black/42 px-3 py-1.5 backdrop-blur-sm">Proveedores locales</span>
+            <span className="rounded-full bg-white px-3 py-1.5 text-casero-dark shadow-sm ring-1 ring-casero-dark/10">WhatsApp visible</span>
+            <span className="rounded-full bg-white px-3 py-1.5 text-casero-dark shadow-sm ring-1 ring-casero-dark/10">Proveedores locales</span>
           </div>
         </PublicPageHero>
 
