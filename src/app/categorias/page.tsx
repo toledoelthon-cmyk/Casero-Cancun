@@ -6,28 +6,28 @@ import { createPublicMetadata } from "@/lib/seo";
 const categorySections = [
   {
     title: "Servicios del hogar",
-    description: "Plomería, electricidad, limpieza, aire acondicionado y mantenimiento para casa o negocio.",
+    description: "Reparaciones, limpieza y mantenimiento.",
     href: "/servicios-del-hogar",
     image: "/images/categories/categoria-servicios-hogar-cover.webp",
     imageAlt: "Servicios del hogar en Cancún",
   },
   {
     title: "Tiendas y materiales",
-    description: "Ferreterías, material eléctrico, plomería, pinturas y productos cerca de tu zona.",
+    description: "Ferreterías, materiales y productos.",
     href: "/tiendas-y-materiales",
     image: "/images/categories/categoria-materiales-cover.webp",
     imageAlt: "Tiendas de materiales y ferreterías locales",
   },
   {
     title: "Mascotas",
-    description: "Veterinarias, estética, alimento, paseos y cuidado para mascotas en la Riviera Maya.",
+    description: "Veterinarias, estética y cuidado.",
     href: "/mascotas",
     image: "/images/categories/categoria-mascotas-cover.webp",
     imageAlt: "Servicios para mascotas en Cancún",
   },
   {
     title: "Servicios para tu auto",
-    description: "Mecánicos, eléctrico automotriz, lavado, llantas, grúas y mantenimiento vehicular.",
+    description: "Mecánicos, lavado, grúas y más.",
     href: "/servicios-para-tu-auto",
     image: "/images/categories/categoria-auto-cover.webp",
     imageAlt: "Servicios automotrices locales",

@@ -11,6 +11,13 @@ const zoneImages: Record<string, string> = {
   tulum: "/images/zones/zona-tulum-card.webp",
 };
 
+const zoneDescriptions: Record<string, string> = {
+  cancun: "Proveedores locales en Cancún.",
+  "puerto-morelos": "Servicios disponibles en Puerto Morelos.",
+  "playa-del-carmen": "Proveedores en Playa del Carmen.",
+  tulum: "Servicios y negocios en Tulum.",
+};
+
 const featuredZones = locations.filter((location) => Object.keys(zoneImages).includes(location.slug));
 
 export const metadata: Metadata = createPublicMetadata({
@@ -37,7 +44,7 @@ export default function LocationsPage() {
             <VisualLinkCard
               key={location.slug}
               title={location.name}
-              description="Encuentra proveedores y negocios publicados que atienden esta zona."
+              description={zoneDescriptions[location.slug]}
               href={`/ubicacion/${location.slug}`}
               image={zoneImages[location.slug]}
               imageAlt={`Zona de cobertura en ${location.name}`}
