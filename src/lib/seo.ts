@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { brandAssets } from "@/lib/brand";
 
 export const siteName = "Casero Cancún";
-export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://caserocancun.com").replace(/\/$/, "");
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://caserocancun.com";
+export const siteUrl = configuredSiteUrl.replace(/\/$/, "");
 
 export const defaultDescription =
-  "Encuentra servicios del hogar, proveedores locales, tiendas de materiales, mascotas y servicios automotrices en Cancún con contacto directo.";
+  "Directorio local de servicios, negocios y proveedores en Cancún y Riviera Maya con contacto directo por WhatsApp.";
 
 export function absoluteUrl(path = "/") {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
@@ -17,7 +18,7 @@ export const defaultOgImage = {
   url: absoluteUrl(defaultOgImagePath),
   width: 1200,
   height: 630,
-  alt: "Casero Cancún | Servicios, proveedores y negocios locales en Cancún",
+  alt: "Casero Cancún | Servicios, negocios y proveedores en Cancún y Riviera Maya",
 };
 
 type PublicMetadataOptions = {
@@ -36,9 +37,14 @@ export function createPublicMetadata({
   const url = absoluteUrl(path);
 
   return {
+    metadataBase: new URL(siteUrl),
     title,
     description,
     applicationName: siteName,
+    generator: "Next.js",
+    creator: siteName,
+    publisher: siteName,
+    manifest: "/manifest.webmanifest",
     appleWebApp: {
       capable: true,
       title: siteName,
@@ -53,6 +59,16 @@ export function createPublicMetadata({
           url: brandAssets.favicon,
           type: "image/png",
         },
+        {
+          url: "/icons/icon-192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          url: "/icons/icon-512.png",
+          sizes: "512x512",
+          type: "image/png",
+        },
       ],
       shortcut: [brandAssets.favicon],
       apple: [
@@ -64,6 +80,10 @@ export function createPublicMetadata({
     },
     alternates: {
       canonical: url,
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
     openGraph: {
       title,
@@ -89,3 +109,6 @@ export const privatePageMetadata: Pick<Metadata, "robots"> = {
     follow: false,
   },
 };
+
+
+

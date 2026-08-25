@@ -150,5 +150,6 @@
 - Aplicar y probar RLS final en Supabase con usuarios anon, provider y admin.
 - Confirmar que el bucket `business-media` no permite delete/update anon.
 - Crear checklist manual en movil para registro, busqueda, perfil publico y admin.
-- Confirmar variables de entorno de Vercel y retirar `NEXT_PUBLIC_ADMIN_ACCESS_KEY` si ya no se usa.
+- Confirmar variables de entorno de Vercel contra `.env.example` y retirar variables antiguas que ya no participen en producción.
 - Revisar textos legales y datos de contacto definitivos antes de publicar el dominio.
+

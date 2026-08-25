@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es-MX">
       <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>
         <Header />
         <main>{children}</main>
@@ -49,3 +49,4 @@ export default function RootLayout({
     </html>
   );
 }
+
