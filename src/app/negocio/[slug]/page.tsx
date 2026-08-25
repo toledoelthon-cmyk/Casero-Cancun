@@ -229,8 +229,6 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                   </h1>
                 </div>
               </div>
-
-              <p className="mt-5 max-w-3xl text-base font-semibold leading-8 text-white/86 sm:text-lg">{business.shortDescription}</p>
               <div className="mt-5 flex flex-wrap gap-3 text-sm font-bold text-white/86">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-black/42 px-3 py-1.5 backdrop-blur-sm">
                   <MapPin className="h-4 w-4" aria-hidden />
