@@ -226,8 +226,8 @@ export function PublicBusinessDirectory({
                 key={attribute.value}
                 className={
                   active
-                    ? "rounded-full bg-casero-green px-3 py-2 text-xs font-extrabold text-white shadow-sm"
-                    : "rounded-full border border-casero-dark/10 bg-white px-3 py-2 text-xs font-bold text-casero-text/70 transition hover:border-casero-green/35 hover:text-casero-dark"
+                    ? "rounded-full bg-casero-green px-3 py-2 text-sm font-extrabold text-white shadow-sm lg:text-xs"
+                    : "rounded-full border border-casero-dark/10 bg-white px-3 py-2 text-sm font-bold text-casero-text/70 transition hover:border-casero-green/35 hover:text-casero-dark lg:text-xs"
                 }
                 type="button"
                 onClick={() => toggleAttribute(attribute.value)}
@@ -240,7 +240,7 @@ export function PublicBusinessDirectory({
       </div>
 
       <button
-        className="mt-5 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-3 text-sm font-extrabold text-casero-dark transition hover:border-casero-green hover:text-casero-green"
+        className="mt-5 min-h-12 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-3 text-sm font-extrabold text-casero-dark transition hover:border-casero-green hover:text-casero-green"
         type="button"
         onClick={clearFilters}
       >
@@ -278,7 +278,7 @@ export function PublicBusinessDirectory({
             </p>
           </div>
           <button
-            className="rounded-xl border border-casero-dark/10 bg-casero-background px-3 py-2.5 text-sm font-extrabold text-casero-dark transition hover:border-casero-green hover:bg-white hover:text-casero-green"
+            className="min-h-11 rounded-xl border border-casero-dark/10 bg-casero-background px-3 py-2.5 text-sm font-extrabold text-casero-dark transition hover:border-casero-green hover:bg-white hover:text-casero-green"
             type="button"
             onClick={clearFilters}
           >

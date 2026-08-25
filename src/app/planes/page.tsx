@@ -74,7 +74,7 @@ export default function PlansPage() {
             <div className="p-5 text-white sm:p-8 md:p-10">
               <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[0.14em] text-white ring-1 ring-white/15">
                 <BadgeCheck className="h-4 w-4 text-casero-orange" aria-hidden />
-                Ya elegiste un plan?
+                ¿Ya elegiste un plan?
               </p>
               <h2 className="mt-5 max-w-3xl font-heading text-3xl font-extrabold leading-tight sm:text-4xl">Crea tu cuenta y registra tu negocio</h2>
               <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-white/74 sm:text-base">Prepara tus datos, elige el plan que más te convenga y empieza a recibir contactos directos por WhatsApp.</p>
@@ -94,3 +94,4 @@ export default function PlansPage() {
     </main>
   );
 }
+

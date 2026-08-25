@@ -8,7 +8,7 @@ type PageProps = {
 };
 
 export const metadata: Metadata = createPublicMetadata({
-  title: "Servicios para tu auto en Cancún y Riviera Maya y Riviera Maya | Casero Cancún",
+  title: "Servicios para tu auto en Cancún y Riviera Maya | Casero Cancún",
   description:
     "Encuentra mecánicos, talleres, lavado, grúas, llanteras, diagnóstico y servicios automotrices locales en Cancún y Riviera Maya.",
   path: "/servicios-para-tu-auto",
@@ -31,3 +31,4 @@ export default async function AutoServicesPage({ searchParams }: PageProps) {
     />
   );
 }
+

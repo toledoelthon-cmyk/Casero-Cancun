@@ -76,7 +76,7 @@ export async function SectionBusinessPage({
                 id="location"
                 name="ubicacion"
                 defaultValue={selectedLocationSlug}
-                className="mt-2 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-2.5 text-sm font-semibold outline-casero-green"
+                className="mt-2 w-full rounded-xl border border-casero-dark/10 bg-white px-3 py-3 text-base font-semibold outline-casero-green md:text-sm"
               >
                 <option value="all">Todas las zonas</option>
                 {locations.map((location) => (
@@ -85,7 +85,7 @@ export async function SectionBusinessPage({
                   </option>
                 ))}
               </select>
-              <button className="mt-2 w-full rounded-xl bg-casero-green px-3 py-2.5 text-sm font-extrabold text-white transition hover:bg-emerald-700" type="submit">
+              <button className="mt-2 min-h-11 w-full rounded-xl bg-casero-green px-3 py-2.5 text-sm font-extrabold text-white transition hover:bg-emerald-700" type="submit">
                 Filtrar
               </button>
             </form>

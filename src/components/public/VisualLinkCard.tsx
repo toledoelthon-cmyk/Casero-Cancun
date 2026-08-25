@@ -42,7 +42,7 @@ export function VisualLinkCard({ title, description, href, image, imageAlt, cta,
           ) : null}
         </div>
         <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{description}</p>
-        <p className="mt-auto inline-flex w-fit items-center gap-2 rounded-full bg-casero-green/10 px-3 py-1.5 text-xs font-extrabold text-emerald-800 shadow-sm ring-1 ring-casero-green/15">
+        <p className="mt-auto inline-flex w-fit items-center gap-2 rounded-full bg-casero-green/10 px-3 py-1.5 text-sm font-extrabold text-emerald-800 shadow-sm ring-1 ring-casero-green/15 sm:text-xs">
           {cta}
           <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" aria-hidden />
         </p>

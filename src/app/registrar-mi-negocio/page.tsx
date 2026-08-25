@@ -21,8 +21,8 @@ export const revalidate = 0;
 const benefits = [
   {
     icon: Search,
-    title: "Mas visibilidad local",
-    text: "Aparece en una plataforma creada para busquedas reales dentro de Cancun.",
+    title: "Más visibilidad local",
+    text: "Aparece en una plataforma creada para búsquedas reales dentro de Cancún.",
   },
   {
     icon: MessageCircle,
@@ -32,12 +32,12 @@ const benefits = [
   {
     icon: Store,
     title: "Perfil profesional",
-    text: "Muestra categoria, zona, badges, resenas demo y datos de contacto claros.",
+    text: "Muestra categoría, zona, señales de confianza y datos de contacto claros.",
   },
   {
     icon: ShieldCheck,
-    title: "Sin comision por trabajo",
-    text: "Casero Cancun conecta; el acuerdo y seguimiento se hacen directamente con tu cliente.",
+    title: "Sin comisión por trabajo",
+    text: "Casero Cancún conecta; el acuerdo y seguimiento se hacen directamente con tu cliente.",
   },
 ];
 
@@ -99,33 +99,33 @@ export default async function RegisterBusinessPage() {
 
   return (
     <>
-      <section className="bg-white py-8 sm:py-12">
+      <section className="bg-white py-10 sm:py-14 lg:py-16">
         <div className="container-page">
-          <div className="max-w-4xl">
-            <span className="inline-flex rounded-md bg-casero-beige px-3 py-1 text-sm font-bold text-casero-green">
+          <div className="max-w-4xl rounded-[1.45rem] border border-casero-dark/10 bg-casero-background p-5 shadow-soft sm:p-8 lg:p-10">
+            <span className="inline-flex rounded-full bg-casero-green px-4 py-2 text-sm font-extrabold text-white shadow-sm">
               Registro de proveedores
             </span>
             <h1 className="mt-4 font-heading text-3xl font-extrabold text-casero-dark sm:text-4xl md:text-5xl">
-              Haz que mas clientes encuentren tu negocio en Cancun
+              Haz que más clientes encuentren tu negocio en Cancún
             </h1>
             <p className="mt-4 text-base leading-7 text-casero-text/75 sm:text-lg sm:leading-8">
-              Registra tu servicio, tienda o proveedor local en Casero Cancun y obten visibilidad
+              Registra tu servicio, tienda o proveedor local en Casero Cancún y obtén visibilidad
               en una plataforma creada para conectar negocios locales con clientes reales.
             </p>
           </div>
 
-          <div className="mt-8 rounded-lg border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm font-bold text-casero-dark">
-            Primer mes gratis para negocios aprobados - WhatsApp visible - Sin comision por trabajo
+          <div className="mt-8 rounded-[1rem] border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm font-extrabold leading-6 text-casero-dark shadow-sm">
+            Primer mes gratis para negocios aprobados - WhatsApp visible - Sin comisión por trabajo
             realizado - Perfil revisado antes de publicarse
           </div>
         </div>
       </section>
 
-      <section className="container-page py-8 sm:py-12">
+      <section className="container-page py-10 sm:py-14">
         <SectionHeader
           eyebrow="Beneficios"
           title="Un perfil pensado para que te contacten mejor"
-          description="La recepcion de solicitudes guardara negocios pendientes cuando Supabase este configurado."
+          description="Completa tu perfil con datos claros para que los clientes entiendan qué ofreces y cómo contactarte."
         />
         <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((benefit) => (
@@ -138,20 +138,20 @@ export default async function RegisterBusinessPage() {
         </div>
       </section>
 
-      <section className="container-page pb-12 sm:pb-16">
+      <section className="container-page pb-14 sm:pb-16 lg:pb-20">
         <div className="grid gap-6 lg:grid-cols-[1fr_22rem] lg:gap-8">
           <div>
             <SectionHeader
               eyebrow="Solicitud"
-              title="Cuentanos sobre tu negocio"
-              description="Completa los datos principales para enviar tu negocio a revision."
+              title="Cuéntanos sobre tu negocio"
+              description="Completa los datos principales para enviar tu negocio a revisión."
             />
             <div className="mt-6 grid gap-4">
               {registrationAuth.status !== "provider" ? (
                 <div className="rounded-lg border border-casero-green/20 bg-casero-green/10 p-4 text-sm font-semibold text-casero-green">
-                  <p>Si ya tienes cuenta de proveedor, inicia sesion antes de registrar tu negocio para que quede asociado a tu panel.</p>
+                  <p>Si ya tienes cuenta de proveedor, inicia sesión antes de registrar tu negocio para que quede asociado a tu panel.</p>
                   <Button href="/proveedor/login" variant="secondary" className="mt-3">
-                    Iniciar sesion como proveedor
+                    Iniciar sesión como proveedor
                   </Button>
                 </div>
               ) : null}
@@ -161,15 +161,15 @@ export default async function RegisterBusinessPage() {
 
           <aside className="space-y-4">
             <Card>
-              <h2 className="font-heading text-lg font-bold text-casero-dark">Que pasa despues</h2>
+              <h2 className="font-heading text-lg font-bold text-casero-dark">Qué pasa después</h2>
               <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                Cada solicitud entrara a revision antes de publicarse en el directorio.
+                Cada solicitud entrará a revisión antes de publicarse en el directorio.
               </p>
             </Card>
             <Card>
-              <h2 className="font-heading text-lg font-bold text-casero-dark">Estado de publicacion</h2>
+              <h2 className="font-heading text-lg font-bold text-casero-dark">Estado de publicación</h2>
               <p className="mt-2 text-sm leading-6 text-casero-text/70">
-                La estructura contempla perfiles pendientes, publicados, pausados y rechazados.
+                Podrás dar seguimiento al estado de tu publicación desde tu panel cuando tu cuenta esté lista.
               </p>
             </Card>
           </aside>
@@ -178,5 +178,6 @@ export default async function RegisterBusinessPage() {
     </>
   );
 }
+
 
 

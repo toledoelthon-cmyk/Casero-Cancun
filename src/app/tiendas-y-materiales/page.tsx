@@ -8,7 +8,7 @@ type PageProps = {
 };
 
 export const metadata: Metadata = createPublicMetadata({
-  title: "Tiendas y materiales en Cancún y Riviera Maya y Riviera Maya | Casero Cancún",
+  title: "Tiendas y materiales en Cancún y Riviera Maya | Casero Cancún",
   description:
     "Encuentra ferreterías, materiales de construcción, herramientas, refacciones y suministros locales para proyectos en Cancún y Riviera Maya.",
   path: "/tiendas-y-materiales",
@@ -31,3 +31,4 @@ export default async function StoresPage({ searchParams }: PageProps) {
     />
   );
 }
+
