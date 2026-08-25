@@ -63,7 +63,7 @@ function fallbackBusinesses() {
         locationNames.map((locationName) => demoLocations.find((location) => location.name === locationName)?.slug ?? slugify(locationName)),
       longDescription:
         business.longDescription ??
-        `${business.shortDescription} Perfil demo preparado para mostrar cómo se verá un negocio publicado en Casero Cancún.`,
+        `${business.shortDescription} Perfil preparado para mostrar información clara, zonas de atención y contacto directo en Casero Cancún.`,
       mainService: business.mainService ?? business.category,
       media: business.media ?? [],
     };
@@ -280,4 +280,5 @@ export async function getPublishedBusinessesByLocation(slug: string) {
 export async function getBusinessesByLocation(slug: string) {
   return getPublishedBusinessesByLocation(slug);
 }
+
 

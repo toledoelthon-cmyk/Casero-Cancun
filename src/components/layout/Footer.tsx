@@ -36,8 +36,8 @@ export function Footer() {
             Servicios, tiendas, mascotas y soluciones para tu auto en Cancún.
           </p>
           <p className="mt-5 text-xs leading-5 text-white/50">
-            Casero Cancún funciona como plataforma de conexion. Cada proveedor, tienda o negocio es responsable de la
-            informacion publicada y de los servicios o productos que ofrece.
+            Casero Cancún funciona como plataforma de conexión. Cada proveedor, tienda o negocio es responsable de la
+            información publicada y de los servicios o productos que ofrece.
           </p>
         </div>
 
@@ -74,3 +74,4 @@ export function Footer() {
     </footer>
   );
 }
+

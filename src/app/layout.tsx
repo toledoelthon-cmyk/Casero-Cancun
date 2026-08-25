@@ -23,7 +23,7 @@ const poppins = Poppins({
 export const metadata: Metadata = createPublicMetadata({
   title: "Casero Cancún | Servicios locales, tiendas, mascotas y auto",
   description:
-    "Encuentra servicios del hogar, proveedores locales, tiendas de materiales, mascotas y servicios automotrices en Cancún con contacto directo por WhatsApp.",
+    "Directorio local de servicios, negocios y proveedores en Cancún y Riviera Maya con contacto directo por WhatsApp.",
 });
 
 export const viewport: Viewport = {
@@ -49,4 +49,5 @@ export default function RootLayout({
     </html>
   );
 }
+
 
