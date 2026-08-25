@@ -230,8 +230,8 @@ export default async function BusinessProfilePage({ params }: PageProps) {
                 </div>
               </div>
               <div className="mt-5 flex flex-wrap gap-3 text-sm font-bold text-white/86">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-black/42 px-3 py-1.5 backdrop-blur-sm">
-                  <MapPin className="h-4 w-4" aria-hidden />
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-emerald-50/95 px-3 py-1.5 text-emerald-800 shadow-sm backdrop-blur-sm">
+                  <MapPin className="h-4 w-4 text-emerald-700" aria-hidden />
                   {business.location}
                 </span>
                 {business.rating ? (
