@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowRight, BadgeCheck, MessageCircle, Sparkles } from "lucide-react";
 import { PlanCard } from "@/components/marketplace/PlanCard";
+import { PremiumAnnualDiscountBanner } from "@/components/public/PremiumAnnualDiscountBanner";
 import { TrustStrip } from "@/components/public/TrustStrip";
 import { Button } from "@/components/ui/Button";
 import { plans } from "@/lib/demo-data";
@@ -36,6 +37,9 @@ export default function PlansPage() {
             </div>
           </div>
           <TrustStrip />
+          <div className="mt-6 sm:mt-8">
+            <PremiumAnnualDiscountBanner />
+          </div>
         </div>
       </section>
 
@@ -94,4 +98,5 @@ export default function PlansPage() {
     </main>
   );
 }
+
 

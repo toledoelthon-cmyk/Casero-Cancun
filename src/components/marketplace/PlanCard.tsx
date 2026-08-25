@@ -13,6 +13,7 @@ const externalButtonClass =
 export function PlanCard({ plan }: PlanCardProps) {
   const paymentMessage = `Hola, quiero solicitar información para pagar por CoDi o transferencia el plan ${plan.name} de Casero Cancún.`;
   const manualPayment = getManualPaymentLinks(plan, paymentMessage);
+  const hasPremiumAnnualPromotion = plan.slug === "premium";
 
   return (
     <article
@@ -22,12 +23,19 @@ export function PlanCard({ plan }: PlanCardProps) {
           : "flex h-full flex-col rounded-[1.35rem] border border-casero-dark/10 bg-white p-6 shadow-sm"
       }
     >
-      {plan.highlighted ? (
-        <span className="absolute right-5 top-5 rounded-full bg-casero-green px-3 py-1.5 text-xs font-extrabold text-white shadow-sm">
-          Más elegido
-        </span>
-      ) : null}
-      <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-casero-green">Plan mensual</p>
+      <div className="absolute right-5 top-5 flex flex-col items-end gap-2">
+        {plan.highlighted ? (
+          <span className="rounded-full bg-casero-green px-3 py-1.5 text-xs font-extrabold text-white shadow-sm">
+            Más elegido
+          </span>
+        ) : null}
+        {hasPremiumAnnualPromotion ? (
+          <span className="rounded-full bg-casero-orange px-3 py-1.5 text-xs font-extrabold text-casero-dark shadow-sm">
+            20% off anual
+          </span>
+        ) : null}
+      </div>
+      <p className="pr-28 text-xs font-extrabold uppercase tracking-[0.14em] text-casero-green">Plan mensual</p>
       <h3 className="mt-2 font-heading text-3xl font-extrabold text-casero-dark">{plan.name}</h3>
       <p className="mt-3 min-h-[48px] text-sm font-semibold leading-6 text-casero-text/68">{plan.summary}</p>
       <div className="mt-6 rounded-[1rem] bg-casero-background p-4">
@@ -74,3 +82,5 @@ export function PlanCard({ plan }: PlanCardProps) {
     </article>
   );
 }
+
+

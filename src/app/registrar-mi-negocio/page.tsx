@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MessageCircle, Search, ShieldCheck, Store } from "lucide-react";
 import { RegisterBusinessForm } from "@/components/marketplace/RegisterBusinessForm";
+import { PremiumAnnualDiscountBanner } from "@/components/public/PremiumAnnualDiscountBanner";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -118,6 +119,10 @@ export default async function RegisterBusinessPage() {
             Primer mes gratis para negocios aprobados - WhatsApp visible - Sin comisión por trabajo
             realizado - Perfil revisado antes de publicarse
           </div>
+
+          <div className="mt-6">
+            <PremiumAnnualDiscountBanner />
+          </div>
         </div>
       </section>
 
@@ -178,6 +183,8 @@ export default async function RegisterBusinessPage() {
     </>
   );
 }
+
+
 
 
 
