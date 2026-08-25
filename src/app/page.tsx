@@ -3,12 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, CheckCircle2, ChevronRight, MapPin, MessageCircle, Search, Wrench } from "lucide-react";
 import { HomeHero } from "@/components/home/HomeHero";
-import { CategoryCard } from "@/components/marketplace/CategoryCard";
 import { TrustFeatureCard } from "@/components/marketplace/TrustFeatureCard";
 import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/jsonLd";
-import { autoServiceCategories, petCategories, serviceCategories, storeCategories } from "@/lib/demo-data";
 import { CATEGORY_VISUALS } from "@/lib/publicVisualAssets";
 import { createPublicMetadata } from "@/lib/seo";
 
@@ -42,15 +40,6 @@ const trustFeatures = [
 ];
 
 export default function Home() {
-  const highlightedServices = serviceCategories.filter((category) =>
-    ["aire-acondicionado", "plomeria", "electricidad", "limpieza-del-hogar", "fumigacion", "mantenimiento-airbnb"].includes(category.slug),
-  );
-  const highlightedStores = storeCategories.filter((category) =>
-    ["ferreterias", "material-electrico", "material-de-plomeria", "herramientas"].includes(category.slug),
-  );
-  const highlightedPets = petCategories.slice(0, 4);
-  const highlightedAuto = autoServiceCategories.slice(0, 4);
-
   return (
     <>
       <JsonLd data={[websiteJsonLd(), organizationJsonLd()]} />
@@ -141,13 +130,6 @@ export default function Home() {
 
       <section className="bg-casero-background py-10 sm:py-14 lg:py-16">
         <div className="container-page">
-          <SectionHeader eyebrow="Categorías populares" title="Búsquedas frecuentes en Casero Cancún" description="Atajos útiles para encontrar proveedores sin recorrer todo el directorio." />
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[...highlightedServices, ...highlightedStores, ...highlightedPets, ...highlightedAuto].map((category) => <CategoryCard key={category.slug} category={category} />)}</div>
-        </div>
-      </section>
-
-      <section className="bg-white py-10 sm:py-14 lg:py-16">
-        <div className="container-page">
           <div className="overflow-hidden rounded-[1.4rem] bg-casero-dark shadow-soft">
             <div className="grid gap-0 lg:grid-cols-[1fr_auto] lg:items-center">
               <div className="p-5 text-white sm:p-8 md:p-10">
@@ -168,3 +150,5 @@ export default function Home() {
     </>
   );
 }
+
+
