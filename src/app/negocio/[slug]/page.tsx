@@ -246,7 +246,7 @@ export default async function BusinessProfilePage({ params }: PageProps) {
             <Card className="border-white/20 bg-white/95 p-4 shadow-soft backdrop-blur-sm sm:p-5">
               <p className="font-heading text-xl font-extrabold text-casero-dark">Contacta a este negocio</p>
               <p className="mt-2 text-sm font-semibold leading-6 text-casero-text/68">
-                Solicita información y continúa por WhatsApp con los datos publicados del proveedor.
+                Solicita información y continúa por WhatsApp con los datos publicados del negocio.
               </p>
               <div className="mt-4">{renderQuoteButton()}</div>
               <div className="mt-4 grid gap-2 text-sm font-semibold text-casero-text/72">

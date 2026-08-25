@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, MessageCircle, Search, Send, Star } from "lucide-react";
+import { MessageCircle, Search, Send, Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 const quickSearchLinks = [
@@ -14,30 +14,21 @@ const quickSearchLinks = [
 
 const marketplaceCards = [
   {
-    title: "Plomería rápida",
-    text: "Fugas, destapes y reparaciones para casa o negocio.",
-    zone: "Cancún",
-    badge: "WhatsApp",
+    title: "Plomería",
     href: "/buscar-servicios?q=plomero",
     image: "/images/hero/hero-main-service-card.webp",
     alt: "Servicio local de plomería atendiendo una reparación en casa",
     position: "object-[42%_center]",
   },
   {
-    title: "Aire y electricidad",
-    text: "Instalaciones, mantenimiento y revisiones a domicilio.",
-    zone: "Cancún",
-    badge: "A domicilio",
+    title: "A/C y Electricidad",
     href: "/buscar-servicios?q=aire%20acondicionado",
     image: "/images/hero/hero-card-electricidad.webp",
     alt: "Técnico local revisando instalación eléctrica y aire acondicionado",
     position: "object-[45%_center]",
   },
   {
-    title: "Ferretería y materiales",
-    text: "Herramientas, refacciones y productos cerca de ti.",
-    zone: "Puerto Morelos",
-    badge: "Abierto",
+    title: "Ferretería y Materiales",
     href: "/buscar-servicios?q=ferreteria",
     image: "/images/hero/hero-card-ferreteria.webp",
     alt: "Ferretería local con materiales y atención a clientes",
@@ -45,9 +36,6 @@ const marketplaceCards = [
   },
   {
     title: "Veterinaria",
-    text: "Consulta, cuidado y atención para mascotas.",
-    zone: "Riviera Maya",
-    badge: "Mascotas",
     href: "/buscar-servicios?q=veterinaria",
     image: "/images/hero/hero-card-mascotas.webp",
     alt: "Servicio local de mascotas y veterinaria",
@@ -55,16 +43,12 @@ const marketplaceCards = [
   },
   {
     title: "Mecánico",
-    text: "Revisión, reparación y servicios para tu auto.",
-    zone: "Playa del Carmen",
-    badge: "Auto",
     href: "/buscar-servicios?q=mecanico",
     image: "/images/hero/hero-card-auto.webp",
     alt: "Servicio mecánico local para auto",
     position: "object-[48%_center]",
   },
 ];
-
 const zoneTiles = [
   {
     label: "Cancún",
@@ -112,7 +96,7 @@ function MarketplaceCard({ card }: { card: MarketplaceCard }) {
       className="group block h-full overflow-hidden rounded-[1.1rem] border border-white/70 bg-casero-dark shadow-sm transition hover:-translate-y-0.5 hover:border-casero-green/35 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-casero-green"
     >
       <article className="h-full overflow-hidden rounded-[1.1rem] bg-casero-dark">
-        <div className="relative h-full min-h-[205px] overflow-hidden bg-casero-dark sm:min-h-[220px] lg:min-h-[184px] xl:min-h-[198px]">
+        <div className="relative h-full min-h-[178px] overflow-hidden bg-casero-dark sm:min-h-[190px] lg:min-h-[166px] xl:min-h-[178px]">
           <Image
             src={card.image}
             alt={card.alt}
@@ -120,27 +104,11 @@ function MarketplaceCard({ card }: { card: MarketplaceCard }) {
             sizes="(min-width: 1280px) 23vw, (min-width: 1024px) 30vw, 100vw"
             className={"object-cover transition duration-500 group-hover:scale-[1.03] " + card.position}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/38 to-black/10" />
-          <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-black/95 via-black/68 to-transparent" />
-          <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm backdrop-blur-sm">
-            {card.badge}
-          </span>
-          <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-3.5">
-            <div className="rounded-xl bg-slate-950/72 p-3 shadow-sm backdrop-blur-sm">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="font-heading text-lg font-extrabold leading-tight text-white sm:text-xl">{card.title}</h2>
-                  <p className="mt-1 line-clamp-2 text-sm font-bold leading-5 text-white">{card.text}</p>
-                </div>
-                <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-emerald-700 text-white shadow-sm ring-1 ring-white/20">
-                  <MessageCircle className="h-5 w-5" aria-hidden />
-                </span>
-              </div>
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/92 px-2.5 py-1 text-xs font-extrabold text-casero-dark shadow-sm">
-                <MapPin className="h-3.5 w-3.5" aria-hidden />
-                {card.zone}
-              </p>
-            </div>
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/78 via-black/34 to-transparent" aria-hidden />
+          <div className="absolute inset-x-0 bottom-0 p-3 sm:p-3.5">
+            <h2 className="rounded-full bg-slate-950/68 px-3.5 py-2 text-center font-heading text-base font-extrabold leading-tight text-white shadow-sm backdrop-blur-sm sm:text-lg">
+              {card.title}
+            </h2>
           </div>
         </div>
       </article>
