@@ -32,9 +32,6 @@ export default function PlansPage() {
             </span>
             <h1 className="mx-auto mt-5 max-w-3xl font-heading text-4xl font-extrabold leading-tight text-casero-dark sm:text-5xl">Publica tu negocio en Casero Cancún</h1>
             <p className="mx-auto mt-4 max-w-3xl text-base font-semibold leading-7 text-casero-text/72 sm:text-lg">Elige un plan para mostrar tu perfil, tus zonas de atención y tus datos de contacto a clientes que buscan negocios locales.</p>
-            <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-casero-orange/35 bg-white px-4 py-3 text-sm font-extrabold text-casero-dark shadow-sm">
-              Primer mes gratis para negocios aprobados durante la etapa de lanzamiento.
-            </div>
           </div>
           <TrustStrip />
           <div className="mt-6 sm:mt-8">
@@ -98,5 +95,6 @@ export default function PlansPage() {
     </main>
   );
 }
+
 
 

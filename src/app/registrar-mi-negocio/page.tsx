@@ -115,12 +115,7 @@ export default async function RegisterBusinessPage() {
             </p>
           </div>
 
-          <div className="mt-8 rounded-[1rem] border border-casero-orange/25 bg-casero-orange/10 p-4 text-sm font-extrabold leading-6 text-casero-dark shadow-sm">
-            Primer mes gratis para negocios aprobados - WhatsApp visible - Sin comisión por trabajo
-            realizado - Perfil revisado antes de publicarse
-          </div>
-
-          <div className="mt-6">
+          <div className="mt-8">
             <PremiumAnnualDiscountBanner />
           </div>
         </div>
@@ -183,6 +178,8 @@ export default async function RegisterBusinessPage() {
     </>
   );
 }
+
+
 
 
 
